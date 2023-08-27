@@ -1,0 +1,26 @@
+import { writeFile } from 'fs/promises'
+import { glob } from 'glob'
+import path from 'path'
+
+const files = await glob('./assets/**')
+
+const folders: Record<string, string[]> = {}
+for (const path of files) {
+	if (path?.includes('.') && !path.includes('.d.ts')) {
+		const parts = path.split('\\')
+		const folder = parts.at(-2)?.replace(/[ &]/g, '')
+		const file = parts.at(-1)?.split('.')[0]
+		if (folder && !folders[folder]) {
+			folders[folder] = []
+		}
+		if (folder && file && folders[folder]) {
+			folders[folder].push(file)
+		}
+	}
+
+}
+let result = ''
+for (const [folder, files] of Object.entries(folders)) {
+	result += `type ${folder} = ${files.map(x => `'${x}'`).join(' | ')}\n`
+}
+await writeFile(path.join(process.cwd(), 'assets', 'assets.d.ts'), result)
