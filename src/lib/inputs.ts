@@ -28,7 +28,7 @@ class Input {
 }
 
 @Component(ecs)
-export class InputMap<const T extends readonly string[]> {
+export class InputMap<T extends readonly string[]> {
 	#inputs = new Map<T[number], Input>()
 	constructor(...inputNames: T) {
 		for (const name of inputNames) {

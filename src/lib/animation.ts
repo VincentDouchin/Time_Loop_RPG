@@ -1,5 +1,5 @@
 import { Component } from './ECS'
-import { TextureAtlasSprite } from './sprite'
+import { Sprite, TextureAtlas } from './sprite'
 import { Timer, time } from './time'
 import { ecs } from '@/globals/init'
 
@@ -8,12 +8,13 @@ export class Animator extends Timer {
 
 }
 
-const animateQuery = ecs.query.pick(Animator, TextureAtlasSprite)
+const animateQuery = ecs.query.pick(Animator, Sprite, TextureAtlas)
 export const animateSprites = () => {
-	for (const [animator, sprite] of animateQuery.getAll()) {
+	for (const [animator, sprite, atlas] of animateQuery.getAll()) {
 		animator.tick(time.delta)
 		if (animator.justFinished) {
-			sprite.increment()
+			atlas.increment()
+			sprite.composer.setInitialTexture(atlas.currentTexture)
 		}
 	}
 }

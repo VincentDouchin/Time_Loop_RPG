@@ -5,13 +5,13 @@
 		"doc": "https://ldtk.io/json",
 		"schema": "https://ldtk.io/files/JSON_SCHEMA.json",
 		"appAuthor": "Sebastien 'deepnight' Benard",
-		"appVersion": "1.3.3",
+		"appVersion": "1.3.4",
 		"url": "https://ldtk.io"
 	},
 	"iid": "334e2dc0-3b70-11ee-9490-d57adfa79ba6",
-	"jsonVersion": "1.3.3",
-	"appBuildId": 467698,
-	"nextUid": 55,
+	"jsonVersion": "1.3.4",
+	"appBuildId": 470178,
+	"nextUid": 59,
 	"identifierStyle": "Capitalize",
 	"toc": [],
 	"worldLayout": "Free",
@@ -19,9 +19,11 @@
 	"worldGridHeight": 256,
 	"defaultLevelWidth": 256,
 	"defaultLevelHeight": 256,
-	"defaultPivotX": 0,
-	"defaultPivotY": 0,
+	"defaultPivotX": 0.5,
+	"defaultPivotY": 0.5,
 	"defaultGridSize": 16,
+	"defaultEntityWidth": 16,
+	"defaultEntityHeight": 16,
 	"bgColor": "#40465B",
 	"defaultLevelBgColor": "#696A79",
 	"minifyJson": false,
@@ -1156,41 +1158,7 @@
 			"pivotY": 0.5,
 			"fieldDefs": [
 				{
-					"identifier": "next",
-					"doc": null,
-					"__type": "Array<EntityRef>",
-					"uid": 33,
-					"type": "F_EntityRef",
-					"isArray": true,
-					"canBeNull": false,
-					"arrayMinLength": null,
-					"arrayMaxLength": null,
-					"editorDisplayMode": "RefLinkBetweenCenters",
-					"editorDisplayScale": 0,
-					"editorDisplayPos": "Above",
-					"editorLinkStyle": "CurvedArrow",
-					"editorAlwaysShow": false,
-					"editorShowInWorld": true,
-					"editorCutLongValues": true,
-					"editorTextSuffix": null,
-					"editorTextPrefix": null,
-					"useForSmartColor": false,
-					"min": null,
-					"max": null,
-					"regex": null,
-					"acceptFileTypes": null,
-					"defaultOverride": null,
-					"textLanguageMode": null,
-					"symmetricalRef": false,
-					"autoChainRef": true,
-					"allowOutOfLevelRef": true,
-					"allowedRefs": "OnlySame",
-					"allowedRefsEntityUid": null,
-					"allowedRefTags": [],
-					"tilesetUid": null
-				},
-				{
-					"identifier": "Node_type",
+					"identifier": "type",
 					"doc": null,
 					"__type": "LocalEnum.Node_type",
 					"uid": 34,
@@ -1200,9 +1168,10 @@
 					"arrayMinLength": null,
 					"arrayMaxLength": null,
 					"editorDisplayMode": "EntityTile",
-					"editorDisplayScale": 0,
+					"editorDisplayScale": 1,
 					"editorDisplayPos": "Above",
 					"editorLinkStyle": "StraightArrow",
+					"editorDisplayColor": null,
 					"editorAlwaysShow": false,
 					"editorShowInWorld": true,
 					"editorCutLongValues": true,
@@ -1234,9 +1203,150 @@
 					"arrayMinLength": null,
 					"arrayMaxLength": null,
 					"editorDisplayMode": "Hidden",
-					"editorDisplayScale": 0,
+					"editorDisplayScale": 1,
 					"editorDisplayPos": "Above",
 					"editorLinkStyle": "StraightArrow",
+					"editorDisplayColor": null,
+					"editorAlwaysShow": false,
+					"editorShowInWorld": true,
+					"editorCutLongValues": true,
+					"editorTextSuffix": null,
+					"editorTextPrefix": null,
+					"useForSmartColor": false,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null,
+					"symmetricalRef": false,
+					"autoChainRef": true,
+					"allowOutOfLevelRef": true,
+					"allowedRefs": "OnlySame",
+					"allowedRefsEntityUid": null,
+					"allowedRefTags": [],
+					"tilesetUid": null
+				},
+				{
+					"identifier": "up",
+					"doc": null,
+					"__type": "EntityRef",
+					"uid": 55,
+					"type": "F_EntityRef",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "RefLinkBetweenCenters",
+					"editorDisplayScale": 1,
+					"editorDisplayPos": "Above",
+					"editorLinkStyle": "CurvedArrow",
+					"editorDisplayColor": null,
+					"editorAlwaysShow": false,
+					"editorShowInWorld": true,
+					"editorCutLongValues": true,
+					"editorTextSuffix": null,
+					"editorTextPrefix": null,
+					"useForSmartColor": false,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null,
+					"symmetricalRef": false,
+					"autoChainRef": true,
+					"allowOutOfLevelRef": true,
+					"allowedRefs": "OnlySame",
+					"allowedRefsEntityUid": null,
+					"allowedRefTags": [],
+					"tilesetUid": null
+				},
+				{
+					"identifier": "down",
+					"doc": null,
+					"__type": "EntityRef",
+					"uid": 56,
+					"type": "F_EntityRef",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "RefLinkBetweenCenters",
+					"editorDisplayScale": 1,
+					"editorDisplayPos": "Above",
+					"editorLinkStyle": "CurvedArrow",
+					"editorDisplayColor": null,
+					"editorAlwaysShow": false,
+					"editorShowInWorld": true,
+					"editorCutLongValues": true,
+					"editorTextSuffix": null,
+					"editorTextPrefix": null,
+					"useForSmartColor": false,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null,
+					"symmetricalRef": false,
+					"autoChainRef": true,
+					"allowOutOfLevelRef": true,
+					"allowedRefs": "OnlySame",
+					"allowedRefsEntityUid": null,
+					"allowedRefTags": [],
+					"tilesetUid": null
+				},
+				{
+					"identifier": "left",
+					"doc": null,
+					"__type": "EntityRef",
+					"uid": 57,
+					"type": "F_EntityRef",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "RefLinkBetweenCenters",
+					"editorDisplayScale": 1,
+					"editorDisplayPos": "Above",
+					"editorLinkStyle": "CurvedArrow",
+					"editorDisplayColor": null,
+					"editorAlwaysShow": false,
+					"editorShowInWorld": true,
+					"editorCutLongValues": true,
+					"editorTextSuffix": null,
+					"editorTextPrefix": null,
+					"useForSmartColor": false,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null,
+					"symmetricalRef": false,
+					"autoChainRef": true,
+					"allowOutOfLevelRef": true,
+					"allowedRefs": "OnlySame",
+					"allowedRefsEntityUid": null,
+					"allowedRefTags": [],
+					"tilesetUid": null
+				},
+				{
+					"identifier": "right",
+					"doc": null,
+					"__type": "EntityRef",
+					"uid": 58,
+					"type": "F_EntityRef",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "RefLinkBetweenCenters",
+					"editorDisplayScale": 1,
+					"editorDisplayPos": "Above",
+					"editorLinkStyle": "CurvedArrow",
+					"editorDisplayColor": null,
 					"editorAlwaysShow": false,
 					"editorShowInWorld": true,
 					"editorCutLongValues": true,
@@ -1265,7 +1375,7 @@
 			"__cHei": 20,
 			"identifier": "GB_LandTileset",
 			"uid": 2,
-			"relPath": "GB-LandTileset.png",
+			"relPath": "tilesets/GB-LandTileset.png",
 			"embedAtlas": null,
 			"pxWid": 256,
 			"pxHei": 320,
@@ -1287,7 +1397,7 @@
 			"__cHei": 15,
 			"identifier": "GB_Trees_and_Mountains",
 			"uid": 3,
-			"relPath": "GB-Trees-and-Mountains.png",
+			"relPath": "tilesets/GB-Trees-and-Mountains.png",
 			"embedAtlas": null,
 			"pxWid": 128,
 			"pxHei": 240,
@@ -1309,7 +1419,7 @@
 			"__cHei": 5,
 			"identifier": "Universal_Road_Tileset",
 			"uid": 4,
-			"relPath": "Universal-Road-Tileset.png",
+			"relPath": "tilesets/Universal-Road-Tileset.png",
 			"embedAtlas": null,
 			"pxWid": 192,
 			"pxHei": 80,
@@ -1331,7 +1441,7 @@
 			"__cHei": 84,
 			"identifier": "Compilation_Building",
 			"uid": 25,
-			"relPath": "Compilation-Building.png",
+			"relPath": "tilesets/Compilation-Building.png",
 			"embedAtlas": null,
 			"pxWid": 256,
 			"pxHei": 672,
@@ -1430,26 +1540,31 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 0, "y": 32, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
+							"__worldX": 120,
+							"__worldY": 232,
 							"iid": "74429160-3b70-11ee-9490-93b4bdca22e7",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [120,232],
 							"fieldInstances": [
-								{ "__identifier": "next", "__type": "Array<EntityRef>", "__value": [{
+								{ "__identifier": "type", "__type": "LocalEnum.Node_type", "__value": "Start", "__tile": { "tilesetUid": 29, "x": 0, "y": 32, "w": 16, "h": 16 }, "defUid": 34, "realEditorValues": [{
+									"id": "V_String",
+									"params": ["Start"]
+								}] },
+								{ "__identifier": "name", "__type": "String", "__value": null, "__tile": null, "defUid": 54, "realEditorValues": [] },
+								{ "__identifier": "up", "__type": "EntityRef", "__value": {
 									"entityIid": "74c2e4f0-3b70-11ee-9490-efeaf433fb76",
 									"layerIid": "0de53c20-3b70-11ee-9490-852adcd2186a",
 									"levelIid": "334e54d0-3b70-11ee-9490-8d591b8611b9",
 									"worldIid": "334e2dc1-3b70-11ee-9490-e14cf6ecd752"
-								}], "__tile": null, "defUid": 33, "realEditorValues": [{
+								}, "__tile": null, "defUid": 55, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["74c2e4f0-3b70-11ee-9490-efeaf433fb76"]
 								}] },
-								{ "__identifier": "Node_type", "__type": "LocalEnum.Node_type", "__value": "Start", "__tile": { "tilesetUid": 29, "x": 0, "y": 32, "w": 16, "h": 16 }, "defUid": 34, "realEditorValues": [{
-									"id": "V_String",
-									"params": ["Start"]
-								}] },
-								{ "__identifier": "name", "__type": "String", "__value": null, "__tile": null, "defUid": 54, "realEditorValues": [] }
+								{ "__identifier": "down", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 56, "realEditorValues": [] },
+								{ "__identifier": "left", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 57, "realEditorValues": [] },
+								{ "__identifier": "right", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 58, "realEditorValues": [] }
 							]
 						},
 						{
@@ -1459,31 +1574,36 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
+							"__worldX": 120,
+							"__worldY": 184,
 							"iid": "74c2e4f0-3b70-11ee-9490-efeaf433fb76",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [120,184],
 							"fieldInstances": [
-								{ "__identifier": "next", "__type": "Array<EntityRef>", "__value": [ {
+								{ "__identifier": "type", "__type": "LocalEnum.Node_type", "__value": null, "__tile": null, "defUid": 34, "realEditorValues": [] },
+								{ "__identifier": "name", "__type": "String", "__value": null, "__tile": null, "defUid": 54, "realEditorValues": [] },
+								{ "__identifier": "up", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 55, "realEditorValues": [] },
+								{ "__identifier": "down", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 56, "realEditorValues": [] },
+								{ "__identifier": "left", "__type": "EntityRef", "__value": {
 									"entityIid": "75782b30-3b70-11ee-9490-59a6d4b753aa",
 									"layerIid": "0de53c20-3b70-11ee-9490-852adcd2186a",
 									"levelIid": "334e54d0-3b70-11ee-9490-8d591b8611b9",
 									"worldIid": "334e2dc1-3b70-11ee-9490-e14cf6ecd752"
-								}, {
+								}, "__tile": null, "defUid": 57, "realEditorValues": [{
+									"id": "V_String",
+									"params": ["75782b30-3b70-11ee-9490-59a6d4b753aa"]
+								}] },
+								{ "__identifier": "right", "__type": "EntityRef", "__value": {
 									"entityIid": "7db03400-3b70-11ee-9490-71d4aae3e84c",
 									"layerIid": "0de53c20-3b70-11ee-9490-852adcd2186a",
 									"levelIid": "334e54d0-3b70-11ee-9490-8d591b8611b9",
 									"worldIid": "334e2dc1-3b70-11ee-9490-e14cf6ecd752"
-								} ], "__tile": null, "defUid": 33, "realEditorValues": [ {
-									"id": "V_String",
-									"params": ["75782b30-3b70-11ee-9490-59a6d4b753aa"]
-								}, {
+								}, "__tile": null, "defUid": 58, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["7db03400-3b70-11ee-9490-71d4aae3e84c"]
-								} ] },
-								{ "__identifier": "Node_type", "__type": "LocalEnum.Node_type", "__value": null, "__tile": null, "defUid": 34, "realEditorValues": [] },
-								{ "__identifier": "name", "__type": "String", "__value": null, "__tile": null, "defUid": 54, "realEditorValues": [] }
+								}] }
 							]
 						},
 						{
@@ -1493,55 +1613,65 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
+							"__worldX": 56,
+							"__worldY": 184,
 							"iid": "75782b30-3b70-11ee-9490-59a6d4b753aa",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [56,184],
 							"fieldInstances": [
-								{ "__identifier": "next", "__type": "Array<EntityRef>", "__value": [{
+								{ "__identifier": "type", "__type": "LocalEnum.Node_type", "__value": null, "__tile": null, "defUid": 34, "realEditorValues": [] },
+								{ "__identifier": "name", "__type": "String", "__value": null, "__tile": null, "defUid": 54, "realEditorValues": [] },
+								{ "__identifier": "up", "__type": "EntityRef", "__value": {
 									"entityIid": "76235f50-3b70-11ee-9490-f1fa473daf23",
 									"layerIid": "0de53c20-3b70-11ee-9490-852adcd2186a",
 									"levelIid": "334e54d0-3b70-11ee-9490-8d591b8611b9",
 									"worldIid": "334e2dc1-3b70-11ee-9490-e14cf6ecd752"
-								}], "__tile": null, "defUid": 33, "realEditorValues": [{
+								}, "__tile": null, "defUid": 55, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["76235f50-3b70-11ee-9490-f1fa473daf23"]
 								}] },
-								{ "__identifier": "Node_type", "__type": "LocalEnum.Node_type", "__value": null, "__tile": null, "defUid": 34, "realEditorValues": [] },
-								{ "__identifier": "name", "__type": "String", "__value": null, "__tile": null, "defUid": 54, "realEditorValues": [] }
+								{ "__identifier": "down", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 56, "realEditorValues": [] },
+								{ "__identifier": "left", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 57, "realEditorValues": [] },
+								{ "__identifier": "right", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 58, "realEditorValues": [] }
 							]
 						},
 						{
 							"__identifier": "Node",
-							"__grid": [3,7],
+							"__grid": [3,8],
 							"__pivot": [0.5,0.5],
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 96, "y": 0, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
+							"__worldX": 56,
+							"__worldY": 136,
 							"iid": "76235f50-3b70-11ee-9490-f1fa473daf23",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
-							"px": [56,120],
+							"px": [56,136],
 							"fieldInstances": [
-								{ "__identifier": "next", "__type": "Array<EntityRef>", "__value": [{
-									"entityIid": "76ddd5b0-3b70-11ee-9490-e1a3dad32e82",
-									"layerIid": "0de53c20-3b70-11ee-9490-852adcd2186a",
-									"levelIid": "334e54d0-3b70-11ee-9490-8d591b8611b9",
-									"worldIid": "334e2dc1-3b70-11ee-9490-e14cf6ecd752"
-								}], "__tile": null, "defUid": 33, "realEditorValues": [{
-									"id": "V_String",
-									"params": ["76ddd5b0-3b70-11ee-9490-e1a3dad32e82"]
-								}] },
-								{ "__identifier": "Node_type", "__type": "LocalEnum.Node_type", "__value": "Battle", "__tile": { "tilesetUid": 29, "x": 96, "y": 0, "w": 16, "h": 16 }, "defUid": 34, "realEditorValues": [{
+								{ "__identifier": "type", "__type": "LocalEnum.Node_type", "__value": "Battle", "__tile": { "tilesetUid": 29, "x": 96, "y": 0, "w": 16, "h": 16 }, "defUid": 34, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["Battle"]
 								}] },
 								{ "__identifier": "name", "__type": "String", "__value": "bandits", "__tile": null, "defUid": 54, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["bandits"]
-								}] }
+								}] },
+								{ "__identifier": "up", "__type": "EntityRef", "__value": {
+									"entityIid": "76ddd5b0-3b70-11ee-9490-e1a3dad32e82",
+									"layerIid": "0de53c20-3b70-11ee-9490-852adcd2186a",
+									"levelIid": "334e54d0-3b70-11ee-9490-8d591b8611b9",
+									"worldIid": "334e2dc1-3b70-11ee-9490-e14cf6ecd752"
+								}, "__tile": null, "defUid": 55, "realEditorValues": [{
+									"id": "V_String",
+									"params": ["76ddd5b0-3b70-11ee-9490-e1a3dad32e82"]
+								}] },
+								{ "__identifier": "down", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 56, "realEditorValues": [] },
+								{ "__identifier": "left", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 57, "realEditorValues": [] },
+								{ "__identifier": "right", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 58, "realEditorValues": [] }
 							]
 						},
 						{
@@ -1551,23 +1681,28 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
+							"__worldX": 56,
+							"__worldY": 72,
 							"iid": "76ddd5b0-3b70-11ee-9490-e1a3dad32e82",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [56,72],
 							"fieldInstances": [
-								{ "__identifier": "next", "__type": "Array<EntityRef>", "__value": [{
+								{ "__identifier": "type", "__type": "LocalEnum.Node_type", "__value": null, "__tile": null, "defUid": 34, "realEditorValues": [] },
+								{ "__identifier": "name", "__type": "String", "__value": null, "__tile": null, "defUid": 54, "realEditorValues": [] },
+								{ "__identifier": "up", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 55, "realEditorValues": [] },
+								{ "__identifier": "down", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 56, "realEditorValues": [] },
+								{ "__identifier": "left", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 57, "realEditorValues": [] },
+								{ "__identifier": "right", "__type": "EntityRef", "__value": {
 									"entityIid": "778427d0-3b70-11ee-9490-d99941e49a7b",
 									"layerIid": "0de53c20-3b70-11ee-9490-852adcd2186a",
 									"levelIid": "334e54d0-3b70-11ee-9490-8d591b8611b9",
 									"worldIid": "334e2dc1-3b70-11ee-9490-e14cf6ecd752"
-								}], "__tile": null, "defUid": 33, "realEditorValues": [{
+								}, "__tile": null, "defUid": 58, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["778427d0-3b70-11ee-9490-d99941e49a7b"]
-								}] },
-								{ "__identifier": "Node_type", "__type": "LocalEnum.Node_type", "__value": null, "__tile": null, "defUid": 34, "realEditorValues": [] },
-								{ "__identifier": "name", "__type": "String", "__value": null, "__tile": null, "defUid": 54, "realEditorValues": [] }
+								}] }
 							]
 						},
 						{
@@ -1577,23 +1712,28 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
+							"__worldX": 120,
+							"__worldY": 72,
 							"iid": "778427d0-3b70-11ee-9490-d99941e49a7b",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [120,72],
 							"fieldInstances": [
-								{ "__identifier": "next", "__type": "Array<EntityRef>", "__value": [{
+								{ "__identifier": "type", "__type": "LocalEnum.Node_type", "__value": null, "__tile": null, "defUid": 34, "realEditorValues": [] },
+								{ "__identifier": "name", "__type": "String", "__value": null, "__tile": null, "defUid": 54, "realEditorValues": [] },
+								{ "__identifier": "up", "__type": "EntityRef", "__value": {
 									"entityIid": "78d02fd0-3b70-11ee-9490-af54dbdc37c6",
 									"layerIid": "0de53c20-3b70-11ee-9490-852adcd2186a",
 									"levelIid": "334e54d0-3b70-11ee-9490-8d591b8611b9",
 									"worldIid": "334e2dc1-3b70-11ee-9490-e14cf6ecd752"
-								}], "__tile": null, "defUid": 33, "realEditorValues": [{
+								}, "__tile": null, "defUid": 55, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["78d02fd0-3b70-11ee-9490-af54dbdc37c6"]
 								}] },
-								{ "__identifier": "Node_type", "__type": "LocalEnum.Node_type", "__value": null, "__tile": null, "defUid": 34, "realEditorValues": [] },
-								{ "__identifier": "name", "__type": "String", "__value": null, "__tile": null, "defUid": 54, "realEditorValues": [] }
+								{ "__identifier": "down", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 56, "realEditorValues": [] },
+								{ "__identifier": "left", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 57, "realEditorValues": [] },
+								{ "__identifier": "right", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 58, "realEditorValues": [] }
 							]
 						},
 						{
@@ -1603,18 +1743,23 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 16, "y": 832, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
+							"__worldX": 120,
+							"__worldY": 8,
 							"iid": "78d02fd0-3b70-11ee-9490-af54dbdc37c6",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [120,8],
 							"fieldInstances": [
-								{ "__identifier": "next", "__type": "Array<EntityRef>", "__value": [], "__tile": null, "defUid": 33, "realEditorValues": [] },
-								{ "__identifier": "Node_type", "__type": "LocalEnum.Node_type", "__value": "End", "__tile": { "tilesetUid": 29, "x": 16, "y": 832, "w": 16, "h": 16 }, "defUid": 34, "realEditorValues": [{
+								{ "__identifier": "type", "__type": "LocalEnum.Node_type", "__value": "End", "__tile": { "tilesetUid": 29, "x": 16, "y": 832, "w": 16, "h": 16 }, "defUid": 34, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["End"]
 								}] },
-								{ "__identifier": "name", "__type": "String", "__value": null, "__tile": null, "defUid": 54, "realEditorValues": [] }
+								{ "__identifier": "name", "__type": "String", "__value": null, "__tile": null, "defUid": 54, "realEditorValues": [] },
+								{ "__identifier": "up", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 55, "realEditorValues": [] },
+								{ "__identifier": "down", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 56, "realEditorValues": [] },
+								{ "__identifier": "left", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 57, "realEditorValues": [] },
+								{ "__identifier": "right", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 58, "realEditorValues": [] }
 							]
 						},
 						{
@@ -1624,23 +1769,28 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
+							"__worldX": 168,
+							"__worldY": 184,
 							"iid": "7db03400-3b70-11ee-9490-71d4aae3e84c",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [168,184],
 							"fieldInstances": [
-								{ "__identifier": "next", "__type": "Array<EntityRef>", "__value": [{
+								{ "__identifier": "type", "__type": "LocalEnum.Node_type", "__value": null, "__tile": null, "defUid": 34, "realEditorValues": [] },
+								{ "__identifier": "name", "__type": "String", "__value": null, "__tile": null, "defUid": 54, "realEditorValues": [] },
+								{ "__identifier": "up", "__type": "EntityRef", "__value": {
 									"entityIid": "c22e3af0-3b70-11ee-9490-d760d2215b01",
 									"layerIid": "0de53c20-3b70-11ee-9490-852adcd2186a",
 									"levelIid": "334e54d0-3b70-11ee-9490-8d591b8611b9",
 									"worldIid": "334e2dc1-3b70-11ee-9490-e14cf6ecd752"
-								}], "__tile": null, "defUid": 33, "realEditorValues": [{
+								}, "__tile": null, "defUid": 55, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["c22e3af0-3b70-11ee-9490-d760d2215b01"]
 								}] },
-								{ "__identifier": "Node_type", "__type": "LocalEnum.Node_type", "__value": null, "__tile": null, "defUid": 34, "realEditorValues": [] },
-								{ "__identifier": "name", "__type": "String", "__value": null, "__tile": null, "defUid": 54, "realEditorValues": [] }
+								{ "__identifier": "down", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 56, "realEditorValues": [] },
+								{ "__identifier": "left", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 57, "realEditorValues": [] },
+								{ "__identifier": "right", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 58, "realEditorValues": [] }
 							]
 						},
 						{
@@ -1650,23 +1800,28 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
+							"__worldX": 120,
+							"__worldY": 120,
 							"iid": "7f3610b0-3b70-11ee-9490-f7cdc7e9e97b",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [120,120],
 							"fieldInstances": [
-								{ "__identifier": "next", "__type": "Array<EntityRef>", "__value": [{
+								{ "__identifier": "type", "__type": "LocalEnum.Node_type", "__value": null, "__tile": null, "defUid": 34, "realEditorValues": [] },
+								{ "__identifier": "name", "__type": "String", "__value": null, "__tile": null, "defUid": 54, "realEditorValues": [] },
+								{ "__identifier": "up", "__type": "EntityRef", "__value": {
 									"entityIid": "778427d0-3b70-11ee-9490-d99941e49a7b",
 									"layerIid": "0de53c20-3b70-11ee-9490-852adcd2186a",
 									"levelIid": "334e54d0-3b70-11ee-9490-8d591b8611b9",
 									"worldIid": "334e2dc1-3b70-11ee-9490-e14cf6ecd752"
-								}], "__tile": null, "defUid": 33, "realEditorValues": [{
+								}, "__tile": null, "defUid": 55, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["778427d0-3b70-11ee-9490-d99941e49a7b"]
 								}] },
-								{ "__identifier": "Node_type", "__type": "LocalEnum.Node_type", "__value": null, "__tile": null, "defUid": 34, "realEditorValues": [] },
-								{ "__identifier": "name", "__type": "String", "__value": null, "__tile": null, "defUid": 54, "realEditorValues": [] }
+								{ "__identifier": "down", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 56, "realEditorValues": [] },
+								{ "__identifier": "left", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 57, "realEditorValues": [] },
+								{ "__identifier": "right", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 58, "realEditorValues": [] }
 							]
 						},
 						{
@@ -1676,29 +1831,34 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 16, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
+							"__worldX": 152,
+							"__worldY": 120,
 							"iid": "c0dd9f10-3b70-11ee-9490-a9e8ef14b947",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [152,120],
 							"fieldInstances": [
-								{ "__identifier": "next", "__type": "Array<EntityRef>", "__value": [{
-									"entityIid": "7f3610b0-3b70-11ee-9490-f7cdc7e9e97b",
-									"layerIid": "0de53c20-3b70-11ee-9490-852adcd2186a",
-									"levelIid": "334e54d0-3b70-11ee-9490-8d591b8611b9",
-									"worldIid": "334e2dc1-3b70-11ee-9490-e14cf6ecd752"
-								}], "__tile": null, "defUid": 33, "realEditorValues": [{
-									"id": "V_String",
-									"params": ["7f3610b0-3b70-11ee-9490-f7cdc7e9e97b"]
-								}] },
-								{ "__identifier": "Node_type", "__type": "LocalEnum.Node_type", "__value": "Encounter", "__tile": { "tilesetUid": 29, "x": 160, "y": 16, "w": 16, "h": 16 }, "defUid": 34, "realEditorValues": [{
+								{ "__identifier": "type", "__type": "LocalEnum.Node_type", "__value": "Encounter", "__tile": { "tilesetUid": 29, "x": 160, "y": 16, "w": 16, "h": 16 }, "defUid": 34, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["Encounter"]
 								}] },
 								{ "__identifier": "name", "__type": "String", "__value": "village", "__tile": null, "defUid": 54, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["village"]
-								}] }
+								}] },
+								{ "__identifier": "up", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 55, "realEditorValues": [] },
+								{ "__identifier": "down", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 56, "realEditorValues": [] },
+								{ "__identifier": "left", "__type": "EntityRef", "__value": {
+									"entityIid": "7f3610b0-3b70-11ee-9490-f7cdc7e9e97b",
+									"layerIid": "0de53c20-3b70-11ee-9490-852adcd2186a",
+									"levelIid": "334e54d0-3b70-11ee-9490-8d591b8611b9",
+									"worldIid": "334e2dc1-3b70-11ee-9490-e14cf6ecd752"
+								}, "__tile": null, "defUid": 57, "realEditorValues": [{
+									"id": "V_String",
+									"params": ["7f3610b0-3b70-11ee-9490-f7cdc7e9e97b"]
+								}] },
+								{ "__identifier": "right", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 58, "realEditorValues": [] }
 							]
 						},
 						{
@@ -1708,23 +1868,28 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
+							"__worldX": 168,
+							"__worldY": 120,
 							"iid": "c22e3af0-3b70-11ee-9490-d760d2215b01",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [168,120],
 							"fieldInstances": [
-								{ "__identifier": "next", "__type": "Array<EntityRef>", "__value": [{
+								{ "__identifier": "type", "__type": "LocalEnum.Node_type", "__value": null, "__tile": null, "defUid": 34, "realEditorValues": [] },
+								{ "__identifier": "name", "__type": "String", "__value": null, "__tile": null, "defUid": 54, "realEditorValues": [] },
+								{ "__identifier": "up", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 55, "realEditorValues": [] },
+								{ "__identifier": "down", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 56, "realEditorValues": [] },
+								{ "__identifier": "left", "__type": "EntityRef", "__value": {
 									"entityIid": "c0dd9f10-3b70-11ee-9490-a9e8ef14b947",
 									"layerIid": "0de53c20-3b70-11ee-9490-852adcd2186a",
 									"levelIid": "334e54d0-3b70-11ee-9490-8d591b8611b9",
 									"worldIid": "334e2dc1-3b70-11ee-9490-e14cf6ecd752"
-								}], "__tile": null, "defUid": 33, "realEditorValues": [{
+								}, "__tile": null, "defUid": 57, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["c0dd9f10-3b70-11ee-9490-a9e8ef14b947"]
 								}] },
-								{ "__identifier": "Node_type", "__type": "LocalEnum.Node_type", "__value": null, "__tile": null, "defUid": 34, "realEditorValues": [] },
-								{ "__identifier": "name", "__type": "String", "__value": null, "__tile": null, "defUid": 54, "realEditorValues": [] }
+								{ "__identifier": "right", "__type": "EntityRef", "__value": null, "__tile": null, "defUid": 58, "realEditorValues": [] }
 							]
 						}
 					]
@@ -1739,7 +1904,7 @@
 					"__pxTotalOffsetX": 0,
 					"__pxTotalOffsetY": 0,
 					"__tilesetDefUid": 25,
-					"__tilesetRelPath": "Compilation-Building.png",
+					"__tilesetRelPath": "tilesets/Compilation-Building.png",
 					"iid": "cc401ec0-3b70-11ee-9490-3b8826327d6f",
 					"levelId": 0,
 					"layerDefUid": 26,
@@ -1781,7 +1946,7 @@
 					"__pxTotalOffsetX": 0,
 					"__pxTotalOffsetY": 0,
 					"__tilesetDefUid": 4,
-					"__tilesetRelPath": "Universal-Road-Tileset.png",
+					"__tilesetRelPath": "tilesets/Universal-Road-Tileset.png",
 					"iid": "5f229e30-3b70-11ee-9490-87f55d36c18a",
 					"levelId": 0,
 					"layerDefUid": 7,
@@ -1851,7 +2016,7 @@
 					"__pxTotalOffsetX": 0,
 					"__pxTotalOffsetY": 0,
 					"__tilesetDefUid": 3,
-					"__tilesetRelPath": "GB-Trees-and-Mountains.png",
+					"__tilesetRelPath": "tilesets/GB-Trees-and-Mountains.png",
 					"iid": "39fbf040-3b70-11ee-9490-e3e9b5b3c339",
 					"levelId": 0,
 					"layerDefUid": 38,
@@ -1860,12 +2025,12 @@
 					"visible": true,
 					"optionalRules": [],
 					"intGridCsv": [
-						2,2,2,2,2,2,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,2,2,2,2,2,2,2,2,2,2,
-						2,2,2,0,0,0,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,0,0,0,0,
-						0,0,0,2,2,2,2,2,2,2,2,2,2,0,2,2,2,0,0,0,0,0,2,2,2,2,2,2,2,0,2,2,2,0,0,
-						0,0,0,2,2,2,2,2,2,0,0,2,2,2,0,0,0,0,2,2,2,2,2,2,2,0,0,2,2,2,2,2,2,0,2,
-						2,2,2,2,2,2,2,0,2,2,2,2,2,2,0,0,2,2,2,2,2,2,2,0,2,2,2,2,2,2,0,0,0,0,0,
-						2,2,2,2,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,0,0,0,2,2,2,2,2,2,2,2,2,
+						2,2,2,2,2,2,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,2,2,2,2,2,2,2,2,2,2,2,
+						2,2,2,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,2,2,2,2,2,2,2,2,2,2,2,0,0,0,
+						0,0,2,2,2,2,2,2,2,2,2,2,2,0,2,2,2,0,0,0,0,0,2,2,2,2,2,2,2,0,2,2,2,0,0,
+						0,0,0,2,2,2,2,2,2,0,0,2,2,2,0,0,0,0,2,2,2,2,2,2,2,0,0,0,2,2,2,2,2,0,2,
+						2,2,2,2,2,2,2,0,2,2,2,2,2,2,0,0,2,2,2,2,2,2,2,0,2,2,2,2,2,2,0,2,2,2,2,
+						2,2,2,2,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,0,0,0,2,2,2,2,2,2,2,2,2,
 						2,2,2,2,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,
 						2,0,0,0,2,2,2,2,2,2,2
 					],
@@ -1875,6 +2040,8 @@
 						{ "px": [32,0], "src": [48,16], "f": 0, "t": 11, "d": [53,2], "a": 1 },
 						{ "px": [48,0], "src": [48,16], "f": 0, "t": 11, "d": [53,3], "a": 1 },
 						{ "px": [64,0], "src": [48,16], "f": 0, "t": 11, "d": [53,4], "a": 1 },
+						{ "px": [80,0], "src": [48,16], "f": 0, "t": 11, "d": [53,5], "a": 1 },
+						{ "px": [144,0], "src": [48,16], "f": 0, "t": 11, "d": [53,9], "a": 1 },
 						{ "px": [160,0], "src": [48,16], "f": 0, "t": 11, "d": [53,10], "a": 1 },
 						{ "px": [176,0], "src": [48,16], "f": 0, "t": 11, "d": [53,11], "a": 1 },
 						{ "px": [192,0], "src": [48,16], "f": 0, "t": 11, "d": [53,12], "a": 1 },
@@ -1886,6 +2053,8 @@
 						{ "px": [32,16], "src": [48,16], "f": 0, "t": 11, "d": [53,18], "a": 1 },
 						{ "px": [48,16], "src": [48,16], "f": 0, "t": 11, "d": [53,19], "a": 1 },
 						{ "px": [64,16], "src": [48,16], "f": 0, "t": 11, "d": [53,20], "a": 1 },
+						{ "px": [80,16], "src": [48,16], "f": 0, "t": 11, "d": [53,21], "a": 1 },
+						{ "px": [144,16], "src": [48,16], "f": 0, "t": 11, "d": [53,25], "a": 1 },
 						{ "px": [160,16], "src": [48,16], "f": 0, "t": 11, "d": [53,26], "a": 1 },
 						{ "px": [176,16], "src": [48,16], "f": 0, "t": 11, "d": [53,27], "a": 1 },
 						{ "px": [192,16], "src": [48,16], "f": 0, "t": 11, "d": [53,28], "a": 1 },
@@ -1893,6 +2062,12 @@
 						{ "px": [224,16], "src": [48,16], "f": 0, "t": 11, "d": [53,30], "a": 1 },
 						{ "px": [240,16], "src": [48,16], "f": 0, "t": 11, "d": [53,31], "a": 1 },
 						{ "px": [0,32], "src": [48,16], "f": 0, "t": 11, "d": [53,32], "a": 1 },
+						{ "px": [16,32], "src": [48,16], "f": 0, "t": 11, "d": [53,33], "a": 1 },
+						{ "px": [32,32], "src": [48,16], "f": 0, "t": 11, "d": [53,34], "a": 1 },
+						{ "px": [48,32], "src": [48,16], "f": 0, "t": 11, "d": [53,35], "a": 1 },
+						{ "px": [64,32], "src": [48,16], "f": 0, "t": 11, "d": [53,36], "a": 1 },
+						{ "px": [80,32], "src": [48,16], "f": 0, "t": 11, "d": [53,37], "a": 1 },
+						{ "px": [144,32], "src": [48,16], "f": 0, "t": 11, "d": [53,41], "a": 1 },
 						{ "px": [160,32], "src": [48,16], "f": 0, "t": 11, "d": [53,42], "a": 1 },
 						{ "px": [176,32], "src": [48,16], "f": 0, "t": 11, "d": [53,43], "a": 1 },
 						{ "px": [192,32], "src": [48,16], "f": 0, "t": 11, "d": [53,44], "a": 1 },
@@ -1900,6 +2075,8 @@
 						{ "px": [224,32], "src": [48,16], "f": 0, "t": 11, "d": [53,46], "a": 1 },
 						{ "px": [240,32], "src": [48,16], "f": 0, "t": 11, "d": [53,47], "a": 1 },
 						{ "px": [0,48], "src": [48,16], "f": 0, "t": 11, "d": [53,48], "a": 1 },
+						{ "px": [16,48], "src": [48,16], "f": 0, "t": 11, "d": [53,49], "a": 1 },
+						{ "px": [144,48], "src": [48,16], "f": 0, "t": 11, "d": [53,57], "a": 1 },
 						{ "px": [160,48], "src": [48,16], "f": 0, "t": 11, "d": [53,58], "a": 1 },
 						{ "px": [176,48], "src": [48,16], "f": 0, "t": 11, "d": [53,59], "a": 1 },
 						{ "px": [192,48], "src": [48,16], "f": 0, "t": 11, "d": [53,60], "a": 1 },
@@ -1907,10 +2084,12 @@
 						{ "px": [224,48], "src": [48,16], "f": 0, "t": 11, "d": [53,62], "a": 1 },
 						{ "px": [240,48], "src": [48,16], "f": 0, "t": 11, "d": [53,63], "a": 1 },
 						{ "px": [0,64], "src": [48,16], "f": 0, "t": 11, "d": [53,64], "a": 1 },
+						{ "px": [16,64], "src": [48,16], "f": 0, "t": 11, "d": [53,65], "a": 1 },
 						{ "px": [208,64], "src": [48,16], "f": 0, "t": 11, "d": [53,77], "a": 1 },
 						{ "px": [224,64], "src": [48,16], "f": 0, "t": 11, "d": [53,78], "a": 1 },
 						{ "px": [240,64], "src": [48,16], "f": 0, "t": 11, "d": [53,79], "a": 1 },
 						{ "px": [0,80], "src": [48,16], "f": 0, "t": 11, "d": [53,80], "a": 1 },
+						{ "px": [16,80], "src": [48,16], "f": 0, "t": 11, "d": [53,81], "a": 1 },
 						{ "px": [208,80], "src": [48,16], "f": 0, "t": 11, "d": [53,93], "a": 1 },
 						{ "px": [224,80], "src": [48,16], "f": 0, "t": 11, "d": [53,94], "a": 1 },
 						{ "px": [240,80], "src": [48,16], "f": 0, "t": 11, "d": [53,95], "a": 1 },
@@ -1920,26 +2099,35 @@
 						{ "px": [224,96], "src": [48,16], "f": 0, "t": 11, "d": [53,110], "a": 1 },
 						{ "px": [240,96], "src": [48,16], "f": 0, "t": 11, "d": [53,111], "a": 1 },
 						{ "px": [0,112], "src": [48,16], "f": 0, "t": 11, "d": [53,112], "a": 1 },
-						{ "px": [80,112], "src": [48,16], "f": 0, "t": 11, "d": [53,117], "a": 1 },
 						{ "px": [208,112], "src": [48,16], "f": 0, "t": 11, "d": [53,125], "a": 1 },
 						{ "px": [224,112], "src": [48,16], "f": 0, "t": 11, "d": [53,126], "a": 1 },
 						{ "px": [240,112], "src": [48,16], "f": 0, "t": 11, "d": [53,127], "a": 1 },
 						{ "px": [0,128], "src": [48,16], "f": 0, "t": 11, "d": [53,128], "a": 1 },
-						{ "px": [80,128], "src": [48,16], "f": 0, "t": 11, "d": [53,133], "a": 1 },
 						{ "px": [208,128], "src": [48,16], "f": 0, "t": 11, "d": [53,141], "a": 1 },
 						{ "px": [224,128], "src": [48,16], "f": 0, "t": 11, "d": [53,142], "a": 1 },
 						{ "px": [240,128], "src": [48,16], "f": 0, "t": 11, "d": [53,143], "a": 1 },
 						{ "px": [0,144], "src": [48,16], "f": 0, "t": 11, "d": [53,144], "a": 1 },
-						{ "px": [80,144], "src": [48,16], "f": 0, "t": 11, "d": [53,149], "a": 1 },
 						{ "px": [96,144], "src": [48,16], "f": 0, "t": 11, "d": [53,150], "a": 1 },
 						{ "px": [112,144], "src": [48,16], "f": 0, "t": 11, "d": [53,151], "a": 1 },
 						{ "px": [128,144], "src": [48,16], "f": 0, "t": 11, "d": [53,152], "a": 1 },
+						{ "px": [208,144], "src": [48,16], "f": 0, "t": 11, "d": [53,157], "a": 1 },
+						{ "px": [224,144], "src": [48,16], "f": 0, "t": 11, "d": [53,158], "a": 1 },
+						{ "px": [240,144], "src": [48,16], "f": 0, "t": 11, "d": [53,159], "a": 1 },
 						{ "px": [0,160], "src": [48,16], "f": 0, "t": 11, "d": [53,160], "a": 1 },
 						{ "px": [16,160], "src": [48,16], "f": 0, "t": 11, "d": [53,161], "a": 1 },
+						{ "px": [208,160], "src": [48,16], "f": 0, "t": 11, "d": [53,173], "a": 1 },
+						{ "px": [224,160], "src": [48,16], "f": 0, "t": 11, "d": [53,174], "a": 1 },
+						{ "px": [240,160], "src": [48,16], "f": 0, "t": 11, "d": [53,175], "a": 1 },
 						{ "px": [0,176], "src": [48,16], "f": 0, "t": 11, "d": [53,176], "a": 1 },
 						{ "px": [16,176], "src": [48,16], "f": 0, "t": 11, "d": [53,177], "a": 1 },
+						{ "px": [192,176], "src": [48,16], "f": 0, "t": 11, "d": [53,188], "a": 1 },
+						{ "px": [208,176], "src": [48,16], "f": 0, "t": 11, "d": [53,189], "a": 1 },
+						{ "px": [224,176], "src": [48,16], "f": 0, "t": 11, "d": [53,190], "a": 1 },
+						{ "px": [240,176], "src": [48,16], "f": 0, "t": 11, "d": [53,191], "a": 1 },
 						{ "px": [0,192], "src": [48,16], "f": 0, "t": 11, "d": [53,192], "a": 1 },
 						{ "px": [16,192], "src": [48,16], "f": 0, "t": 11, "d": [53,193], "a": 1 },
+						{ "px": [192,192], "src": [48,16], "f": 0, "t": 11, "d": [53,204], "a": 1 },
+						{ "px": [208,192], "src": [48,16], "f": 0, "t": 11, "d": [53,205], "a": 1 },
 						{ "px": [224,192], "src": [48,16], "f": 0, "t": 11, "d": [53,206], "a": 1 },
 						{ "px": [240,192], "src": [48,16], "f": 0, "t": 11, "d": [53,207], "a": 1 },
 						{ "px": [0,208], "src": [48,16], "f": 0, "t": 11, "d": [53,208], "a": 1 },
@@ -1976,46 +2164,45 @@
 						{ "px": [224,240], "src": [48,16], "f": 0, "t": 11, "d": [53,254], "a": 1 },
 						{ "px": [240,240], "src": [48,16], "f": 0, "t": 11, "d": [53,255], "a": 1 },
 						{ "px": [192,64], "src": [0,32], "f": 0, "t": 16, "d": [52,76], "a": 1 },
+						{ "px": [80,112], "src": [0,32], "f": 0, "t": 16, "d": [52,117], "a": 1 },
 						{ "px": [192,128], "src": [0,32], "f": 0, "t": 16, "d": [52,140], "a": 1 },
-						{ "px": [240,144], "src": [0,32], "f": 0, "t": 16, "d": [52,159], "a": 1 },
-						{ "px": [16,32], "src": [16,32], "f": 0, "t": 17, "d": [51,33], "a": 1 },
+						{ "px": [32,48], "src": [16,32], "f": 0, "t": 17, "d": [51,50], "a": 1 },
 						{ "px": [16,96], "src": [16,32], "f": 0, "t": 17, "d": [51,97], "a": 1 },
-						{ "px": [16,80], "src": [16,16], "f": 0, "t": 9, "d": [50,81], "a": 1 },
 						{ "px": [96,128], "src": [16,16], "f": 0, "t": 9, "d": [50,134], "a": 1 },
 						{ "px": [16,144], "src": [16,16], "f": 0, "t": 9, "d": [50,145], "a": 1 },
 						{ "px": [32,192], "src": [16,16], "f": 0, "t": 9, "d": [50,194], "a": 1 },
 						{ "px": [192,112], "src": [0,16], "f": 0, "t": 8, "d": [49,124], "a": 1 },
-						{ "px": [240,176], "src": [0,16], "f": 0, "t": 8, "d": [49,191], "a": 1 },
-						{ "px": [208,192], "src": [0,16], "f": 0, "t": 8, "d": [49,205], "a": 1 },
-						{ "px": [144,0], "src": [32,16], "f": 0, "t": 10, "d": [48,9], "a": 1 },
-						{ "px": [144,16], "src": [32,16], "f": 0, "t": 10, "d": [48,25], "a": 1 },
-						{ "px": [144,32], "src": [32,16], "f": 0, "t": 10, "d": [48,41], "a": 1 },
-						{ "px": [144,48], "src": [32,16], "f": 0, "t": 10, "d": [48,57], "a": 1 },
+						{ "px": [80,144], "src": [0,16], "f": 0, "t": 8, "d": [49,149], "a": 1 },
+						{ "px": [192,160], "src": [0,16], "f": 0, "t": 8, "d": [49,172], "a": 1 },
+						{ "px": [176,192], "src": [0,16], "f": 0, "t": 8, "d": [49,203], "a": 1 },
+						{ "px": [128,0], "src": [32,16], "f": 0, "t": 10, "d": [48,8], "a": 1 },
+						{ "px": [128,16], "src": [32,16], "f": 0, "t": 10, "d": [48,24], "a": 1 },
+						{ "px": [128,32], "src": [32,16], "f": 0, "t": 10, "d": [48,40], "a": 1 },
+						{ "px": [128,48], "src": [32,16], "f": 0, "t": 10, "d": [48,56], "a": 1 },
 						{ "px": [192,80], "src": [32,16], "f": 0, "t": 10, "d": [48,92], "a": 1 },
 						{ "px": [64,96], "src": [32,16], "f": 0, "t": 10, "d": [48,100], "a": 1 },
 						{ "px": [192,96], "src": [32,16], "f": 0, "t": 10, "d": [48,108], "a": 1 },
-						{ "px": [64,112], "src": [32,16], "f": 0, "t": 10, "d": [48,116], "a": 1 },
-						{ "px": [64,128], "src": [32,16], "f": 0, "t": 10, "d": [48,132], "a": 1 },
-						{ "px": [64,144], "src": [32,16], "f": 0, "t": 10, "d": [48,148], "a": 1 },
-						{ "px": [240,160], "src": [32,16], "f": 0, "t": 10, "d": [48,175], "a": 1 },
+						{ "px": [80,128], "src": [32,16], "f": 0, "t": 10, "d": [48,133], "a": 1 },
+						{ "px": [192,144], "src": [32,16], "f": 0, "t": 10, "d": [48,156], "a": 1 },
+						{ "px": [176,176], "src": [32,16], "f": 0, "t": 10, "d": [48,187], "a": 1 },
 						{ "px": [144,208], "src": [32,16], "f": 0, "t": 10, "d": [48,217], "a": 1 },
 						{ "px": [144,224], "src": [32,16], "f": 0, "t": 10, "d": [48,233], "a": 1 },
 						{ "px": [144,240], "src": [32,16], "f": 0, "t": 10, "d": [48,249], "a": 1 },
-						{ "px": [32,32], "src": [48,32], "f": 0, "t": 19, "d": [47,34], "a": 1 },
-						{ "px": [48,32], "src": [48,32], "f": 0, "t": 19, "d": [47,35], "a": 1 },
-						{ "px": [64,32], "src": [48,32], "f": 0, "t": 19, "d": [47,36], "a": 1 },
+						{ "px": [48,48], "src": [48,32], "f": 0, "t": 19, "d": [47,51], "a": 1 },
+						{ "px": [64,48], "src": [48,32], "f": 0, "t": 19, "d": [47,52], "a": 1 },
+						{ "px": [80,48], "src": [48,32], "f": 0, "t": 19, "d": [47,53], "a": 1 },
+						{ "px": [144,64], "src": [48,32], "f": 0, "t": 19, "d": [47,73], "a": 1 },
 						{ "px": [160,64], "src": [48,32], "f": 0, "t": 19, "d": [47,74], "a": 1 },
 						{ "px": [176,64], "src": [48,32], "f": 0, "t": 19, "d": [47,75], "a": 1 },
-						{ "px": [208,144], "src": [48,32], "f": 0, "t": 19, "d": [47,157], "a": 1 },
-						{ "px": [224,144], "src": [48,32], "f": 0, "t": 19, "d": [47,158], "a": 1 },
 						{ "px": [80,160], "src": [48,32], "f": 0, "t": 19, "d": [47,165], "a": 1 },
 						{ "px": [96,160], "src": [48,32], "f": 0, "t": 19, "d": [47,166], "a": 1 },
 						{ "px": [112,160], "src": [48,32], "f": 0, "t": 19, "d": [47,167], "a": 1 },
 						{ "px": [128,160], "src": [48,32], "f": 0, "t": 19, "d": [47,168], "a": 1 },
-						{ "px": [80,0], "src": [64,16], "f": 0, "t": 12, "d": [46,5], "a": 1 },
-						{ "px": [80,16], "src": [64,16], "f": 0, "t": 12, "d": [46,21], "a": 1 },
-						{ "px": [16,48], "src": [64,16], "f": 0, "t": 12, "d": [46,49], "a": 1 },
-						{ "px": [16,64], "src": [64,16], "f": 0, "t": 12, "d": [46,65], "a": 1 },
+						{ "px": [96,0], "src": [64,16], "f": 0, "t": 12, "d": [46,6], "a": 1 },
+						{ "px": [96,16], "src": [64,16], "f": 0, "t": 12, "d": [46,22], "a": 1 },
+						{ "px": [96,32], "src": [64,16], "f": 0, "t": 12, "d": [46,38], "a": 1 },
+						{ "px": [32,64], "src": [64,16], "f": 0, "t": 12, "d": [46,66], "a": 1 },
+						{ "px": [32,80], "src": [64,16], "f": 0, "t": 12, "d": [46,82], "a": 1 },
 						{ "px": [96,96], "src": [64,16], "f": 0, "t": 12, "d": [46,102], "a": 1 },
 						{ "px": [16,112], "src": [64,16], "f": 0, "t": 12, "d": [46,113], "a": 1 },
 						{ "px": [96,112], "src": [64,16], "f": 0, "t": 12, "d": [46,118], "a": 1 },
@@ -2029,27 +2216,24 @@
 						{ "px": [80,80], "src": [48,0], "f": 0, "t": 3, "d": [45,85], "a": 1 },
 						{ "px": [112,128], "src": [48,0], "f": 0, "t": 3, "d": [45,135], "a": 1 },
 						{ "px": [128,128], "src": [48,0], "f": 0, "t": 3, "d": [45,136], "a": 1 },
-						{ "px": [224,176], "src": [48,0], "f": 0, "t": 3, "d": [45,190], "a": 1 },
 						{ "px": [48,192], "src": [48,0], "f": 0, "t": 3, "d": [45,195], "a": 1 },
 						{ "px": [64,192], "src": [48,0], "f": 0, "t": 3, "d": [45,196], "a": 1 },
 						{ "px": [160,192], "src": [48,0], "f": 0, "t": 3, "d": [45,202], "a": 1 },
-						{ "px": [176,192], "src": [48,0], "f": 0, "t": 3, "d": [45,203], "a": 1 },
-						{ "px": [192,192], "src": [48,0], "f": 0, "t": 3, "d": [45,204], "a": 1 },
-						{ "px": [144,64], "src": [32,32], "f": 0, "t": 18, "d": [44,73], "a": 1 },
+						{ "px": [128,64], "src": [32,32], "f": 0, "t": 18, "d": [44,72], "a": 1 },
+						{ "px": [64,112], "src": [32,32], "f": 0, "t": 18, "d": [44,116], "a": 1 },
 						{ "px": [176,128], "src": [32,32], "f": 0, "t": 18, "d": [44,139], "a": 1 },
-						{ "px": [192,144], "src": [32,32], "f": 0, "t": 18, "d": [44,156], "a": 1 },
 						{ "px": [64,160], "src": [32,32], "f": 0, "t": 18, "d": [44,164], "a": 1 },
-						{ "px": [80,32], "src": [64,32], "f": 0, "t": 20, "d": [43,37], "a": 1 },
+						{ "px": [96,48], "src": [64,32], "f": 0, "t": 20, "d": [43,54], "a": 1 },
 						{ "px": [32,96], "src": [64,32], "f": 0, "t": 20, "d": [43,98], "a": 1 },
 						{ "px": [144,160], "src": [64,32], "f": 0, "t": 20, "d": [43,169], "a": 1 },
-						{ "px": [32,80], "src": [64,0], "f": 0, "t": 4, "d": [42,82], "a": 1 },
 						{ "px": [96,80], "src": [64,0], "f": 0, "t": 4, "d": [42,86], "a": 1 },
 						{ "px": [144,128], "src": [64,0], "f": 0, "t": 4, "d": [42,137], "a": 1 },
 						{ "px": [32,144], "src": [64,0], "f": 0, "t": 4, "d": [42,146], "a": 1 },
 						{ "px": [80,192], "src": [64,0], "f": 0, "t": 4, "d": [42,197], "a": 1 },
 						{ "px": [64,80], "src": [32,0], "f": 0, "t": 2, "d": [41,84], "a": 1 },
 						{ "px": [176,112], "src": [32,0], "f": 0, "t": 2, "d": [41,123], "a": 1 },
-						{ "px": [208,176], "src": [32,0], "f": 0, "t": 2, "d": [41,189], "a": 1 },
+						{ "px": [64,144], "src": [32,0], "f": 0, "t": 2, "d": [41,148], "a": 1 },
+						{ "px": [176,160], "src": [32,0], "f": 0, "t": 2, "d": [41,171], "a": 1 },
 						{ "px": [144,192], "src": [32,0], "f": 0, "t": 2, "d": [41,201], "a": 1 }
 					],
 					"seed": 37260,
@@ -2067,7 +2251,7 @@
 					"__pxTotalOffsetX": 0,
 					"__pxTotalOffsetY": 0,
 					"__tilesetDefUid": 2,
-					"__tilesetRelPath": "GB-LandTileset.png",
+					"__tilesetRelPath": "tilesets/GB-LandTileset.png",
 					"iid": "2c4ed690-3b70-11ee-9490-11311ef57c00",
 					"levelId": 0,
 					"layerDefUid": 1,

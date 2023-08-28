@@ -41,7 +41,7 @@ export const spawnCamera = () => {
 		new Position(0, 0, 10),
 	)
 	ecs.spawn(
-		getCamera(6),
+		getCamera(5),
 		new Position(0, 0, 10),
 		new MainCamera(),
 	)

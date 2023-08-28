@@ -135,9 +135,15 @@ class Query<T extends InstanceType<Class>[] = []> extends Map<Entity, T> {
 		this.ecs.eventBus.subscribe(component.name, ({ type, entity }) => {
 			if (type === 'added' && this.has(entity)) {
 				this.delete(entity)
+			} else if (type === 'removed' && this.checkEntity(entity)) {
+				this.addEntity(entity)
 			}
 		})
 		return this
+	}
+
+	getEntities() {
+		return [...this.entries()].map(([entity, components]) => [entity, ...components] as [Entity, ...T])
 	}
 
 	getAll() {
@@ -186,9 +192,11 @@ export class Entity {
 		this.ecs.despawn(this)
 	}
 
-	addComponent(component: InstanceType<Class>) {
-		this.ecs.getComponentsMap(component.constructor).set(this, component)
-		this.ecs.eventBus.publish(component.constructor.name, { type: 'added', entity: this })
+	addComponent(...components: InstanceType<Class>[]) {
+		for (const component of components) {
+			this.ecs.getComponentsMap(component.constructor).set(this, component)
+			this.ecs.eventBus.publish(component.constructor.name, { type: 'added', entity: this })
+		}
 	}
 
 	getComponent<C extends Class>(component: C) {
@@ -197,6 +205,7 @@ export class Entity {
 
 	removeComponent<C extends Class>(component: C) {
 		if (this.ecs.getComponentsMap(component)?.has(this)) {
+			this.ecs.getComponentsMap(component).delete(this)
 			this.ecs.eventBus.publish(component.name, { type: 'removed', entity: this })
 		}
 	}
@@ -223,9 +232,6 @@ export class State {
 		return this
 	}
 
-	/**
-	 * put here the late queries that need access to added, removed or despawned
-	 */
 	onPostUpdate(...systems: System[]) {
 		this.#postUpdate.push(...systems)
 		return this
@@ -288,9 +294,6 @@ export class ECS {
 	#queries = new Set<Query>()
 	core = new State(this)
 	eventBus = new EventBus<Record<Class['name'], { type: 'added' | 'removed' ; entity: Entity }>>()
-	constructor() {
-		this.registerComponent(Entity)
-	}
 
 	registerComponent<T extends Class>(component: T) {
 		if (!this.#components.has(component)) {
@@ -314,7 +317,6 @@ export class ECS {
 
 	spawn<C extends InstanceType<Class>[]>(...components: C) {
 		const entity = new Entity(this)
-		this.getComponentsMap(Entity).set(entity, entity)
 		for (const component of components) {
 			entity.addComponent(component)
 		}

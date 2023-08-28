@@ -1,4 +1,6 @@
 import { getBuffer } from './buffer'
+import type { TextureAltasStates } from '@/lib/sprite'
+import { PixelTexture } from '@/lib/pixelTexture'
 
 type chainFn<T = any> = (value: T, key: string, name: string) => any
 
@@ -48,6 +50,24 @@ export const splitTexture = (tiles: number) => (img: HTMLImageElement) => {
 		const buffer = getBuffer(width, img.height)
 		buffer.drawImage(img, width * i, 0, width, height, 0, 0, width, height)
 		result.push(buffer.canvas)
+	}
+	return result
+}
+
+export const createAtlas = <K extends string>(img: HTMLImageElement, sprites: [K, number][], w: number, h: number) => {
+	const result = {} as TextureAltasStates<K>
+	for (let i = 0; i < sprites.length; i++) {
+		const [key, tilesNb] = sprites[i]
+		result[key] = []
+		for (let j = 0; j < tilesNb; j++) {
+			const buffer = getBuffer(w, h)
+			buffer.drawImage(
+				img,
+				j * w, i * h, h, w,
+				0, 0, w, h,
+			)
+			result[key].push(new PixelTexture(buffer.canvas))
+		}
 	}
 	return result
 }

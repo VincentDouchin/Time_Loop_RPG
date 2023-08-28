@@ -1,6 +1,7 @@
-import { writeFile } from 'fs/promises'
+import { writeFile } from 'node:fs/promises'
+import path from 'node:path'
+import process from 'node:process'
 import { glob } from 'glob'
-import path from 'path'
 
 const files = await glob('./assets/**')
 
@@ -17,7 +18,6 @@ for (const path of files) {
 			folders[folder].push(file)
 		}
 	}
-
 }
 let result = ''
 for (const [folder, files] of Object.entries(folders)) {

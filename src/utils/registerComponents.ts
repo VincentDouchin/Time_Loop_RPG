@@ -1,18 +1,15 @@
-import { Collider, ColliderDesc, RigidBody, RigidBodyDesc } from '@dimforge/rapier2d-compat'
 import { Group } from 'three'
-import type { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
 import { Block, Text } from 'three-mesh-ui'
+import type { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
 import { ecs } from '@/globals/init'
 import type { Class, Constructor } from '@/lib/ECS'
-import { Entity } from '@/lib/ECS'
-import { worldQuery } from '@/lib/world'
 import { UISceneQuery, sceneQuery } from '@/lib/camera'
-import { UIContainer } from '@/ui/spawnUI'
 import { Position } from '@/lib/transforms'
+import { UIContainer } from '@/ui/spawnUI'
 
 export const addToScene = (...components: Class[]) => {
 	// ! UI
-	const uiElementAddedQuery = ecs.query.pick(Entity, Block).added(Block).without(UIContainer)
+	const uiElementAddedQuery = ecs.query.pick(Block).added(Block).without(UIContainer)
 	ecs.core.onEnter(() => {
 		const block = new Block({
 			width: window.innerWidth,
@@ -37,7 +34,7 @@ export const addToScene = (...components: Class[]) => {
 			uiScene.add(uiContainer)
 		}
 		const container = uiContainerQuery.extract()
-		for (const [entity, block] of uiElementAddedQuery.getAll()) {
+		for (const [entity, block] of uiElementAddedQuery.getEntities()) {
 			const parent = entity.parent?.getComponent(Block) ?? container
 			if (parent) {
 				parent.add(block)
@@ -55,12 +52,12 @@ export const addToScene = (...components: Class[]) => {
 	})
 
 	// ! SCENE
-	const withGroupquery = ecs.query.pick(Entity, Group, Position).added(Group)
+	const withGroupquery = ecs.query.pick(Group, Position).added(Group)
 	for (const component of components) {
 		// ! CREATE GROUP
-		const withoutGroupQuery = ecs.query.pick(Entity, component).without(Group).added(component)
+		const withoutGroupQuery = ecs.query.pick(component).without(Group).added(component)
 		ecs.core.onPostUpdate(() => {
-			for (const [entity, component] of withoutGroupQuery.getAll()) {
+			for (const [entity, component] of withoutGroupQuery.getEntities()) {
 				const group = new Group()
 				group.add(component)
 				entity.addComponent(group)
@@ -68,7 +65,7 @@ export const addToScene = (...components: Class[]) => {
 		})
 	}
 	ecs.core.onPostUpdate(() => {
-		for (const [entity, group, position] of withGroupquery.getAll()) {
+		for (const [entity, group, position] of withGroupquery.getEntities()) {
 			group.position.add(position)
 			const parent = entity.parent?.getComponent(Group) ?? sceneQuery.extract()!
 			parent.add(group)
@@ -101,25 +98,4 @@ export const registerShader = (...sprites: Class[]) => (...shaderPasses: Constru
 			})
 		}
 	}
-}
-export const addToWorld = () => {
-	const bodyQuery = ecs.query.pick(RigidBodyDesc, Entity).without(RigidBody)
-	const colliderQuery = ecs.query.pick(ColliderDesc, RigidBody, Entity).without(Collider)
-	const removedQuery = ecs.query.pick(RigidBody).removed(RigidBody)
-	ecs.core.onPostUpdate(() => {
-		const world = worldQuery.extract()
-		if (world) {
-			for (const [bodyDesc, entity] of bodyQuery.getAll()) {
-				const body = world.createRigidBody(bodyDesc)
-				entity.addComponent(body)
-			}
-			for (const [colliderDesc, rigidBody, entity] of colliderQuery.getAll()) {
-				const collider = world.createCollider(colliderDesc, rigidBody)
-				entity.addComponent(collider)
-			}
-			for (const [body] of removedQuery.getAll()) {
-				world.removeRigidBody(body)
-			}
-		}
-	})
 }

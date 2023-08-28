@@ -18,6 +18,11 @@ export class Sprite extends Mesh<PlaneGeometry, MeshBasicMaterial> {
 		this.composer = composer
 	}
 
+	anchor(x: number, y: number) {
+		this.position.x = x
+		this.position.y = y
+	}
+
 	addPass(shaderPass: ShaderPass) {
 		this.composer.addPass(shaderPass)
 	}
@@ -44,27 +49,23 @@ export class Sprite extends Mesh<PlaneGeometry, MeshBasicMaterial> {
 		return this
 	}
 }
+export type TextureAltasStates<K extends string> = Record<K, PixelTexture[]>
 @Component(ecs)
-export class TextureAtlasSprite extends Sprite {
+export class TextureAtlas<K extends string> {
 	index = 0
-	constructor(public atlas: PixelTexture[], name: string) {
-		super(atlas[0])
-		this.name = name
-	}
 
-	setAtlas(atlas: PixelTexture[], name: string) {
-		this.atlas = atlas
-		this.composer.setInitialTexture(atlas[0])
-		this.name = name
+	constructor(public atlas: TextureAltasStates<K>, public state: K) {
 	}
 
 	changeIndex(nb: number) {
-		const newIndex = (this.index + nb) % (this.atlas.length)
+		const newIndex = (this.index + nb) % (this.atlas[this.state].length)
 		if (this.index !== newIndex) {
 			this.index = newIndex
-			this.composer.initialTarget.texture = this.atlas[this.index]
-			this.composer.render()
 		}
+	}
+
+	get currentTexture() {
+		return this.atlas[this.state][this.index]
 	}
 
 	increment() {
