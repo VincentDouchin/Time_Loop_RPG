@@ -7,6 +7,7 @@ import { Position } from '@/lib/transforms'
 import { menuInputQuery } from '@/menus/menuInputs'
 import { Sprite, TextureAtlas } from '@/lib/sprite'
 import type { characterStates } from '@/character/spawnOverworldCharacter'
+import { battleState } from '@/main'
 
 @Component(ecs)
 export class Navigator {
@@ -53,6 +54,9 @@ export const moveOverworldCharacter = () => {
 							atlas.state = 'idle'
 							navigator.currentNode = targetNode
 							entity.removeComponent(Navigating)
+							if (targetNode.data.type === 'Battle') {
+								battleState.enable()
+							}
 						}
 						return data
 					})

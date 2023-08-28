@@ -1,7 +1,7 @@
 import { OrthographicCamera } from 'three'
 import { spawnOverworldCharacter } from './character/spawnOverworldCharacter'
 import { ecs } from './globals/init'
-import { spawnOverworld } from './level/spawnOverworld'
+import { despawnOverworld, spawnOverworld } from './level/spawnOverworld'
 import { animateSprites } from './lib/animation'
 import { render, spawnCamera } from './lib/camera'
 import { updateInputs } from './lib/inputs'
@@ -14,20 +14,26 @@ import { ColorShader } from './shaders/ColorShader'
 import { addToScene, registerShader } from './utils/registerComponents'
 import { spawnMenuInputs } from './menus/menuInputs'
 import { moveOverworldCharacter } from './navigation/navigation'
+import { spawnBattleBackground } from './battle/spawnBattleBackground'
 
 addToScene(OrthographicCamera, Sprite)
 registerShader(Sprite)(ColorShader)
 updateInputs()
+
 ecs.core
 	.onEnter(initThree, updateMousePosition, spawnCamera, spawnMenuInputs)
 	.onPreUpdate(animateSprites)
 	.onPostUpdate(render, updateSpritePosition, detectInteractions)
 	.enable()
 
-ecs.state
+export const overworldState = ecs.state
 	.onEnter(spawnOverworld, spawnOverworldCharacter)
 	.onUpdate(moveOverworldCharacter)
+	.onExit(despawnOverworld)
 	.enable()
+
+export const battleState = ecs.state
+	.onEnter(() => overworldState.disable(), spawnBattleBackground)
 
 const animate = () => {
 	ecs.update()
