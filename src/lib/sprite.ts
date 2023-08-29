@@ -18,6 +18,11 @@ export class Sprite extends Mesh<PlaneGeometry, MeshBasicMaterial> {
 		this.composer = composer
 	}
 
+	setScale(scale: number) {
+		const img = this.composer.texture.image
+		this.geometry = new PlaneGeometry(img.width * scale, img.height * scale)
+	}
+
 	anchor(x: number, y: number) {
 		this.position.x = x
 		this.position.y = y

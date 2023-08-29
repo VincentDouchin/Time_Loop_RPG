@@ -15,6 +15,8 @@ import { addToScene, registerShader } from './utils/registerComponents'
 import { spawnMenuInputs } from './menus/menuInputs'
 import { moveOverworldCharacter } from './navigation/navigation'
 import { spawnBattleBackground } from './battle/spawnBattleBackground'
+import { spawnBattlers } from './battle/spawnBattlers'
+import { Tween } from './lib/tween'
 
 addToScene(OrthographicCamera, Sprite)
 registerShader(Sprite)(ColorShader)
@@ -33,11 +35,12 @@ export const overworldState = ecs.state
 	.enable()
 
 export const battleState = ecs.state
-	.onEnter(() => overworldState.disable(), spawnBattleBackground)
+	.onEnter(() => overworldState.disable(), spawnBattleBackground, spawnBattlers)
 
 const animate = () => {
 	ecs.update()
 	time.tick(Date.now())
+	Tween.update(time.delta)
 	requestAnimationFrame(animate)
 }
 animate()

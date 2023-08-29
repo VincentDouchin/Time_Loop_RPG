@@ -1,13 +1,13 @@
-import { tween } from 'shifty'
+import type { characterStates } from '@/character/spawnOverworldCharacter'
 import { ecs } from '@/globals/init'
 import { NavNode } from '@/level/NavNode'
 import type { Entity } from '@/lib/ECS'
 import { Component } from '@/lib/ECS'
-import { Position } from '@/lib/transforms'
-import { menuInputQuery } from '@/menus/menuInputs'
 import { Sprite, TextureAtlas } from '@/lib/sprite'
-import type { characterStates } from '@/character/spawnOverworldCharacter'
+import { Position } from '@/lib/transforms'
+import { Tween } from '@/lib/tween'
 import { battleState } from '@/main'
+import { menuInputQuery } from '@/menus/menuInputs'
 
 @Component(ecs)
 export class Navigator {
@@ -41,25 +41,19 @@ export const moveOverworldCharacter = () => {
 				if (targetPosition) {
 					entity.addComponent(new Navigating())
 					atlas.state = 'run'
-					tween({
-						render(state) {
-							position.x = Number(state.x)
-							position.y = Number(state.y)
-						},
-						duration: position.distanceTo(targetPosition) * 20,
-						from: { x: position.x, y: position.y },
-						to: { x: targetPosition.x, y: targetPosition.y },
-					}).then((data) => {
-						if (targetNode) {
-							atlas.state = 'idle'
-							navigator.currentNode = targetNode
-							entity.removeComponent(Navigating)
-							if (targetNode.data.type === 'Battle') {
-								battleState.enable()
+					new Tween(position.distanceTo(targetPosition) * 20)
+						.onUpdate(y => position.y = y, position.y, targetPosition.y)
+						.onUpdate(x => position.x = x, position.x, targetPosition.x)
+						.onComplete(() => {
+							if (targetNode) {
+								atlas.state = 'idle'
+								navigator.currentNode = targetNode
+								entity.removeComponent(Navigating)
+								if (targetNode.data.type === 'Battle') {
+									battleState.enable()
+								}
 							}
-						}
-						return data
-					})
+						})
 				}
 			}
 		}

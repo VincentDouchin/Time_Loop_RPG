@@ -16,6 +16,7 @@
 		"@typescript-eslint/brace-style": 0,
 		"no-labels": 0,
 		"no-restricted-syntax": 0,
-		"antfu/top-level-function": 0
+		"antfu/top-level-function": 0,
+		"accessor-pairs": "off"
 	}
 }

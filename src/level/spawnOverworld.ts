@@ -3,7 +3,9 @@ import { NavNode } from './NavNode'
 import { LDTKEntityInstance } from './LDTKEntity'
 import { assets } from '@/globals/assets'
 import { ecs } from '@/globals/init'
-import { Component, type Entity } from '@/lib/ECS'
+import { Component } from '@/lib/ECS'
+import type { Class, Entity } from '@/lib/ECS'
+
 import { PixelTexture } from '@/lib/pixelTexture'
 import { Sprite } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
@@ -30,9 +32,9 @@ const createNavNodes = (parent: Entity, layerInstance: LayerInstance) => {
 	}
 }
 
-export const spawnLevel = (level: Level) => () => {
+export const spawnLevel = (level: Level, ...components: InstanceType<Class>[]) => () => {
 	const buffer = getBuffer(level.pxWid, level.pxHei)
-	const map = ecs.spawn(new Map())
+	const map = ecs.spawn(...components)
 	if (level.layerInstances) {
 		for (const layerInstance of level.layerInstances.reverse()) {
 			switch (layerInstance.__type) {
@@ -48,7 +50,7 @@ export const spawnLevel = (level: Level) => () => {
 		map.addComponent(new Sprite(new PixelTexture(buffer.canvas)), new Position())
 	}
 }
-export const spawnOverworld = spawnLevel(assets.levels.overworld.levels[0])
+export const spawnOverworld = spawnLevel(assets.levels.overworld.levels[0], new Map())
 
 export const mapQuery = ecs.query.with(Map)
 export const despawnOverworld = () => {
