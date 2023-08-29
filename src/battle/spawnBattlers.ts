@@ -1,9 +1,17 @@
+import { Block } from 'three-mesh-ui'
+import { Color } from 'three'
 import type { characterStates } from '@/character/spawnOverworldCharacter'
 import { assets } from '@/globals/assets'
 import { ecs } from '@/globals/init'
 import { textureAtlasBundle } from '@/lib/bundles'
 import { Position } from '@/lib/transforms'
 import { Tween } from '@/lib/tween'
+
+const spawnBattleUi = () => {
+	ecs
+		.spawn(new Block({ width: window.innerWidth, height: window.innerHeight, backgroundOpacity: 0, justifyContent: 'end' }))
+		.spawn(new Block({ width: window.innerWidth * 0.8, margin: 20, height: 100, backgroundColor: new Color(0xFF0000) }))
+}
 
 export const spawnBattlers = () => {
 	const sides = [
@@ -24,7 +32,10 @@ export const spawnBattlers = () => {
 			ecs.spawn(...bundle, position)
 			new Tween(500)
 				.onUpdate(x => position.x = x, edge, edge + 50 * -direction)
-				.onComplete(() => atlas.state = 'idle')
+				.onComplete(() => {
+					atlas.state = 'idle'
+					spawnBattleUi()
+				})
 		}
 	}
 }

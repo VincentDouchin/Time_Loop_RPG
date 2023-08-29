@@ -19,8 +19,8 @@
     "vite": "^3.1.0"
   },
   "dependencies": {
-    "three": "^0.155.0",
-    "three-mesh-ui": "^6.5.4",
+    "three": "^0.148.0",
+    "three-mesh-ui": "github:felixmariotto/three-mesh-ui#7.1.x",
     "ts-easing": "^0.2.0"
   }
 }

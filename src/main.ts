@@ -32,10 +32,10 @@ export const overworldState = ecs.state
 	.onEnter(spawnOverworld, spawnOverworldCharacter)
 	.onUpdate(moveOverworldCharacter)
 	.onExit(despawnOverworld)
-	.enable()
 
 export const battleState = ecs.state
 	.onEnter(() => overworldState.disable(), spawnBattleBackground, spawnBattlers)
+	.enable()
 
 const animate = () => {
 	ecs.update()
