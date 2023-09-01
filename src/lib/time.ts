@@ -1,5 +1,5 @@
 export const time = new class Time {
-	current = 0
+	current = Date.now()
 	delta = 0
 	elapsed = 0
 	tick(newTime: number) {

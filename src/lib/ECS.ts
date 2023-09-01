@@ -95,13 +95,11 @@ class Query<T extends InstanceType<Class>[] = []> extends Map<Entity, T> {
 
 	with<C extends Class>(component: C) {
 		this.addCondition(entity => this.ecs.getComponentsMap(component).has(entity))
-		this.ecs.eventBus.subscribe(component.name, ({ type, entity }) => {
+		this.ecs.eventBus.subscribe(component.name, (entity) => {
 			if (this.checkEntity(entity)) {
-				if (type === 'added') {
-					this.addEntity(entity)
-				} else if (type === 'removed') {
-					this.delete(entity)
-				}
+				this.addEntity(entity)
+			} else {
+				this.delete(entity)
 			}
 		})
 		return this
@@ -109,10 +107,12 @@ class Query<T extends InstanceType<Class>[] = []> extends Map<Entity, T> {
 
 	removed<C extends Class>(component: C) {
 		this.addCondition((entity: Entity) => this.ecs.toDespawn.has(entity))
-		this.ecs.eventBus.subscribe(component.name, ({ type, entity }) => {
-			if (type === 'removed' && this.checkEntity(entity)) {
+		this.ecs.eventBus.subscribe(component.name, (entity) => {
+			if (this.checkEntity(entity)) {
 				this.addEntity(entity)
 				this.#temp.add(entity)
+			} else {
+				this.delete(entity)
 			}
 		})
 
@@ -121,10 +121,12 @@ class Query<T extends InstanceType<Class>[] = []> extends Map<Entity, T> {
 
 	added<C extends Class>(component: C) {
 		this.addCondition(entity => this.ecs.getComponentsMap(component).has(entity))
-		this.ecs.eventBus.subscribe(component.name, ({ type, entity }) => {
-			if (type === 'added' && this.checkEntity(entity)) {
+		this.ecs.eventBus.subscribe(component.name, (entity) => {
+			if (this.checkEntity(entity)) {
 				this.addEntity(entity)
 				this.#temp.add(entity)
+			} else {
+				this.delete(entity)
 			}
 		})
 		return this
@@ -132,11 +134,11 @@ class Query<T extends InstanceType<Class>[] = []> extends Map<Entity, T> {
 
 	without(component: Class) {
 		this.addCondition((entity: Entity) => !this.ecs.getComponentsMap(component).has(entity))
-		this.ecs.eventBus.subscribe(component.name, ({ type, entity }) => {
-			if (type === 'added' && this.has(entity)) {
-				this.delete(entity)
-			} else if (type === 'removed' && this.checkEntity(entity)) {
+		this.ecs.eventBus.subscribe(component.name, (entity) => {
+			if (this.checkEntity(entity)) {
 				this.addEntity(entity)
+			} else {
+				this.delete(entity)
 			}
 		})
 		return this
@@ -195,7 +197,7 @@ export class Entity {
 	addComponent(...components: InstanceType<Class>[]) {
 		for (const component of components) {
 			this.ecs.getComponentsMap(component.constructor).set(this, component)
-			this.ecs.eventBus.publish(component.constructor.name, { type: 'added', entity: this })
+			this.ecs.eventBus.publish(component.constructor.name, this)
 		}
 	}
 
@@ -206,7 +208,7 @@ export class Entity {
 	removeComponent<C extends Class>(component: C) {
 		if (this.ecs.getComponentsMap(component)?.has(this)) {
 			this.ecs.getComponentsMap(component).delete(this)
-			this.ecs.eventBus.publish(component.name, { type: 'removed', entity: this })
+			this.ecs.eventBus.publish(component.name, this)
 		}
 	}
 }
@@ -293,7 +295,7 @@ export class ECS {
 	#components = new Map<Class, Map<Entity, InstanceType<Class>>>()
 	#queries = new Set<Query>()
 	core = new State(this)
-	eventBus = new EventBus<Record<Class['name'], { type: 'added' | 'removed' ; entity: Entity }>>()
+	eventBus = new EventBus<Record<Class['name'], Entity >>()
 
 	registerComponent<T extends Class>(component: T) {
 		if (!this.#components.has(component)) {
@@ -317,11 +319,11 @@ export class ECS {
 
 	spawn<C extends InstanceType<Class>[]>(...components: C) {
 		const entity = new Entity(this)
+		this.entities.add(entity)
 		for (const component of components) {
 			entity.addComponent(component)
 		}
 
-		this.entities.add(entity)
 		return entity
 	}
 

@@ -1,11 +1,9 @@
 import { OrthographicCamera, Scene, Texture, WebGLRenderer } from 'three'
 
-import { update } from 'three-mesh-ui'
 import { Sprite } from './sprite'
-import { ecs } from '@/globals/init'
+import { cssRenderer, ecs } from '@/globals/init'
 import { Component } from '@/lib/ECS'
 import { Position } from '@/lib/transforms'
-import { UI } from '@/ui/spawnUI'
 
 @Component(ecs)
 export class MainCamera { }
@@ -35,11 +33,7 @@ export const spawnCamera = () => {
 	const height = window.innerHeight
 
 	const getCamera = (zoom: number) => new OrthographicCamera(width / -zoom, width / zoom, height / zoom, height / -zoom, 0.1, 1000)
-	ecs.spawn(
-		getCamera(2),
-		new UI(),
-		new Position(0, 0, 10),
-	)
+
 	ecs.spawn(
 		getCamera(5),
 		new Position(0, 0, 10),
@@ -52,9 +46,7 @@ const mainCameraPositionQuery = ecs.query.pick(Position).with(MainCamera)
 const followCameraQuery = ecs.query.pick(FollowCamera, Position)
 const followCameraSpriteQuery = ecs.query.pick(FollowCamera, Sprite)
 
-export const UISceneQuery = ecs.query.pick(Scene).with(UI)
-export const UICameraQuery = ecs.query.pick(OrthographicCamera).with(UI)
-export const sceneQuery = ecs.query.pick(Scene).without(UI)
+export const sceneQuery = ecs.query.pick(Scene)
 export const mainCameraQuery = ecs.query.pick(OrthographicCamera).with(MainCamera)
 export const rendererQuery = ecs.query.pick(WebGLRenderer)
 export const cameraFollow = () => {
@@ -90,11 +82,10 @@ export const render = () => {
 	const scene = sceneQuery.extract()
 	const renderer = rendererQuery.extract()
 	const camera = mainCameraQuery.extract()
-	const uiCamera = UICameraQuery.extract()
-	const uiScene = UISceneQuery.extract()
-	update()
 	if (renderer) {
-		if (scene && camera) renderer.render(scene, camera)
-		if (uiCamera && uiScene) renderer.render(uiScene, uiCamera)
+		if (scene && camera) {
+			cssRenderer.render(scene, camera)
+			renderer.render(scene, camera)
+		}
 	}
 }

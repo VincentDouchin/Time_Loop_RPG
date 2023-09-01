@@ -1,5 +1,5 @@
 import { Group, OrthographicCamera, Scene, WebGLRenderer } from 'three'
-import { Block, InlineBlock, Text } from 'three-mesh-ui'
+import { CSS2DObject, CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer'
 import { ECS } from '@/lib/ECS'
 
 export const ecs = new ECS()
@@ -8,10 +8,7 @@ ecs.registerComponent(WebGLRenderer)
 ecs.registerComponent(Group)
 ecs.registerComponent(Scene)
 ecs.registerComponent(OrthographicCamera)
-
-// ! MESH UI
-ecs.registerComponent(Block)
-ecs.registerComponent(InlineBlock)
-ecs.registerComponent(Text)
+ecs.registerComponent(CSS2DObject)
 
 export const renderer = new WebGLRenderer({ antialias: true, alpha: true })
+export const cssRenderer = new CSS2DRenderer()

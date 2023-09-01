@@ -1,17 +1,18 @@
 import { LinearSRGBColorSpace, Scene } from 'three'
 import { PixelTexture } from './pixelTexture'
-import { ecs, renderer } from '@/globals/init'
-import { UI } from '@/ui/spawnUI'
+import { cssRenderer, ecs, renderer } from '@/globals/init'
 
 export const initThree = () => {
 	ecs.spawn(new Scene())
-	ecs.spawn(new Scene(), new UI())
 	renderer.setSize(window.innerWidth, window.innerHeight)
+	cssRenderer.setSize(window.innerWidth, window.innerHeight)
+	cssRenderer.domElement.style.position = 'fixed'
 	renderer.outputColorSpace = LinearSRGBColorSpace
 	renderer.setPixelRatio(devicePixelRatio)
 	renderer.setClearColor(0xFFFFFF, 0)
 	renderer.autoClear = false
 	document.body.appendChild(renderer.domElement)
+	document.body.appendChild(cssRenderer.domElement)
 	ecs.spawn(renderer)
 }
 

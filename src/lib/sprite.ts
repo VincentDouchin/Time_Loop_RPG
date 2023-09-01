@@ -18,9 +18,9 @@ export class Sprite extends Mesh<PlaneGeometry, MeshBasicMaterial> {
 		this.composer = composer
 	}
 
-	setScale(scale: number) {
-		const img = this.composer.texture.image
-		this.geometry = new PlaneGeometry(img.width * scale, img.height * scale)
+	setScale(x: number, y?: number) {
+		this.geometry.scale(x, y ?? x, 1)
+		return this
 	}
 
 	anchor(x: number, y: number) {
@@ -58,12 +58,17 @@ export type TextureAltasStates<K extends string> = Record<K, PixelTexture[]>
 @Component(ecs)
 export class TextureAtlas<K extends string> {
 	index = 0
-
-	constructor(public atlas: TextureAltasStates<K>, public state: K) {
-	}
+	animationsPlaying = new Set<(val?: unknown) => void>()
+	constructor(public atlas: TextureAltasStates<K>, public state: K) {}
 
 	changeIndex(nb: number) {
 		const newIndex = (this.index + nb) % (this.atlas[this.state].length)
+		if (newIndex === this.atlas[this.state].length - 1) {
+			for (const resolve of this.animationsPlaying) {
+				resolve()
+				this.animationsPlaying.delete(resolve)
+			}
+		}
 		if (this.index !== newIndex) {
 			this.index = newIndex
 		}
@@ -79,5 +84,12 @@ export class TextureAtlas<K extends string> {
 
 	decrement() {
 		this.changeIndex(-1)
+	}
+
+	playAnimation(state: K) {
+		this.state = state
+		return new Promise((resolve) => {
+			this.animationsPlaying.add(resolve)
+		})
 	}
 }

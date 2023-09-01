@@ -1,8 +1,8 @@
 import type { OrthographicCamera } from 'three'
 import { Group, Raycaster, Vector2, WebGLRenderer } from 'three'
-import { Block } from 'three-mesh-ui'
 import { Component } from './ECS'
-import { UICameraQuery, mainCameraQuery } from './camera'
+import { mainCameraQuery } from './camera'
+import { UIElement } from '@/ui/UiElement'
 import { ecs } from '@/globals/init'
 
 export enum InteractableType {
@@ -42,6 +42,7 @@ class PointerInput {
 
 	position = new Vector2()
 	pressed = false
+	target: EventTarget | null = null
 	constructor(private down: string, private up: string) {
 	}
 
@@ -52,9 +53,11 @@ class PointerInput {
 		this.position = new Vector2(x, y)
 		if (event === this.down) {
 			this.pressed = true
+			this.target = e.target
 		}
 		if (event === this.up) {
 			this.pressed = false
+			this.target = null
 		}
 	}
 
@@ -79,7 +82,7 @@ export const updateMousePosition = () => {
 	if (rendererEntity) {
 		const [renderer] = rendererEntity
 		for (const event of ['mouseup', 'mousemove', 'mousedown'] as const) {
-			renderer.domElement.addEventListener(event, (e) => {
+			window.addEventListener(event, (e) => {
 				e.preventDefault()
 				const touchInput = PointerInput.pointers.get('mouse')
 				if (!touchInput) {
@@ -90,7 +93,7 @@ export const updateMousePosition = () => {
 			})
 		}
 		for (const event of ['touchstart', 'touchmove', 'touchend'] as const) {
-			renderer.domElement.addEventListener(event, (e) => {
+			window.addEventListener(event, (e) => {
 				e.preventDefault()
 				for (const changedTouch of e.changedTouches) {
 					const touchInput = PointerInput.pointers.get(changedTouch.identifier)
@@ -106,23 +109,29 @@ export const updateMousePosition = () => {
 }
 
 const interactablesQuery = ecs.query.pick(Interactable, Group)
-const uiInteractablesQuery = ecs.query.pick(Interactable, Block)
+const uiInteractablesQuery = ecs.query.pick(Interactable, UIElement)
 
 export const detectInteractions = () => {
-	for (const [query, cameraQuery] of [[interactablesQuery, mainCameraQuery], [uiInteractablesQuery, UICameraQuery]] as const) {
-		const camera = cameraQuery.extract()
-		if (camera) {
-			for (const [interactable, group] of query.getAll()) {
-				const touchingPointer = PointerInput.all.find(pointer => pointer.getRay(camera).intersectObject(group, true).length)
-				if (touchingPointer) {
-					interactable.hover = true
-					interactable.pressed = touchingPointer.pressed
-					interactable.lastTouchedBy = touchingPointer
-				} else {
-					interactable.pressed = false
-					interactable.hover = false
-				}
+	const camera = mainCameraQuery.extract()
+	if (camera) {
+		for (const [interactable, group] of interactablesQuery.getAll()) {
+			const touchingPointer = PointerInput.all.find(pointer => pointer.getRay(camera).intersectObject(group, true).length)
+			if (touchingPointer) {
+				interactable.hover = true
+				interactable.pressed = touchingPointer.pressed
+				interactable.lastTouchedBy = touchingPointer
+			} else {
+				interactable.pressed = false
+				interactable.hover = false
 			}
+		}
+	}
+	for (const [interactable, uiElement] of uiInteractablesQuery.getAll()) {
+		const touchingPointer = PointerInput.all.find(pointer => pointer.target === uiElement)
+		if (touchingPointer) {
+			interactable.pressed = touchingPointer.pressed
+		} else {
+			interactable.pressed = false
 		}
 	}
 }

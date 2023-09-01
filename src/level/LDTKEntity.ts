@@ -1,7 +1,7 @@
-import type { EntityInstance, FieldInstance, ForcedRefs, LayerInstance } from './LDTK'
-import type { Class, Entity } from '@/lib/ECS'
-import { Component } from '@/lib/ECS'
+import type { EntityInstance, FieldInstance, LayerInstance } from './LDTK'
 import { ecs } from '@/globals/init'
+import type { Entity } from '@/lib/ECS'
+import { Component } from '@/lib/ECS'
 import { Position } from '@/lib/transforms'
 
 export type LDTKEntityRef = () => Entity

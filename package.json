@@ -13,6 +13,7 @@
     "@antfu/eslint-config": "^0.41.0",
     "@types/node": "^20.5.6",
     "@types/three": "^0.155.1",
+    "csstype": "^3.1.2",
     "eslint": "^8.48.0",
     "glob": "^10.3.3",
     "typescript": "^5.2.2",
@@ -20,7 +21,6 @@
   },
   "dependencies": {
     "three": "^0.148.0",
-    "three-mesh-ui": "github:felixmariotto/three-mesh-ui#7.1.x",
     "ts-easing": "^0.2.0"
   }
 }
