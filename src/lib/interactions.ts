@@ -7,6 +7,9 @@ import { ecs } from '@/globals/init'
 
 export enum InteractableType {
 	StartMultiplayer,
+	PlayerAttack,
+	PlayerFlee,
+	Battler,
 }
 
 @Component(ecs)
@@ -129,8 +132,10 @@ export const detectInteractions = () => {
 	for (const [interactable, uiElement] of uiInteractablesQuery.getAll()) {
 		const touchingPointer = PointerInput.all.find(pointer => pointer.target === uiElement)
 		if (touchingPointer) {
+			interactable.hover = true
 			interactable.pressed = touchingPointer.pressed
 		} else {
+			interactable.hover = false
 			interactable.pressed = false
 		}
 	}

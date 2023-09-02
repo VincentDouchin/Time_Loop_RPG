@@ -54,8 +54,8 @@ export const splitTexture = (tiles: number) => (img: HTMLImageElement) => {
 	return result
 }
 
-export const createAtlas = <K extends string>(img: HTMLImageElement, sprites: [K, number][], w: number, h: number) => {
-	const result = {} as TextureAltasStates<K>
+export const createAtlas = (img: HTMLImageElement, sprites: [string, number][], w: number, h: number) => {
+	const result = {} as TextureAltasStates<string>
 	for (let i = 0; i < sprites.length; i++) {
 		const [key, tilesNb] = sprites[i]
 		result[key] = []

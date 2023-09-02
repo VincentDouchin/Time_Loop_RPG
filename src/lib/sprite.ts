@@ -8,13 +8,16 @@ import { ecs, renderer } from '@/globals/init'
 @Component(ecs)
 export class Sprite extends Mesh<PlaneGeometry, MeshBasicMaterial> {
 	composer: ShaderComposer
-
+	width: number
+	height: number
 	constructor(texture: PixelTexture) {
 		const composer = new ShaderComposer(renderer, texture)
 		const geometry = new PlaneGeometry(texture.image.width, texture.image.height)
 		composer.render()
 		const material = new MeshBasicMaterial({ map: composer.texture, transparent: true })
 		super(geometry, material)
+		this.width = texture.image.width
+		this.height = texture.image.height
 		this.composer = composer
 	}
 
@@ -30,10 +33,6 @@ export class Sprite extends Mesh<PlaneGeometry, MeshBasicMaterial> {
 
 	addPass(shaderPass: ShaderPass) {
 		this.composer.addPass(shaderPass)
-	}
-
-	removePass(shaderPass: ShaderPass) {
-		this.composer.removePass(shaderPass)
 	}
 
 	set flip(flipped: boolean) {

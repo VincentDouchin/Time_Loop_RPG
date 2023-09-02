@@ -1,5 +1,6 @@
 import { AssetLoaderChain, createAtlas, getFileName, loadImage } from '../utils/assetLoader'
 import type { characterStates } from '@/character/spawnOverworldCharacter'
+import { animations } from '@/constants/animations'
 import type { LDTKMap } from '@/level/LDTK'
 
 const levelLoader = new AssetLoaderChain<LDTKMap>(getFileName)
@@ -19,7 +20,7 @@ const tileSetLoader = new AssetLoaderChain(getFileName)
 
 const characterLoader = new AssetLoaderChain(getFileName)
 	.chain(m => loadImage(m.default))
-	.chain(img => createAtlas<characterStates>(img, [['idle', 4], ['run', 6], ['hit', 3], ['jump', 6], ['death', 6], ['attack', 6]], 32, 32))
+	.chain((img, _, k) => createAtlas(img, animations[k as characters], 32, 32))
 
 export const assets = {
 	levels: await levelLoader.load<levels>(import.meta.glob('./../../assets/levels/*.json', { eager: true })),

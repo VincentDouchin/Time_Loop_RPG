@@ -1,4 +1,4 @@
-export type EventMap = Record<string, any>
+export type EventMap = Record<string, any[]>
 export type EventName<E extends EventMap> = keyof E
 
 export interface Event<E extends EventMap, Name extends EventName<E>> {
@@ -6,7 +6,7 @@ export interface Event<E extends EventMap, Name extends EventName<E>> {
 	data: E[Name]
 }
 
-export type EventCallback<E extends EventMap, Name extends EventName<E>> = (event: Event<E, Name>['data']) => void
+export type EventCallback<E extends EventMap, Name extends EventName<E>> = (...event: Event<E, Name>['data']) => void
 
 export type Subscribers<E extends EventMap> = {
 	[Name in EventName<E>]?: Set<EventCallback<E, Name>>
@@ -33,11 +33,11 @@ export class EventBus<E extends EventMap> {
 		}
 	}
 
-	publish<Name extends EventName<E>>(event: Name, data: Event<E, Name>['data']) {
+	publish<Name extends EventName<E>>(event: Name, ...data: Event<E, Name>['data']) {
 		const subscribers = this.subscribers[event]
 		if (subscribers?.size) {
 			for (const callback of subscribers) {
-				callback(data)
+				callback(...data)
 			}
 		}
 	}

@@ -3,8 +3,8 @@ import { NavNode } from './NavNode'
 import { LDTKEntityInstance } from './LDTKEntity'
 import { assets } from '@/globals/assets'
 import { ecs } from '@/globals/init'
-import { Component } from '@/lib/ECS'
-import type { Class, Entity } from '@/lib/ECS'
+import type { Class } from '@/lib/ECS'
+import { Component, Entity } from '@/lib/ECS'
 
 import { PixelTexture } from '@/lib/pixelTexture'
 import { Sprite } from '@/lib/sprite'
@@ -52,9 +52,9 @@ export const spawnLevel = (level: Level, ...components: InstanceType<Class>[]) =
 }
 export const spawnOverworld = spawnLevel(assets.levels.overworld.levels[0], new Map())
 
-export const mapQuery = ecs.query.with(Map)
+export const mapQuery = ecs.query.pick(Entity).with(Map)
 export const despawnOverworld = () => {
-	for (const [mapEntity] of mapQuery.getEntities()) {
+	for (const [mapEntity] of mapQuery.getAll()) {
 		mapEntity.despawn()
 	}
 }

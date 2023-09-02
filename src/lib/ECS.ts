@@ -39,17 +39,9 @@ export function SystemSet(...systems: System[]): systemSet {
 
 class Query<T extends InstanceType<Class>[] = []> extends Map<Entity, T> {
 	#components: Class[] = []
-	#temp = new Set<Entity>()
 	#conditions: Array<(entity: Entity) => boolean> = []
 	constructor(private ecs: ECS) {
 		super()
-	}
-
-	clearTemp() {
-		for (const temp of this.#temp) {
-			this.delete(temp)
-		}
-		this.#temp.clear()
 	}
 
 	addEntity(entity: Entity) {
@@ -93,24 +85,39 @@ class Query<T extends InstanceType<Class>[] = []> extends Map<Entity, T> {
 		return this as Query<QueryPicked<C>>
 	}
 
-	with<C extends Class>(component: C) {
-		this.addCondition(entity => this.ecs.getComponentsMap(component).has(entity))
-		this.ecs.eventBus.subscribe(component.name, (entity) => {
-			if (this.checkEntity(entity)) {
-				this.addEntity(entity)
-			} else {
-				this.delete(entity)
-			}
-		})
+	with(...components: Class[]) {
+		for (const component of components) {
+			this.addCondition(entity => this.ecs.getComponentsMap(component).has(entity))
+			this.ecs.eventBus.subscribe(component.name, (entity) => {
+				if (this.checkEntity(entity)) {
+					this.addEntity(entity)
+				} else {
+					this.delete(entity)
+				}
+			})
+		}
+		return this
+	}
+
+	without(...components: Class[]) {
+		for (const component of components) {
+			this.addCondition((entity: Entity) => !this.ecs.getComponentsMap(component).has(entity))
+			this.ecs.eventBus.subscribe(component.name, (entity) => {
+				if (this.checkEntity(entity)) {
+					this.addEntity(entity)
+				} else {
+					this.delete(entity)
+				}
+			})
+		}
 		return this
 	}
 
 	removed<C extends Class>(component: C) {
-		this.addCondition((entity: Entity) => this.ecs.toDespawn.has(entity))
-		this.ecs.eventBus.subscribe(component.name, (entity) => {
-			if (this.checkEntity(entity)) {
+		this.ecs.eventBus.subscribe(component.name, (entity, type) => {
+			if (this.checkEntity(entity) && type === 'removed') {
 				this.addEntity(entity)
-				this.#temp.add(entity)
+				this.ecs.onNextTick(() => this.delete(entity))
 			} else {
 				this.delete(entity)
 			}
@@ -120,32 +127,15 @@ class Query<T extends InstanceType<Class>[] = []> extends Map<Entity, T> {
 	}
 
 	added<C extends Class>(component: C) {
-		this.addCondition(entity => this.ecs.getComponentsMap(component).has(entity))
-		this.ecs.eventBus.subscribe(component.name, (entity) => {
-			if (this.checkEntity(entity)) {
+		this.ecs.eventBus.subscribe(component.name, (entity, type) => {
+			if (this.checkEntity(entity) && type === 'added') {
 				this.addEntity(entity)
-				this.#temp.add(entity)
+				this.ecs.onNextTick(() => this.delete(entity))
 			} else {
 				this.delete(entity)
 			}
 		})
 		return this
-	}
-
-	without(component: Class) {
-		this.addCondition((entity: Entity) => !this.ecs.getComponentsMap(component).has(entity))
-		this.ecs.eventBus.subscribe(component.name, (entity) => {
-			if (this.checkEntity(entity)) {
-				this.addEntity(entity)
-			} else {
-				this.delete(entity)
-			}
-		})
-		return this
-	}
-
-	getEntities() {
-		return [...this.entries()].map(([entity, components]) => [entity, ...components] as [Entity, ...T])
 	}
 
 	getAll() {
@@ -194,22 +184,26 @@ export class Entity {
 		this.ecs.despawn(this)
 	}
 
-	addComponent(...components: InstanceType<Class>[]) {
-		for (const component of components) {
-			this.ecs.getComponentsMap(component.constructor).set(this, component)
-			this.ecs.eventBus.publish(component.constructor.name, this)
-		}
-	}
-
 	getComponent<C extends Class>(component: C) {
 		return this.ecs.getComponentsMap(component).get(this)
 	}
 
+	addComponent(...components: InstanceType<Class>[]) {
+		this.ecs.onNextTick(() => {
+			for (const component of components) {
+				this.ecs.getComponentsMap(component.constructor).set(this, component)
+				this.ecs.eventBus.publish(component.constructor.name, this, 'added')
+			}
+		})
+	}
+
 	removeComponent<C extends Class>(component: C) {
-		if (this.ecs.getComponentsMap(component)?.has(this)) {
-			this.ecs.getComponentsMap(component).delete(this)
-			this.ecs.eventBus.publish(component.name, this)
-		}
+		this.ecs.onNextTick(() => {
+			if (this.ecs.getComponentsMap(component)?.has(this)) {
+				this.ecs.getComponentsMap(component).delete(this)
+				this.ecs.eventBus.publish(component.name, this, 'removed')
+			}
+		})
 	}
 }
 
@@ -288,14 +282,21 @@ export class State {
 }
 
 export class ECS {
-	toDespawn = new Set<Entity>()
-	despawned = new Set<Entity>()
 	states = new Set<State>()
 	entities = new Set<Entity>()
+	#callBacks = new Set<() => void>()
+	#callBacks2 = new Set<() => void>()
 	#components = new Map<Class, Map<Entity, InstanceType<Class>>>()
 	#queries = new Set<Query>()
 	core = new State(this)
-	eventBus = new EventBus<Record<Class['name'], Entity >>()
+	eventBus = new EventBus<Record<Class['name'], [Entity, 'added' | 'removed'] >>()
+	constructor() {
+		this.registerComponent(Entity)
+	}
+
+	onNextTick(func: () => void) {
+		this.#callBacks2.add(func)
+	}
 
 	registerComponent<T extends Class>(component: T) {
 		if (!this.#components.has(component)) {
@@ -319,6 +320,7 @@ export class ECS {
 
 	spawn<C extends InstanceType<Class>[]>(...components: C) {
 		const entity = new Entity(this)
+		entity.addComponent(entity)
 		this.entities.add(entity)
 		for (const component of components) {
 			entity.addComponent(component)
@@ -327,12 +329,7 @@ export class ECS {
 		return entity
 	}
 
-	isStateActive(state: State) {
-		return this.states.has(state)
-	}
-
 	despawn(entity: Entity) {
-		this.toDespawn.add(entity)
 		for (const component of this.#components.keys()) {
 			entity.removeComponent(component)
 		}
@@ -341,15 +338,8 @@ export class ECS {
 		})
 	}
 
-	#delete(entity: Entity) {
-		this.despawned.delete(entity)
-		if (entity.parent) {
-			entity.parent?.children.delete(entity)
-		}
-		this.entities.delete(entity)
-		for (const component of this.#components.values()) {
-			component.delete(entity)
-		}
+	isStateActive(state: State) {
+		return this.states.has(state)
 	}
 
 	get state() {
@@ -367,11 +357,6 @@ export class ECS {
 	}
 
 	update() {
-		for (const entity of this.toDespawn) {
-			this.entities.delete(entity)
-			this.despawned.add(entity)
-			this.toDespawn.delete(entity)
-		}
 		for (const state of this.states) {
 			state.preUpdate()
 		}
@@ -381,13 +366,10 @@ export class ECS {
 		for (const state of this.states) {
 			state.postUpdate()
 		}
-
-		for (const query of this.#queries) {
-			query.clearTemp()
+		for (const callback of this.#callBacks) {
+			callback()
 		}
-		for (const entity of this.despawned) {
-			this.despawned.delete(entity)
-			this.#delete(entity)
-		}
+		this.#callBacks.clear();
+		[this.#callBacks, this.#callBacks2] = [this.#callBacks2, this.#callBacks]
 	}
 }

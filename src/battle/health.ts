@@ -1,6 +1,6 @@
 import { assets } from '@/globals/assets'
 import { ecs } from '@/globals/init'
-import { Component } from '@/lib/ECS'
+import { Component, Entity } from '@/lib/ECS'
 import { UIElement } from '@/ui/UiElement'
 
 @Component(ecs)
@@ -16,9 +16,9 @@ export class HealthDisplay {
 	constructor(public inner: UIElement) {}
 }
 
-const healthDisplayToCreate = ecs.query.pick(Health).added(Health)
+const healthDisplayToCreate = ecs.query.pick(Entity, Health).added(Health)
 export const displayHealth = () => {
-	for (const [entity] of healthDisplayToCreate.getEntities()) {
+	for (const [entity] of healthDisplayToCreate.getAll()) {
 		const inner = UIElement.fromImage(assets.ui.healthfull, 3)
 
 		entity

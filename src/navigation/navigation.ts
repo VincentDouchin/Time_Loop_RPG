@@ -1,8 +1,8 @@
 import type { characterStates } from '@/character/spawnOverworldCharacter'
 import { ecs } from '@/globals/init'
 import { NavNode } from '@/level/NavNode'
-import type { Entity } from '@/lib/ECS'
-import { Component } from '@/lib/ECS'
+import { Component, Entity } from '@/lib/ECS'
+
 import { Sprite, TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { Tween } from '@/lib/tween'
@@ -17,9 +17,10 @@ export class Navigator {
 @Component(ecs)
 export class Navigating {}
 
-const navigatorQuery = ecs.query.pick(Navigator, Position, TextureAtlas<characterStates>, Sprite).without(Navigating)
+const navigatorQuery = ecs.query.pick(Entity, Navigator, Position, TextureAtlas<characterStates>, Sprite).without(Navigating)
 export const moveOverworldCharacter = () => {
-	for (const [entity, navigator, position, atlas, sprite] of navigatorQuery.getEntities()) {
+	for (const [entity, navigator, position, atlas, sprite] of navigatorQuery.getAll()) {
+		console.log('ok')
 		const inputs = menuInputQuery.extract()
 		if (inputs) {
 			let target: Entity | null = null
