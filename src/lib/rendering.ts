@@ -1,18 +1,24 @@
+import type { WebGLRenderer } from 'three'
 import { LinearSRGBColorSpace, Scene } from 'three'
+import type { CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer'
 import { PixelTexture } from './pixelTexture'
 import { cssRenderer, ecs, renderer } from '@/globals/init'
 
+const initRenderer = (renderer: WebGLRenderer | CSS2DRenderer) => {
+	renderer.setSize(window.innerWidth, window.innerHeight)
+	document.body.appendChild(renderer.domElement)
+}
+
 export const initThree = () => {
 	ecs.spawn(new Scene())
-	renderer.setSize(window.innerWidth, window.innerHeight)
-	cssRenderer.setSize(window.innerWidth, window.innerHeight)
+	initRenderer(renderer)
+	initRenderer(cssRenderer)
 	cssRenderer.domElement.style.position = 'fixed'
 	renderer.outputColorSpace = LinearSRGBColorSpace
 	renderer.setPixelRatio(devicePixelRatio)
 	renderer.setClearColor(0xFFFFFF, 0)
 	renderer.autoClear = false
-	document.body.appendChild(renderer.domElement)
-	document.body.appendChild(cssRenderer.domElement)
+
 	ecs.spawn(renderer)
 }
 

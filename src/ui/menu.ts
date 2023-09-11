@@ -12,8 +12,7 @@ export class Menu {
 	#active = true
 	constructor(entities: Entity[][]) {
 		this.entities = entities
-		this.selectedEntity = entities[0][0]
-		this.selectedEntity.addComponent(new Selected(this))
+		this.selectEntity(this.entities[0][0])
 	}
 
 	static fromRow(...entities: Entity[]) {
@@ -28,6 +27,8 @@ export class Menu {
 		this.#active = active
 		if (!active) {
 			this.selectedEntity?.removeComponent(Selected)
+		} else {
+			this.selectedEntity?.addComponent(new Selected(this))
 		}
 	}
 
@@ -115,9 +116,9 @@ const selectedUiElement = ecs.query.pick(UIElement).added(Selected)
 const unselectedUiElement = ecs.query.pick(UIElement).removed(Selected)
 export const selectUiElement = () => {
 	for (const [uiElement] of selectedUiElement.getAll()) {
-		uiElement.setStyle('text-decoration', 'underline')
+		uiElement.setStyles({ textDecoration: 'underline' })
 	}
 	for (const [uiElement] of unselectedUiElement.getAll()) {
-		uiElement.setStyle('text-decoration', 'none')
+		uiElement.setStyles({ textDecoration: 'none' })
 	}
 }

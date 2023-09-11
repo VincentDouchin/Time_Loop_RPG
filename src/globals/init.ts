@@ -5,6 +5,7 @@ import { ECS } from '@/lib/ECS'
 export const ecs = new ECS()
 // ! THREE
 ecs.registerComponent(WebGLRenderer)
+ecs.registerComponent(CSS2DRenderer)
 ecs.registerComponent(Group)
 ecs.registerComponent(Scene)
 ecs.registerComponent(OrthographicCamera)

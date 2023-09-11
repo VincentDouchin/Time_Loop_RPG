@@ -3,6 +3,7 @@ import { NearestFilter, RepeatWrapping, WebGLRenderTarget } from 'three'
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
 import { CopyShader } from 'three/examples/jsm/shaders/CopyShader'
 import type { PixelTexture } from './pixelTexture'
+import type { Constructor } from './ECS'
 
 export class ShaderComposer {
 	static copyPass = new ShaderPass(CopyShader)
@@ -44,8 +45,8 @@ export class ShaderComposer {
 		this.render()
 	}
 
-	removePass(shader: ShaderPass) {
-		const index = this.passes.indexOf(shader)
+	removePass(shaderPass: Constructor<ShaderPass>) {
+		const index = this.passes.findIndex(shader => shader instanceof shaderPass)
 		this.passes.splice(index, 1)
 		this.targets.splice(index, 1)
 		this.render()

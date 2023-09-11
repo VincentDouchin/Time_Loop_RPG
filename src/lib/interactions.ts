@@ -3,7 +3,7 @@ import { Group, Raycaster, Vector2, WebGLRenderer } from 'three'
 import { Component } from './ECS'
 import { mainCameraQuery } from './camera'
 import { UIElement } from '@/ui/UiElement'
-import { ecs } from '@/globals/init'
+import { ecs, renderer } from '@/globals/init'
 
 export enum InteractableType {
 	StartMultiplayer,
@@ -78,36 +78,30 @@ class PointerInput {
 	}
 }
 
-const rendererQuery = ecs.query.pick(WebGLRenderer)
-
 export const updateMousePosition = () => {
-	const rendererEntity = rendererQuery.getSingle()
-	if (rendererEntity) {
-		const [renderer] = rendererEntity
-		for (const event of ['mouseup', 'mousemove', 'mousedown'] as const) {
-			window.addEventListener(event, (e) => {
-				e.preventDefault()
-				const touchInput = PointerInput.pointers.get('mouse')
+	for (const event of ['mouseup', 'mousemove', 'mousedown'] as const) {
+		window.addEventListener(event, (e) => {
+			e.preventDefault()
+			const touchInput = PointerInput.pointers.get('mouse')
+			if (!touchInput) {
+				PointerInput.pointers.set('mouse', new PointerInput('mousedown', 'mouseup'))
+			} else {
+				touchInput.setFromScreenCoords(renderer.domElement, event, e)
+			}
+		})
+	}
+	for (const event of ['touchstart', 'touchmove', 'touchend'] as const) {
+		window.addEventListener(event, (e) => {
+			e.preventDefault()
+			for (const changedTouch of e.changedTouches) {
+				const touchInput = PointerInput.pointers.get(changedTouch.identifier)
 				if (!touchInput) {
-					PointerInput.pointers.set('mouse', new PointerInput('mousedown', 'mouseup'))
+					PointerInput.pointers.set(changedTouch.identifier, new PointerInput('touchstart', 'touchend'))
 				} else {
-					touchInput.setFromScreenCoords(renderer.domElement, event, e)
+					touchInput.setFromScreenCoords(renderer.domElement, event, changedTouch)
 				}
-			})
-		}
-		for (const event of ['touchstart', 'touchmove', 'touchend'] as const) {
-			window.addEventListener(event, (e) => {
-				e.preventDefault()
-				for (const changedTouch of e.changedTouches) {
-					const touchInput = PointerInput.pointers.get(changedTouch.identifier)
-					if (!touchInput) {
-						PointerInput.pointers.set(changedTouch.identifier, new PointerInput('touchstart', 'touchend'))
-					} else {
-						touchInput.setFromScreenCoords(renderer.domElement, event, changedTouch)
-					}
-				}
-			})
-		}
+			}
+		})
 	}
 }
 

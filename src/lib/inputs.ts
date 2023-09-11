@@ -47,7 +47,7 @@ export class InputMap<T extends readonly string[]> {
 	}
 }
 
-export const updateInputs = (...inputClasses: Class[]) => {
+export const resetInputs = (...inputClasses: Class[]) => {
 	for (const inputClass of inputClasses) {
 		const inputsQuery = ecs.query.pick(inputClass)
 

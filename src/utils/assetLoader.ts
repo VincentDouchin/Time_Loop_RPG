@@ -40,7 +40,9 @@ export const loadImage = (path: string): Promise<HTMLImageElement> => new Promis
 	img.onload = () => resolve(img)
 })
 
-export const getFileName = (path: string) => path.split(/[./]/g).at(-2) ?? ''
+export const getFileName = (path: string) => {
+	return	path.split(/[./]/g).at(-2) ?? ''
+}
 
 export const splitTexture = (tiles: number) => (img: HTMLImageElement) => {
 	const result: HTMLCanvasElement[] = []

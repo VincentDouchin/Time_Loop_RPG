@@ -1,4 +1,4 @@
-import { Mesh, MeshBasicMaterial, PlaneGeometry } from 'three'
+import { Mesh, MeshBasicMaterial, PlaneGeometry, Vector2 } from 'three'
 import type { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
 import { ShaderComposer } from './shader'
 import type { PixelTexture } from './pixelTexture'
@@ -10,6 +10,7 @@ export class Sprite extends Mesh<PlaneGeometry, MeshBasicMaterial> {
 	composer: ShaderComposer
 	width: number
 	height: number
+	#scale = new Vector2(1, 1)
 	constructor(texture: PixelTexture) {
 		const composer = new ShaderComposer(renderer, texture)
 		const geometry = new PlaneGeometry(texture.image.width, texture.image.height)
@@ -22,13 +23,25 @@ export class Sprite extends Mesh<PlaneGeometry, MeshBasicMaterial> {
 	}
 
 	setScale(x: number, y?: number) {
-		this.geometry.scale(x, y ?? x, 1)
+		this.#scale.x = x
+		this.#scale.y = y ?? x
+		this.geometry.scale(this.#scale.x, this.#scale.y, 1)
 		return this
 	}
 
-	anchor(x: number, y: number) {
-		this.position.x = x
-		this.position.y = y
+	setOpacity(opacity: number) {
+		this.material.opacity = opacity
+		return this
+	}
+
+	anchor(anchorX = 0, anchorY = 0) {
+		this.position.x = anchorX * this.scaledDimensions.x
+		this.position.y = anchorY * this.scaledDimensions.y
+		return this
+	}
+
+	get scaledDimensions() {
+		return new Vector2(this.width, this.height).multiply(this.#scale)
 	}
 
 	addPass(shaderPass: ShaderPass) {

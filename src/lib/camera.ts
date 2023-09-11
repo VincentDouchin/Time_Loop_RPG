@@ -1,16 +1,16 @@
 import { OrthographicCamera, Scene, Texture, WebGLRenderer } from 'three'
 
 import { Sprite } from './sprite'
-import { cssRenderer, ecs } from '@/globals/init'
+import { cssRenderer, ecs, renderer } from '@/globals/init'
 import { Component } from '@/lib/ECS'
 import { Position } from '@/lib/transforms'
 
 @Component(ecs)
-export class MainCamera { }
-
+export class MainCamera {}
 @Component(ecs)
-export class CameraTarget {
-}
+export class CameraBounds {}
+@Component(ecs)
+export class CameraTarget {}
 @Component(ecs)
 export class FollowCamera {
 	constructor(public x = false, public y = false) {}
@@ -32,10 +32,8 @@ export const spawnCamera = () => {
 	const width = window.innerWidth
 	const height = window.innerHeight
 
-	const getCamera = (zoom: number) => new OrthographicCamera(width / -zoom, width / zoom, height / zoom, height / -zoom, 0.1, 1000)
-
 	ecs.spawn(
-		getCamera(5),
+		new OrthographicCamera(width / -2, width / 2, height / 2, height / -2, 0.1, 1000),
 		new Position(0, 0, 10),
 		new MainCamera(),
 	)
@@ -86,6 +84,40 @@ export const render = () => {
 		if (scene && camera) {
 			cssRenderer.render(scene, camera)
 			renderer.render(scene, camera)
+		}
+	}
+}
+
+export const adjustScreenSize = () => {
+	const screenSize = { x: window.innerWidth, y: window.innerHeight, changed: false }
+	window.addEventListener('resize', () => {
+		screenSize.x = window.innerWidth
+		screenSize.y = window.innerHeight
+		screenSize.changed = true
+	})
+	const cameraBoundsQuery = ecs.query.pick(Sprite, Position).with(CameraBounds)
+	return () => {
+		if (screenSize.changed) {
+			for (const anyRenderer of [renderer, cssRenderer]) {
+				anyRenderer.setSize(window.innerWidth, window.innerHeight)
+			}
+			for (const [camera] of mainCameraQuery.getAll()) {
+				camera.left = -window.innerWidth / 2
+				camera.right = window.innerWidth / 2
+				camera.bottom = -window.innerHeight / 2
+				camera.top = window.innerHeight / 2
+			}
+		}
+
+		let zoom: null | number = null
+		for (const [sprite] of cameraBoundsQuery.getAll()) {
+			zoom = window.innerWidth / sprite.scaledDimensions.x
+		}
+		for (const [camera] of mainCameraQuery.getAll()) {
+			if (zoom) {
+				camera.zoom = zoom
+				camera.updateProjectionMatrix()
+			}
 		}
 	}
 }

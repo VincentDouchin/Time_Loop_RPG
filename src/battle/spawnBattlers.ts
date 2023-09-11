@@ -1,152 +1,147 @@
+import { ActionSelector, Battler, BattlerMenu, BattlerType, EnemyActions, PlayerActions, TargetSelector, selectAction, selectNextBattler, selectTargets, takeAction } from './battleActions'
 import { Health } from './health'
-import type { characterStates } from '@/character/spawnOverworldCharacter'
+import { currentLevel } from './spawnBattleBackground'
+import { Shadow } from '@/character/shadow'
 import { assets } from '@/globals/assets'
 import { ecs } from '@/globals/init'
 import { Component, Entity } from '@/lib/ECS'
 import { textureAtlasBundle } from '@/lib/bundles'
-import { Interactable, InteractableType } from '@/lib/interactions'
+import { Interactable } from '@/lib/interactions'
 import { type TextureAltasStates, TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { Tween } from '@/lib/tween'
 import { OutlineShader } from '@/shaders/OutlineShader'
 import { NineSlice } from '@/ui/NineSlice'
 import { TextElement, UIElement } from '@/ui/UiElement'
-import { Menu, Selected } from '@/ui/menu'
+import { Selected } from '@/ui/menu'
 
 @Component(ecs)
-export class BattlerMenu {}
-@Component(ecs)
-export class EnemySelectMenu {}
+export class Player {}
 
 const spawnBattleUi = () => {
-	const battlerMenuEntity = ecs.spawn(
+	ecs.spawn(
 		new UIElement({ width: '50%', height: '50px', alignSelf: 'end', justifySelf: 'center', display: 'grid', gridTemplateColumns: '1fr 1fr', placeItems: 'center' }),
 		new NineSlice(assets.ui.frameBig.path, 16, 2),
 		new BattlerMenu(),
 	)
-	const attack = battlerMenuEntity.spawn(
-		new UIElement(),
-		new Interactable(InteractableType.PlayerAttack),
-	)
-	attack.spawn(new TextElement('Attack'))
-	const flee = battlerMenuEntity.spawn(
-		new UIElement(),
-		new Interactable(InteractableType.PlayerFlee),
-	)
-	flee.spawn(new TextElement('Flee'))
-	battlerMenuEntity.addComponent(Menu.fromRow(attack, flee))
 }
-
 const battlerSpriteBundle = (side: 'left' | 'right', textureAtlas: TextureAltasStates<'run' | 'idle'>, index: number = 0, length: number = 1) => {
-	const bundle = textureAtlasBundle<'run' | 'idle'>(textureAtlas, 'run', 200)
+	const bundle = textureAtlasBundle<'run' | 'idle'>(textureAtlas, 'run', 1000 / 8)
 	const [sprite, _, atlas] = bundle
-	sprite.setScale(1.5)
-	sprite.flip = side === 'right'
-	const direction = side === 'left' ? -1 : 1
-	const edge = assets.levels.battle.levels[0].pxWid / 2 * direction
-	const y = 1 + index
-	const position = new Position(edge, y * 50 - length * 25)
+	sprite.anchor(0, 0).setScale(1).setRenderOrder(10)
 
+	sprite.flip = side === 'right'
+
+	const direction = side === 'left' ? -1 : 1
+	const width = sprite.scaledDimensions.x / 2
+	const edge = (currentLevel.pxWid / 2 - (width / 2)) * direction
+	const position = new Position(edge, index * width - width * (length - 1) / 2)
+	// const offset = index * width * -direction
+	// const totalOffset = length * width * -direction
 	new Tween(1500)
-		.onUpdate(x => position.x = x, edge, edge + 50 * -direction)
+		.onUpdate(x => position.x = x, edge, edge - width * direction)
+		// .onUpdate(x => position.x = x, edge + offset - totalOffset, edge + offset)
 		.onComplete(() => atlas.state = 'idle')
-	return [...bundle, position, new Battler(), new Interactable(InteractableType.Battler)]
+	return [...bundle, position, new Interactable(), new Shadow()]
 }
-@Component(ecs)
-export class Player { }
-@Component(ecs)
-export class Enemy { }
-@Component(ecs)
-export class Battler {}
-@Component(ecs)
-export class Played {}
-@Component(ecs)
-export class CurrentTurn {}
-@Component(ecs)
-export class TargetToSelect {}
-@Component(ecs)
-export class Target {}
 
 export const spawnBattlers = () => {
 	const bundle = battlerSpriteBundle('left', assets.characters.MiniPrinceMan)
-	ecs.spawn(...bundle, new Player(), new CurrentTurn(), new Health(10))
+	// const bundle = battlerSpriteBundle('left', assets.characters.Minifantasy_CreaturesHumanBaseAnimations)
+	const player = ecs.spawn(...bundle, new Health(20), new Player())
+	new Tween(2000).onComplete(() => player.addComponent(new Battler(BattlerType.Player, [PlayerActions.attack, PlayerActions.flee], ActionSelector.PlayerMenu, TargetSelector.PlayerTargetMenu)))
 
-	const enemies = [assets.characters.MiniGoblin, assets.characters.MiniGoblinThief, assets.characters.MiniGoblin]
+	// const enemies = [assets.characters.Minifantasy_CreaturesOrcBaseAnimations, assets.characters.Minifantasy_CreaturesOrcBaseAnimations, assets.characters.Minifantasy_CreaturesOrcBaseAnimations]
+	const enemies = [
+		assets.characters.MiniGoblin,
+		assets.characters.MiniGoblin,
+		assets.characters.MiniGoblinThief,
+	]
 	for (let i = 0; i < enemies.length; i++) {
 		const bundle = battlerSpriteBundle('right', enemies[i], i, enemies.length)
-		ecs.spawn(...bundle, new Enemy(), new Health(2))
+		const enemy = ecs.spawn(...bundle, new Health(2))
+		new Tween(2000).onComplete(() => enemy.addComponent(new Battler(BattlerType.Enemy, [EnemyActions.attack], ActionSelector.EnemyAuto, TargetSelector.EnemyAuto)))
 	}
 	spawnBattleUi()
 }
+const battlersQuery = ecs.query.pick(Entity, Battler)
 
-@Component(ecs)
-export class PlayerAttackAction {}
+export const battleTurn = () => {
+	// !Select next turn
+	if (battlersQuery.toArray().every(([_, battler]) => !battler.currentTurn)) {
+		for (const [_, battler] of battlersQuery.getAll()) {
+			if (
+				battler === selectNextBattler(battlersQuery.toArray()
+					.filter(([_, battler]) => !battler.finishedTurn)
+					.map(([_, battler]) => battler))
+			) {
+				battler.currentTurn = true
+			}
+		}
+	}
+	if (battlersQuery.toArray().every(([_, battler]) => battler.finishedTurn)) {
+		for (const [_, battler] of battlersQuery.getAll()) {
+			battler.reset()
+		}
+	}
+	for (const [_, battler] of battlersQuery.getAll()) {
+		if (battler.currentTurn) {
+			if (!battler.currentAction) {
+				selectAction(battler)
+			} else if (!battler.hasSelectedTargets()) {
+				selectTargets(battler)
+			} else if (!battler.takingAction) {
+				takeAction(battler)
+			}
+		}
+	}
+}
 
-const enemyToTakeTurnQuery = ecs.query.pick(Entity).with(Enemy).without(CurrentTurn, Played)
+const deadBattlersQuery = ecs.query.pick(Entity, Health, TextureAtlas<'death'>).with(Battler)
 
-const targetQuery = ecs.query.pick(TextureAtlas<'hit' | 'idle'>, Health).with(Target)
-const whoseTurnQuery = ecs.query.pick(Entity, TextureAtlas<characterStates>).with(CurrentTurn).without(Played)
-export const takeAction = () => {
-	for (const [entity, atlas] of whoseTurnQuery.getAll()) {
-		if (targetQuery.size) {
-			atlas.playAnimation('attack').then(() => {
-				entity.addComponent(new Played())
-				atlas.state = 'idle'
-				for (const [targetAtlas, targetHealth] of targetQuery.getAll()) {
-					targetHealth.currentHealth--
-					targetAtlas.playAnimation('hit').then(() => targetAtlas.state = 'idle')
-				}
-				entity.removeComponent(CurrentTurn)
+export const removeDeadBattlers = () => {
+	for (const [entity, health, atlas] of deadBattlersQuery.getAll()) {
+		if (health.currentHealth === 0) {
+			entity.removeComponent(Battler)
+			atlas.playAnimation('death').then(() => {
+				entity.despawn()
 			})
 		}
 	}
 }
 
-const nextTurnQuery = ecs.query.without(Played, CurrentTurn)
-const currentTurnQuery = ecs.query.pick(Entity).with(CurrentTurn)
-export const battleTurn = () => {
-	if (nextTurnQuery.size === 0 && !currentTurnQuery.size) {
-		const enemy = enemyToTakeTurnQuery.extract()
-		if (enemy) {
-			enemy.addComponent(new CurrentTurn())
-		}
-	}
-}
-
-const playerQuery = ecs.query.pick(Entity).with(Player, Health)
-const enemyQuery = ecs.query.pick(Entity).with(Enemy, Health)
-const targetToSelect = ecs.query.with(TargetToSelect)
-const actionsQuery = ecs.query.pick(Entity, Interactable)
-const actionMenuQuery = ecs.query.pick(Menu).with(BattlerMenu)
-const enemySelectMenuQuery = ecs.query.pick(Entity).with(EnemySelectMenu)
-export const selectTarget = () => {
-	for (const [entity, interactable] of actionsQuery.getAll()) {
-		if (interactable.justPressed && interactable.type === InteractableType.PlayerAttack) {
-			const actionMenu = actionMenuQuery.extract()
-			if (actionMenu) {
-				actionMenu.active = false
-				ecs.spawn(
-					Menu.fromColumn(...Array.from(enemyQuery.getAll()).flat()),
-					new EnemySelectMenu(),
-				)
-			}
-		}
-		if (interactable.justPressed && interactable.type === InteractableType.Battler) {
-			entity.addComponent(new Target())
-			const enemySelectMenu = enemySelectMenuQuery.extract()
-			if (enemySelectMenu) {
-				enemySelectMenu.despawn()
-			}
-		}
-	}
-}
-const targetedEnemies = ecs.query.pick(Entity).with(Enemy).added(Selected)
-const untargetedEnemies = ecs.query.pick(Entity).with(Enemy).removed(Selected)
-export const selectEnemy = () => {
+const targetedEnemies = ecs.query.pick(Entity, Battler).added(Selected)
+const untargetedEnemies = ecs.query.pick(Entity, Battler).removed(Selected)
+export const outlineSelectedEnemy = () => {
 	for (const [enemy] of untargetedEnemies.getAll()) {
 		enemy.removeComponent(OutlineShader)
 	}
 	for (const [enemy] of targetedEnemies.getAll()) {
 		enemy.addComponent(new OutlineShader())
+	}
+}
+@Component(ecs)
+export class WinOrLose {}
+
+const winOrLoseUiQuery = ecs.query.with(WinOrLose)
+const playerQuery = ecs.query.with(Player, Battler)
+const notPlayerQuery = ecs.query.with(Battler).without(Player)
+const battlerMenuQuery = ecs.query.pick(Entity).with(BattlerMenu)
+const winOrLoseBundle = () => [new UIElement({ position: 'absolute', placeSelf: 'center', width: 'fit-content', padding: '5%', color: 'black', placeContent: 'center', display: 'grid', fontSize: '3em' }), new NineSlice(assets.ui.framedisplay.path, 8, 3), new WinOrLose()]
+const despawnBattleMenu = () => {
+	for (const [entity] of battlerMenuQuery.getAll()) {
+		entity.despawn()
+	}
+}
+export const winOrLose = () => {
+	if (winOrLoseUiQuery.size === 0) {
+		if (playerQuery.size === 0 && notPlayerQuery.size > 0) {
+			ecs.spawn(...winOrLoseBundle()).spawn(new TextElement('Game Over'))
+			despawnBattleMenu()
+		}
+		if (notPlayerQuery.size === 0 && playerQuery.size > 0) {
+			ecs.spawn(...winOrLoseBundle()).spawn(new TextElement('You won!'))
+			despawnBattleMenu()
+		}
 	}
 }

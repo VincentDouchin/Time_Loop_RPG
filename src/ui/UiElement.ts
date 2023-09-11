@@ -1,4 +1,4 @@
-import type { Properties, StandardProperties, StandardPropertiesHyphen } from 'csstype'
+import type { Properties, StandardProperties } from 'csstype'
 import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer'
 import { ecs } from '@/globals/init'
 import { Component } from '@/lib/ECS'
@@ -6,15 +6,20 @@ import { Position } from '@/lib/transforms'
 
 @Component(ecs)
 export class UIElement extends HTMLDivElement {
-	constructor(style: StandardProperties = {}) {
+	constructor(styles: StandardProperties = {}) {
 		super()
-		for (const [key, val] of Object.entries(style) as [keyof Properties, any]) {
-			this.style[key] = val
-		}
+		this.setStyles(styles)
 	}
 
-	setStyle<K extends keyof StandardPropertiesHyphen>(key: K, value: StandardPropertiesHyphen[K]) {
+	setStyle<K extends keyof StandardProperties>(key: K, value: StandardProperties[K]) {
 		(<any> this.style)[key] = value
+		return this
+	}
+
+	setStyles(styles: StandardProperties) {
+		for (const [key, val] of Object.entries(styles) as [keyof Properties, any]) {
+			this.style[key] = val
+		}
 		return this
 	}
 
@@ -40,6 +45,12 @@ export class TextElement extends HTMLSpanElement {
 		super()
 		this.textContent = text
 		this.style.pointerEvents = 'none'
+		this.style.fontFamily = 'm5x7'
 	}
 }
+
 customElements.define('text-element', TextElement, { extends: 'span' })
+
+export const setDefaultFontSize = () => {
+	document.body.style.fontSize = '30px'
+}

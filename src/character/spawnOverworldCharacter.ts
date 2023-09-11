@@ -7,21 +7,23 @@ import { Position } from '@/lib/transforms'
 import { Navigator } from '@/navigation/navigation'
 
 export type characterStates = 'idle' | 'attack' | 'death' | 'run' | 'hit' | 'jump'
-
+const navigatorQuery = ecs.query.with(Navigator)
 const startNodeQuery = ecs.query.pick(NavNode, Position)
 export const spawnOverworldCharacter = () => {
-	for (const [mapEntity] of mapQuery.getAll()) {
-		for (const [node, position] of startNodeQuery.getAll()) {
-			if (node.data.type === 'Start') {
-				const [sprite, animator, textureAtlas] = textureAtlasBundle<characterStates>(assets.characters.MiniPrinceMan, 'idle', 200)
-				sprite.anchor(0, 8)
-				mapEntity.spawn(
-					sprite,
-					animator,
-					textureAtlas,
-					new Position(position.x, position.y),
-					new Navigator(node),
-				)
+	if (!navigatorQuery.size) {
+		for (const [mapEntity] of mapQuery.getAll()) {
+			for (const [node, position] of startNodeQuery.getAll()) {
+				if (node.data.type === 'Start') {
+					const [sprite, animator, textureAtlas] = textureAtlasBundle<characterStates>(assets.characters.MiniPrinceMan, 'idle', 200)
+					sprite.anchor(0, 0.5)
+					mapEntity.spawn(
+						sprite,
+						animator,
+						textureAtlas,
+						new Position(position.x, position.y),
+						new Navigator(node),
+					)
+				}
 			}
 		}
 	}

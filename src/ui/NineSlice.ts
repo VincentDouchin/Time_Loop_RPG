@@ -28,15 +28,14 @@ const ninesliceUIQuery = ecs.query.pick(UIElement, NineSlice).added(NineSlice)
 
 export const addNineSlicetoUI = () => {
 	for (const [uiElement, nineSlice] of ninesliceUIQuery.getAll()) {
-		uiElement.setStyle('border-image', `url(${nineSlice.image})`)
-		uiElement.setStyle('border-image-slice', 'fill 16')
-		uiElement.setStyle('border-image-repeat', 'round')
-		uiElement.setStyle(
-			'border-width',
-			[nineSlice.margins.top, nineSlice.margins.bottom, nineSlice.margins.left, nineSlice.margins.right]
-				.map(border => `${border * nineSlice.scale}px`)
-				.join(' '),
-		)
-		uiElement.setStyle('border-style', 'solid')
+		const allMargins = [nineSlice.margins.top, nineSlice.margins.bottom, nineSlice.margins.left, nineSlice.margins.right]
+		uiElement.setStyles({
+			borderImage: `url(${nineSlice.image})`,
+			borderImageSlice: `${allMargins.join(' ')} fill`,
+			borderImageRepeat: 'round',
+			imageRendering: 'pixelated',
+			borderWidth: allMargins.map(border => `${border * nineSlice.scale}px`).join(' '),
+			borderStyle: 'solid',
+		})
 	}
 }

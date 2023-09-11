@@ -15,12 +15,19 @@ for (const path of asespriteFiles) {
 }
 
 const files = await glob('./assets/**')
+const getFolder = (parts: string[]) => {
+	for (let i = -2; i > -parts.length; i--) {
+		const folder = parts.at(-2)!.replace(/[ &]/g, '')
+		if (folder[0] === '_') continue
+		return folder
+	}
+}
 
 const folders: Record<string, string[]> = {}
 for (const path of files) {
-	if (path?.includes('.') && ['.d.ts', '.aseprite', 'ase'].every(ext => !path.includes(ext))) {
+	if (path?.includes('.') && ['.d.ts', '.aseprite', '.ase'].every(ext => !path.includes(ext))) {
 		const parts = path.split('\\')
-		const folder = parts.at(-2)?.replace(/[ &]/g, '')
+		const folder = getFolder(parts)
 		const file = parts.at(-1)?.split('.')[0]
 		if (folder && !folders[folder]) {
 			folders[folder] = []

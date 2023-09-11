@@ -20,7 +20,6 @@ export class Navigating {}
 const navigatorQuery = ecs.query.pick(Entity, Navigator, Position, TextureAtlas<characterStates>, Sprite).without(Navigating)
 export const moveOverworldCharacter = () => {
 	for (const [entity, navigator, position, atlas, sprite] of navigatorQuery.getAll()) {
-		console.log('ok')
 		const inputs = menuInputQuery.extract()
 		if (inputs) {
 			let target: Entity | null = null

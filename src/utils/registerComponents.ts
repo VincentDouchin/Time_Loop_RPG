@@ -36,21 +36,19 @@ export const addToScene = (...components: Class[]) => {
 	})
 }
 
-export const registerShader = (...sprites: Class[]) => (...shaderPasses: Constructor<ShaderPass>[]) => {
-	for (const sprite of sprites) {
-		for (const shaderPass of shaderPasses) {
-			const query = ecs.query.pick(sprite, shaderPass).added(shaderPass)
-			ecs.core.onPostUpdate(() => {
-				for (const [sprite, shader] of query.getAll()) {
-					sprite.addPass(shader)
-				}
-			})
-			const removedQuery = ecs.query.pick(Sprite, shaderPass).removed(shaderPass)
-			ecs.core.onPostUpdate(() => {
-				for (const [sprite, shader] of removedQuery.getAll()) {
-					sprite.composer.removePass(shader)
-				}
-			})
-		}
+export const registerShader = (...shaderPasses: Constructor<ShaderPass>[]) => {
+	for (const shaderPass of shaderPasses) {
+		const query = ecs.query.pick(Sprite, shaderPass).added(shaderPass)
+		ecs.core.onUpdate(() => {
+			for (const [sprite, shader] of query.getAll()) {
+				sprite.composer.addPass(shader)
+			}
+		})
+		const removedQuery = ecs.query.pick(Sprite).removed(shaderPass)
+		ecs.core.onUpdate(() => {
+			for (const [sprite] of removedQuery.getAll()) {
+				sprite.composer.removePass(shaderPass)
+			}
+		})
 	}
 }
