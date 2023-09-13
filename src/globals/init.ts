@@ -1,5 +1,5 @@
 import { Group, OrthographicCamera, Scene, WebGLRenderer } from 'three'
-import { Collider, ColliderDesc, RigidBody, RigidBodyDesc, World, init } from '@dimforge/rapier2d-compat'
+import { Collider, ColliderDesc, ImpulseJoint, RigidBody, RigidBodyDesc, World, init } from '@dimforge/rapier2d-compat'
 import { CSS2DObject, CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer'
 import { ECS } from '@/lib/ECS'
 
@@ -19,5 +19,6 @@ ecs.registerComponent(RigidBody)
 ecs.registerComponent(World)
 ecs.registerComponent(Collider)
 ecs.registerComponent(ColliderDesc)
+ecs.registerComponent(ImpulseJoint)
 export const renderer = new WebGLRenderer({ antialias: true, alpha: true })
 export const cssRenderer = new CSS2DRenderer()

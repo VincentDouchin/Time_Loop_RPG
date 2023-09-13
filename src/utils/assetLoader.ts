@@ -109,8 +109,8 @@ export const joinAtlas = <K extends string>(atlas: Record<string, Array<Array<Ca
 		for (const [animationName, textures] of Object.entries(animations)) {
 			const finalTextures: PixelTexture[] = []
 			for (let i = 0; i < textures.normal?.length; i++) {
-				textures.shadow[i].drawImage(textures.normal[i].canvas, 0, 0)
-				finalTextures.push(new PixelTexture(textures.shadow[i].canvas))
+				// textures.shadow[i].drawImage(textures.normal[i].canvas, 0, 0)
+				finalTextures.push(new PixelTexture(textures.normal[i].canvas))
 			}
 			finalResult[character].states[animationName as K] = finalTextures
 		}

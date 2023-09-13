@@ -18,13 +18,20 @@ export class Map {}
 export const drawLayer = (layerInstance: LayerInstance, buffer: CanvasRenderingContext2D) => {
 	if (layerInstance.__tilesetRelPath) {
 		const tiles = layerInstance.__type === 'IntGrid' ? 'autoLayerTiles' : 'gridTiles'
-		const tileset = assets.tilesets[getFileName(layerInstance.__tilesetRelPath!) as tilesets]
-		for (const tile of layerInstance[tiles]) {
-			buffer.drawImage(
-				tileset,
-				tile.src[0], tile.src[1], layerInstance.__gridSize, layerInstance.__gridSize,
-				tile.px[0] + layerInstance.__pxTotalOffsetX, tile.px[1] + layerInstance.__pxTotalOffsetY, layerInstance.__gridSize, layerInstance.__gridSize,
-			)
+		const tilesets = [assets.tilesets[getFileName(layerInstance.__tilesetRelPath) as tilesets]]
+		const shadowMap = assets.tilesets?.[`${getFileName(layerInstance.__tilesetRelPath)}Shadows` as tilesets]
+		debugger
+		if (shadowMap) {
+			tilesets.unshift(shadowMap)
+		}
+		for (const tileset of tilesets) {
+			for (const tile of layerInstance[tiles]) {
+				buffer.drawImage(
+					tileset,
+					tile.src[0], tile.src[1], layerInstance.__gridSize, layerInstance.__gridSize,
+					tile.px[0] + layerInstance.__pxTotalOffsetX, tile.px[1] + layerInstance.__pxTotalOffsetY, layerInstance.__gridSize, layerInstance.__gridSize,
+				)
+			}
 		}
 	}
 }

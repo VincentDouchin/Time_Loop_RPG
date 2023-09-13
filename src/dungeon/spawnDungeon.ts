@@ -2,6 +2,7 @@ import { Collider, ColliderDesc, RigidBody, RigidBodyDesc } from '@dimforge/rapi
 import { Vector2 } from 'three'
 import { PlayerInputMap, getPlayerInputMap } from './playerInputs'
 import { Player } from '@/battle/spawnBattlers'
+import { NPCBundle } from '@/dungeon/NPC'
 import { assets } from '@/globals/assets'
 import { ecs } from '@/globals/init'
 import type { LayerInstance } from '@/level/LDTK'
@@ -27,6 +28,7 @@ const spawnLayer = (layer: LayerInstance) => {
 	drawLayer(layer, buffer)
 	return Sprite.fromBuffer(buffer).setRenderOrder(layer.__identifier.includes('top') ? 100 : -1)
 }
+
 export const spawnDungeon = () => {
 	const mapFile = assets.levels.tavern
 	const level = mapFile.levels[0]
@@ -49,6 +51,13 @@ export const spawnDungeon = () => {
 					(wall, w, h) => {
 						wall.addComponent(new InsideTrigger(), RigidBodyDesc.fixed(), ColliderDesc.cuboid(w / 2, h / 2).setSensor(true))
 					})
+			}
+			if (layerInstance.__type === 'Entities') {
+				for (const entityInstance of layerInstance.entityInstances) {
+					if (entityInstance.__identifier === 'NPC') {
+						map.spawn(...NPCBundle(entityInstance, layerInstance))
+					}
+				}
 			}
 		}
 	}

@@ -1,6 +1,6 @@
-type ui = 'healthfull' | 'healthbar' | 'framedisplay' | 'frameBig'
+type ui = 'textbox' | 'healthfull' | 'healthbar' | 'framedisplay' | 'frameBig'
 type levels = 'tavern' | 'overworld' | 'minibattle'
 type fonts = 'm5x7'
 type backgrounds = 'forest'
 type tilesets = 'WallOfTreesTileset' | 'Universal-Road-Tileset' | 'Tents' | 'TavernIndoorAll' | 'Minifantasy_TownsTileset' | 'Minifantasy_TownsProps' | 'Minifantasy_TownsIIWoodenPlankBuildingOutdoorTileset' | 'Minifantasy_TownsIIBrickBuildingOutdoorTileset' | 'Minifantasy_ForgottenPlainsTiles' | 'Minifantasy_ForgottenPlainsProps' | 'GB-Trees-and-Mountains' | 'GB-LandTileset' | 'Compilation-Building'
-type characters = 'PaladinWalkShadow' | 'PaladinWalk' | 'PaladinJumpShadow' | 'PaladinJump' | 'PaladinIdleStartShadow' | 'PaladinIdleStart' | 'PaladinIdleShadow' | 'PaladinIdleMiddleShadow' | 'PaladinIdleMiddle' | 'PaladinIdleEndShadow' | 'PaladinIdleEnd' | 'PaladinIdle' | 'PaladinDmgShadow' | 'PaladinDmg' | 'PaladinDieShadow' | 'PaladinDie' | 'PaladinAttackShadow' | 'PaladinAttack'
+type characters = 'PaladinWalkShadow' | 'PaladinWalk' | 'PaladinJumpShadow' | 'PaladinJump' | 'PaladinIdleStartShadow' | 'PaladinIdleStart' | 'PaladinIdleShadow' | 'PaladinIdleMiddleShadow' | 'PaladinIdleMiddle' | 'PaladinIdleEndShadow' | 'PaladinIdleEnd' | 'PaladinIdle' | 'PaladinDmgShadow' | 'PaladinDmg' | 'PaladinDieShadow' | 'PaladinDie' | 'PaladinAttackShadow' | 'PaladinAttack' | 'howardWalk' | 'howardIdle' | 'howardDmg' | 'howardDie'

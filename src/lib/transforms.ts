@@ -1,6 +1,6 @@
 import { Group, Vector2, Vector3 } from 'three'
-import { RigidBody } from '@dimforge/rapier2d-compat'
-import { Component } from './ECS'
+import { ImpulseJoint, RigidBody } from '@dimforge/rapier2d-compat'
+import { Component, Entity } from './ECS'
 import { ecs } from '@/globals/init'
 
 @Component(ecs)
@@ -26,14 +26,19 @@ export const updateSpritePosition = () => {
 		group.position.set(pos.x, pos.y, pos.z)
 	}
 }
-const bodyPositionQuery = ecs.query.pick(Position, RigidBody)
+const bodyPositionQuery = ecs.query.pick(Entity, Position, RigidBody)
 export const updatePosition = () => {
-	for (const [pos, body] of bodyPositionQuery.getAll()) {
+	for (const [entity, pos, body] of bodyPositionQuery.getAll()) {
 		if (pos.init) {
 			const translation = body.translation()
 			pos.x = translation.x
 			pos.y = translation.y
 		} else {
+			const parentPosition = entity.parent?.getComponent(Position)
+			if (parentPosition) {
+				pos.x += parentPosition.x
+				pos.y += parentPosition.y
+			}
 			body.setTranslation(new Vector2(pos.x, pos.y), true)
 			pos.init = true
 		}

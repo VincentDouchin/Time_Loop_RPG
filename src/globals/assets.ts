@@ -23,7 +23,7 @@ const tileSetLoader = new AssetLoaderChain(getFileName)
 const characterLoader = new AssetLoaderChain(getFileName)
 	.chain(m => loadImage(m.default))
 	.chain((img, _) => createAtlas(img, 32))
-	.reduce(r => joinAtlas<'walk' | 'idle'>(r, animations))
+	.reduce(r => joinAtlas(r, animations))
 
 const fontLoader = new AssetLoaderChain(getFileName)
 	.chain(async (m, _, name) => {

@@ -28,6 +28,7 @@ import { selectUiElement, unSelectDespawnMenus, updateMenus } from './ui/menu'
 import { addToScene, addToWorld, registerShader } from './utils/registerComponents'
 import { spawnOverworldCharacter } from './overworld/spawnOverworldCharacter'
 import { State } from './lib/ECS'
+import { spawnDialogArea, startDialog } from './dungeon/NPC'
 
 ecs.core
 	.onEnter(createWorld, initThree, updateMousePosition, spawnCamera, spawnMenuInputs, spawnUIRoot, setDefaultFontSize)
@@ -43,7 +44,7 @@ export const overworldState = ecs.state
 	.onEnter(spawnOverworld)
 	.onUpdate(moveOverworldCharacter, spawnOverworldCharacter)
 	.onExit(despawnOverworld)
-	.enable()
+	// .enable()
 
 export const battleState = ecs.state
 	.onEnter(spawnBattleBackground, spawnBattlers)
@@ -52,12 +53,12 @@ export const battleState = ecs.state
 
 export const dungeonState = ecs.state
 	.onEnter(spawnDungeon, spawnPlayer)
-	.onUpdate(movePlayer, isPlayerInside, updateCamera)
-	// .enable()
+	.onUpdate(movePlayer, isPlayerInside, updateCamera, startDialog, spawnDialogArea)
+	.enable()
 State.exclusive(overworldState, battleState, dungeonState)
 const animate = () => {
-	time.tick(Date.now())
 	ecs.update()
+	time.tick(Date.now())
 	requestAnimationFrame(animate)
 }
 animate()
