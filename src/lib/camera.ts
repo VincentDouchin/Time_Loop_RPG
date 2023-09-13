@@ -1,14 +1,21 @@
-import { OrthographicCamera, Scene, Texture, WebGLRenderer } from 'three'
+import { Box2, OrthographicCamera, Scene, Texture, Vector2, WebGLRenderer } from 'three'
 
 import { Sprite } from './sprite'
 import { cssRenderer, ecs, renderer } from '@/globals/init'
 import { Component } from '@/lib/ECS'
 import { Position } from '@/lib/transforms'
+import type { Level } from '@/level/LDTK'
 
 @Component(ecs)
 export class MainCamera {}
 @Component(ecs)
-export class CameraBounds {}
+export class CameraBounds extends Box2 {
+	static fromLevel(level: Level) {
+		const w = level.pxWid / 2
+		const h = level.pxHei / 2
+		return new CameraBounds(new Vector2(-w, -h), new Vector2(w, h))
+	}
+}
 @Component(ecs)
 export class CameraTarget {}
 @Component(ecs)
@@ -40,15 +47,16 @@ export const spawnCamera = () => {
 }
 
 const targetQuery = ecs.query.pick(Position).with(CameraTarget)
-const mainCameraPositionQuery = ecs.query.pick(Position).with(MainCamera)
+const mainCameraPositionQuery = ecs.query.pick(Position, OrthographicCamera).with(MainCamera)
 const followCameraQuery = ecs.query.pick(FollowCamera, Position)
 const followCameraSpriteQuery = ecs.query.pick(FollowCamera, Sprite)
 
 export const sceneQuery = ecs.query.pick(Scene)
 export const mainCameraQuery = ecs.query.pick(OrthographicCamera).with(MainCamera)
 export const rendererQuery = ecs.query.pick(WebGLRenderer)
+export const cameraBoundsQuery = ecs.query.pick(CameraBounds)
 export const cameraFollow = () => {
-	for (const [cameraPosition] of mainCameraPositionQuery.getAll()) {
+	for (const [cameraPosition, camera] of mainCameraPositionQuery.getAll()) {
 		for (const [followCamera, position] of followCameraQuery.getAll()) {
 			if (followCamera.x) {
 				position.x = cameraPosition.x
@@ -73,6 +81,12 @@ export const cameraFollow = () => {
 				scene.background.offset.y = cameraPosition.y / scene.background.image.height
 			}
 		}
+		for (const [bounds] of cameraBoundsQuery.getAll()) {
+			// console.log(bounds.min.x, bounds.max.x)
+			cameraPosition.x = Math.max(Math.min(bounds.max.x + camera.left / camera.zoom, cameraPosition.x), bounds.min.x + camera.right / camera.zoom)
+			// console.log(camera.position.x,)
+			cameraPosition.y = Math.max(Math.min(bounds.max.y + camera.bottom / camera.zoom, cameraPosition.y), bounds.min.y + camera.top / camera.zoom)
+		}
 	}
 }
 
@@ -87,7 +101,15 @@ export const render = () => {
 		}
 	}
 }
-
+const addedBoundsQuery = ecs.query.pick(CameraBounds, Position, Sprite).added(CameraBounds)
+export const initializeCameraBounds = () => {
+	for (const [bounds, pos, sprite] of addedBoundsQuery.getAll()) {
+		bounds.min.x ??= pos.x - sprite.scaledDimensions.x
+		bounds.max.x ??= pos.x + sprite.scaledDimensions.x
+		bounds.min.y ??= pos.y - sprite.scaledDimensions.y
+		bounds.max.y ??= pos.y + sprite.scaledDimensions.y
+	}
+}
 export const adjustScreenSize = () => {
 	const screenSize = { x: window.innerWidth, y: window.innerHeight, changed: false }
 	window.addEventListener('resize', () => {

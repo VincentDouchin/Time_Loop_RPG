@@ -1,10 +1,12 @@
 import { Group } from 'three'
 import type { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
+import { Collider, ColliderDesc, RigidBody, RigidBodyDesc } from '@dimforge/rapier2d-compat'
 import { ecs } from '@/globals/init'
 import { type Class, type Constructor, Entity } from '@/lib/ECS'
 import { sceneQuery } from '@/lib/camera'
 import { Position } from '@/lib/transforms'
 import { Sprite } from '@/lib/sprite'
+import { worldQuery } from '@/lib/world'
 
 export const addToScene = (...components: Class[]) => {
 	// ! SCENE
@@ -51,4 +53,25 @@ export const registerShader = (...shaderPasses: Constructor<ShaderPass>[]) => {
 			}
 		})
 	}
+}
+export const addToWorld = () => {
+	const bodyQuery = ecs.query.pick(RigidBodyDesc, Entity).without(RigidBody)
+	const colliderQuery = ecs.query.pick(ColliderDesc, RigidBody, Entity).without(Collider)
+	const removedQuery = ecs.query.pick(RigidBody).removed(RigidBody)
+	ecs.core.onPostUpdate(() => {
+		const world = worldQuery.extract()
+		if (world) {
+			for (const [bodyDesc, entity] of bodyQuery.getAll()) {
+				const body = world.createRigidBody(bodyDesc)
+				entity.addComponent(body)
+			}
+			for (const [colliderDesc, rigidBody, entity] of colliderQuery.getAll()) {
+				const collider = world.createCollider(colliderDesc, rigidBody)
+				entity.addComponent(collider)
+			}
+			for (const [body] of removedQuery.getAll()) {
+				world.removeRigidBody(body)
+			}
+		}
+	})
 }

@@ -3,7 +3,6 @@ import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer'
 import { TextElement, UIElement } from './UiElement'
 import { Component, Entity } from '@/lib/ECS'
 import { ecs } from '@/globals/init'
-import { assets } from '@/globals/assets'
 
 @Component(ecs)
 export class UIRoot {}

@@ -211,7 +211,7 @@ export const selectTargets = (battler: Battler) => {
 		battler.targets = potentialTargets
 	}
 }
-const battlerToTakeActionOnQuery = ecs.query.pick(Entity, TextureAtlas<'hit' | 'attack' | 'idle'>, Health, Battler)
+const battlerToTakeActionOnQuery = ecs.query.pick(Entity, TextureAtlas, Health, Battler)
 export const takeAction = (battlerTakingAction: Battler) => {
 	battlerTakingAction.takingAction = true
 	for (const [_entity, atlas, _health, battler] of battlerToTakeActionOnQuery.getAll()) {
@@ -220,7 +220,7 @@ export const takeAction = (battlerTakingAction: Battler) => {
 				atlas.state = 'idle'
 				for (const [enemyEntity, enemyAtlas, enemyHealth, _enemyBattler] of battlerToTakeActionOnQuery.getAll()) {
 					if (battler.targets.includes(enemyEntity)) {
-						enemyAtlas.playAnimation('hit').then(() => {
+						enemyAtlas.playAnimation('dmg').then(() => {
 							enemyAtlas.state = 'idle'
 							enemyHealth.currentHealth--
 							battler.finishedTurn = true

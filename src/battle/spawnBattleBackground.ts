@@ -1,6 +1,6 @@
 import { assets } from '@/globals/assets'
 import { ecs } from '@/globals/init'
-import { spawnLevel } from '@/level/spawnOverworld'
+import { spawnLevel } from '@/level/spawnLevel'
 import { Component } from '@/lib/ECS'
 import { CameraBounds } from '@/lib/camera'
 

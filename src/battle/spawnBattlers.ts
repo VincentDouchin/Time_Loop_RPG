@@ -1,7 +1,6 @@
 import { ActionSelector, Battler, BattlerMenu, BattlerType, EnemyActions, PlayerActions, TargetSelector, selectAction, selectNextBattler, selectTargets, takeAction } from './battleActions'
 import { Health } from './health'
 import { currentLevel } from './spawnBattleBackground'
-import { Shadow } from '@/character/shadow'
 import { assets } from '@/globals/assets'
 import { ecs } from '@/globals/init'
 import { Component, Entity } from '@/lib/ECS'
@@ -25,40 +24,31 @@ const spawnBattleUi = () => {
 		new BattlerMenu(),
 	)
 }
-const battlerSpriteBundle = (side: 'left' | 'right', textureAtlas: TextureAltasStates<'run' | 'idle'>, index: number = 0, length: number = 1) => {
-	const bundle = textureAtlasBundle<'run' | 'idle'>(textureAtlas, 'run', 1000 / 8)
+const battlerSpriteBundle = (side: 'left' | 'right', textureAtlas: TextureAltasStates<'walk' | 'idle'>, index: number = 0, length: number = 1) => {
+	const bundle = textureAtlasBundle<'walk' | 'idle'>(textureAtlas, 'walk', side, 'down')
 	const [sprite, _, atlas] = bundle
 	sprite.anchor(0, 0).setScale(1).setRenderOrder(10)
 
-	sprite.flip = side === 'right'
-
-	const direction = side === 'left' ? -1 : 1
+	const direction = side === 'right' ? -1 : 1
 	const width = sprite.scaledDimensions.x / 2
 	const edge = (currentLevel.pxWid / 2 - (width / 2)) * direction
 	const position = new Position(edge, index * width - width * (length - 1) / 2)
-	// const offset = index * width * -direction
-	// const totalOffset = length * width * -direction
 	new Tween(1500)
 		.onUpdate(x => position.x = x, edge, edge - width * direction)
-		// .onUpdate(x => position.x = x, edge + offset - totalOffset, edge + offset)
 		.onComplete(() => atlas.state = 'idle')
-	return [...bundle, position, new Interactable(), new Shadow()]
+	return [...bundle, position, new Interactable()]
 }
 
 export const spawnBattlers = () => {
-	const bundle = battlerSpriteBundle('left', assets.characters.MiniPrinceMan)
-	// const bundle = battlerSpriteBundle('left', assets.characters.Minifantasy_CreaturesHumanBaseAnimations)
+	const bundle = battlerSpriteBundle('right', assets.characters.paladin)
 	const player = ecs.spawn(...bundle, new Health(20), new Player())
 	new Tween(2000).onComplete(() => player.addComponent(new Battler(BattlerType.Player, [PlayerActions.attack, PlayerActions.flee], ActionSelector.PlayerMenu, TargetSelector.PlayerTargetMenu)))
 
-	// const enemies = [assets.characters.Minifantasy_CreaturesOrcBaseAnimations, assets.characters.Minifantasy_CreaturesOrcBaseAnimations, assets.characters.Minifantasy_CreaturesOrcBaseAnimations]
 	const enemies = [
-		assets.characters.MiniGoblin,
-		assets.characters.MiniGoblin,
-		assets.characters.MiniGoblinThief,
+		assets.characters.paladin,
 	]
 	for (let i = 0; i < enemies.length; i++) {
-		const bundle = battlerSpriteBundle('right', enemies[i], i, enemies.length)
+		const bundle = battlerSpriteBundle('left', enemies[i], i, enemies.length)
 		const enemy = ecs.spawn(...bundle, new Health(2))
 		new Tween(2000).onComplete(() => enemy.addComponent(new Battler(BattlerType.Enemy, [EnemyActions.attack], ActionSelector.EnemyAuto, TargetSelector.EnemyAuto)))
 	}
@@ -97,13 +87,13 @@ export const battleTurn = () => {
 	}
 }
 
-const deadBattlersQuery = ecs.query.pick(Entity, Health, TextureAtlas<'death'>).with(Battler)
+const deadBattlersQuery = ecs.query.pick(Entity, Health, TextureAtlas<'die'>).with(Battler)
 
 export const removeDeadBattlers = () => {
 	for (const [entity, health, atlas] of deadBattlersQuery.getAll()) {
 		if (health.currentHealth === 0) {
 			entity.removeComponent(Battler)
-			atlas.playAnimation('death').then(() => {
+			atlas.playAnimation('die').then(() => {
 				entity.despawn()
 			})
 		}

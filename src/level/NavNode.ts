@@ -7,7 +7,7 @@ interface NavNodeLDTK {
 	down?: LDTKEntityRef
 	left?: LDTKEntityRef
 	right?: LDTKEntityRef
-	type: 'Battle' | 'Encounter' | 'Start' | 'End'
+	type: 'Battle' | 'Encounter' | 'Start' | 'End' | 'Dungeon'
 	name: string
 }
 

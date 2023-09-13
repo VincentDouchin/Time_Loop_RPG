@@ -17,7 +17,7 @@ for (const path of asespriteFiles) {
 const files = await glob('./assets/**')
 const getFolder = (parts: string[]) => {
 	for (let i = -2; i > -parts.length; i--) {
-		const folder = parts.at(-2)!.replace(/[ &]/g, '')
+		const folder = parts.at(i)!.replace(/[ &]/g, '')
 		if (folder[0] === '_') continue
 		return folder
 	}

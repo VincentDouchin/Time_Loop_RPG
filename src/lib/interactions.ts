@@ -1,5 +1,5 @@
 import type { OrthographicCamera } from 'three'
-import { Group, Raycaster, Vector2, WebGLRenderer } from 'three'
+import { Group, Raycaster, Vector2 } from 'three'
 import { Component } from './ECS'
 import { mainCameraQuery } from './camera'
 import { UIElement } from '@/ui/UiElement'

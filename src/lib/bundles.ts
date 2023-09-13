@@ -1,7 +1,8 @@
 import { Animator } from './animation'
-import type { TextureAltasStates } from './sprite'
+import type { TextureAltasStates, directionX, directionY } from './sprite'
 import { Sprite, TextureAtlas } from './sprite'
 
-export const textureAtlasBundle = <K extends string>(textureAtlas: TextureAltasStates<K>, defaultState: K, delay: number) => {
-	return [new Sprite(textureAtlas[defaultState][0]), new Animator(delay), new TextureAtlas(textureAtlas, defaultState)] as const
+export const textureAtlasBundle = <K extends string>(textureAtlas: TextureAltasStates<K>, defaultState: K, directionX: directionX = 'left', directionY: directionY = 'down') => {
+	const atlas = new TextureAtlas(textureAtlas, defaultState, directionX, directionY)
+	return [new Sprite(atlas.currentTexture), new Animator(100), atlas] as const
 }

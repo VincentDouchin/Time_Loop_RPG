@@ -1,8 +1,8 @@
 import { Mesh, MeshBasicMaterial, PlaneGeometry, Vector2 } from 'three'
 import type { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
-import { ShaderComposer } from './shader'
-import type { PixelTexture } from './pixelTexture'
 import { Component } from './ECS'
+import { PixelTexture } from './pixelTexture'
+import { ShaderComposer } from './shader'
 import { ecs, renderer } from '@/globals/init'
 
 @Component(ecs)
@@ -65,17 +65,40 @@ export class Sprite extends Mesh<PlaneGeometry, MeshBasicMaterial> {
 		this.renderOrder = nb
 		return this
 	}
+
+	static fromBuffer(buffer: CanvasRenderingContext2D) {
+		return new Sprite(new PixelTexture(buffer.canvas))
+	}
 }
-export type TextureAltasStates<K extends string> = Record<K, PixelTexture[]>
+export type directionX = 'left' | 'right'
+export type directionY = 'up' | 'down'
+export interface TextureAltasStates<K extends string > {
+	speed: { default: number } & Record<string, number>
+	states: Record<K | `${K}-${directionX}-${directionY}`, PixelTexture[]>
+}
+
 @Component(ecs)
 export class TextureAtlas<K extends string> {
 	index = 0
 	animationsPlaying = new Set<(val?: unknown) => void>()
-	constructor(public atlas: TextureAltasStates<K>, public state: K) {}
+	constructor(public atlas: TextureAltasStates<K>, public state: K, public directionX: directionX = 'left', public directionY: directionY = 'down') {}
+	get currentSpeed() {
+		return this.atlas.speed[this.state] ?? this.atlas.speed.default
+	}
+
+	get #currentAtlas() {
+		if (!this.directionX && !this.directionY) {
+			return this.atlas.states[this.state]
+		} else if (this.directionX && this.directionY && `${this.state}-${this.directionX}-${this.directionY}` in this.atlas.states) {
+			return this.atlas.states[`${this.state}-${this.directionX}-${this.directionY}`]
+		} else {
+			return this.atlas.states[this.state]
+		}
+	}
 
 	changeIndex(nb: number) {
-		const newIndex = (this.index + nb) % (this.atlas[this.state].length)
-		if (newIndex === this.atlas[this.state].length - 1) {
+		const newIndex = (this.index + nb) % (this.#currentAtlas.length)
+		if (newIndex === this.#currentAtlas.length - 1) {
 			for (const resolve of this.animationsPlaying) {
 				resolve()
 				this.animationsPlaying.delete(resolve)
@@ -87,7 +110,7 @@ export class TextureAtlas<K extends string> {
 	}
 
 	get currentTexture() {
-		return this.atlas[this.state][this.index]
+		return this.#currentAtlas[this.index]
 	}
 
 	increment() {

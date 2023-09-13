@@ -19,14 +19,14 @@ export class HealthDisplay {
 const healthDisplayToCreate = ecs.query.pick(Entity, Health).added(Health)
 export const displayHealth = () => {
 	for (const [entity] of healthDisplayToCreate.getAll()) {
-		const inner = UIElement.fromImage(assets.ui.healthfull, 3)
+		const inner = UIElement.fromImage(assets.ui.healthfull, 5)
 
 		entity
 			.spawn(...UIElement
-				.fromImage(assets.ui.healthbar, 3)
-				.withWorldPosition(),
+				.fromImage(assets.ui.healthbar, 5)
+				.withWorldPosition(0, 8),
 			)
-			.spawn(new UIElement({ margin: '3px' }))
+			.spawn(new UIElement({ margin: '5px' }))
 			.spawn(inner)
 		entity.addComponent(new HealthDisplay(inner))
 	}
