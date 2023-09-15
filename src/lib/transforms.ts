@@ -1,5 +1,5 @@
+import { RigidBody } from '@dimforge/rapier2d-compat'
 import { Group, Vector2, Vector3 } from 'three'
-import { ImpulseJoint, RigidBody } from '@dimforge/rapier2d-compat'
 import { Component, Entity } from './ECS'
 import { ecs } from '@/globals/init'
 

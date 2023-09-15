@@ -1,4 +1,4 @@
-import { ColliderDesc, RigidBody, RigidBodyDesc } from '@dimforge/rapier2d-compat'
+import { ColliderDesc, RigidBodyDesc } from '@dimforge/rapier2d-compat'
 import type { EntityInstance, FieldInstance, LayerInstance } from './LDTK'
 import { ecs } from '@/globals/init'
 import type { Entity } from '@/lib/ECS'

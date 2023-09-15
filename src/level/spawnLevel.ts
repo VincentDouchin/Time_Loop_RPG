@@ -89,7 +89,7 @@ export const spawnLevel = (level: Level, ...components: InstanceType<Class>[]) =
 	const buffer = getBuffer(level.pxWid, level.pxHei)
 	const map = ecs.spawn(...components)
 	if (level.layerInstances) {
-		for (const layerInstance of level.layerInstances.toReversed()) {
+		for (const layerInstance of [...level.layerInstances].reverse()) {
 			switch (layerInstance.__type) {
 			case 'IntGrid':
 			case 'Tiles': drawLayer(layerInstance, buffer)

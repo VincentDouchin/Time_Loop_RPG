@@ -1,4 +1,4 @@
-import { writeFile } from 'node:fs/promises'
+import { readdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import process from 'node:process'
 import { exec } from 'node:child_process'
@@ -14,32 +14,29 @@ for (const path of asespriteFiles) {
 	}
 }
 
-const files = await glob('./assets/**')
-const getFolder = (parts: string[]) => {
-	for (let i = -2; i > -parts.length; i--) {
-		const folder = parts.at(i)!.replace(/[ &]/g, '')
-		if (folder[0] === '_') continue
-		return folder
-	}
-}
-const getFile = (parts: string[]) => {
-	return parts.at(-1)?.split('.')[0]
-}
-const folders: Record<string, string[]> = {}
-for (const path of files) {
-	if (path?.includes('.') && ['.d.ts', '.aseprite', '.ase'].every(ext => !path.includes(ext))) {
-		const parts = path.split('\\')
-		const folder = getFolder(parts)
-		const file = getFile(parts)
-		if (folder && !folders[folder]) {
-			folders[folder] = []
-		}
+// const files = await glob('./assets/*/*')
 
-		if (folder && file && folders[folder]) {
-			folders[folder].push(file)
-		}
+// const getFile = (parts: string[]) => {
+// 	return parts.at(-1)?.split('.')[0]
+// }
+const folders: Record<string, string[]> = {}
+const assetsDir = await readdir('./assets', { recursive: true, withFileTypes: true })
+for (const dir of assetsDir) {
+	if (dir.isDirectory()) {
+		folders[dir.name] = (await readdir(`./assets/${dir.name}`)).map(x => x.split('.')[0])
 	}
 }
+// for (const path of files) {
+// 	if (path?.includes('.') && ['.d.ts', '.aseprite', '.ase'].every(ext => !path.includes(ext))) {
+// 		const parts = path.split('\\')
+// 		const folder = parts.at(-2)?.replace(/[ &]/g, '')
+// 		const file = getFile(parts)
+// 		console.log(folder, file)
+// 		// folders[folder] ??= []
+
+// 		// folders[folder].push(file)
+// 	}
+// }
 let result = ''
 for (const [folder, files] of Object.entries(folders)) {
 	result += `type ${folder} = ${files.map(x => `'${x}'`).join(' | ')}\n`

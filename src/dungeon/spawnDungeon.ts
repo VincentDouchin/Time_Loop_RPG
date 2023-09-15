@@ -75,7 +75,7 @@ export const spawnDungeon = () => {
 		new Dungeon(),
 	)
 	if (level.layerInstances) {
-		for (const layerInstance of level.layerInstances.toReversed()) {
+		for (const layerInstance of [...level.layerInstances].reverse()) {
 			if (layerInstance.__identifier.toLowerCase().includes('outside')) {
 				map.spawn(spawnLayer(layerInstance), new Position(), new Outside())
 			} else if (layerInstance.__identifier.toLowerCase().includes('inside')) {

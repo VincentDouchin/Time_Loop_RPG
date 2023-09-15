@@ -15,7 +15,7 @@ export const spawnBattleBackground = () => {
 	const level = assets.levels.minibattle.levels[0]
 	const buffer = getBuffer(level.pxWid, level.pxHei)
 	if (level.layerInstances) {
-		for (const layerInstance of level.layerInstances.toReversed()) {
+		for (const layerInstance of [...level.layerInstances].reverse()) {
 			drawLayer(layerInstance, buffer)
 		}
 		const battle = ecs.spawn(Sprite.fromBuffer(buffer), new Position(), new Battle(), CameraBounds.fromLevel(level))
