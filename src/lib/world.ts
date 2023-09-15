@@ -10,7 +10,7 @@ export const worldQuery = ecs.query.pick(World)
 export const stepWorld = () => {
 	const worldResult = worldQuery.getSingle()
 	if (worldResult) {
-		worldResult[0].timestep = time.delta / 1000
 		worldResult[0].step()
+		worldResult[0].timestep = time.delta / 1000
 	}
 }

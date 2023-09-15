@@ -22,13 +22,15 @@ const getFolder = (parts: string[]) => {
 		return folder
 	}
 }
-
+const getFile = (parts: string[]) => {
+	return parts.at(-1)?.split('.')[0]
+}
 const folders: Record<string, string[]> = {}
 for (const path of files) {
 	if (path?.includes('.') && ['.d.ts', '.aseprite', '.ase'].every(ext => !path.includes(ext))) {
 		const parts = path.split('\\')
 		const folder = getFolder(parts)
-		const file = parts.at(-1)?.split('.')[0]
+		const file = getFile(parts)
 		if (folder && !folders[folder]) {
 			folders[folder] = []
 		}

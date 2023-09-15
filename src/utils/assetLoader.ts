@@ -1,44 +1,22 @@
 import { getBuffer } from './buffer'
+
+import type { characterNames } from '@/constants/animations'
+import { animations } from '@/constants/animations'
+import { PixelTexture } from '@/lib/pixelTexture'
 import type { TextureAltasStates } from '@/lib/sprite'
 
-import { PixelTexture } from '@/lib/pixelTexture'
-import type { animations, characterNames } from '@/constants/animations'
+type pipeFn<T> = (glob: Record<string, T>) => Promise<Record<string, any>> | Record<string, any>
 
-type chainFn<T = any> = (value: T, key: string, name: string) => any
-type reduceFn<T = any> = (value: Record<string, T>) => any
-export class AssetLoaderChain<R = { default: string }> {
-	chains: Array<chainFn> = []
-	#reduce: (arg: Record<string, R>) => unknown = x => x
-	constructor(private keyTransform: (key: string) => string) {
+export class AssetLoader< T = { default: string } > {
+	#fn: pipeFn<T> = x => x
+	constructor() {}
+	pipe<F extends pipeFn<T>>(fn: F) {
+		this.#fn = fn
+		return this as AssetLoader<Awaited<ReturnType<F>>>
 	}
 
-	chain<F extends chainFn<R>>(fn: F) {
-		this.chains.push(fn)
-		return this as AssetLoaderChain<Awaited<ReturnType<F>>>
-	}
-
-	reduce< F extends reduceFn<R>>(fn: F) {
-		this.#reduce = fn
-		return this as AssetLoaderChain<ReturnType<F>[number]>
-	}
-
-	async load<K extends string>(glob: Record<string, any>) {
-		const finalResult = {} as Record<K, R>
-		for (const [key, val] of Object.entries(glob)) {
-			let result = val
-			const name = this.keyTransform(key) as K
-			for (const chain of this.chains) {
-				result = await chain(result, key, name)
-			}
-			finalResult[name] = result
-		}
-		return this.#reduce(finalResult) as Record<K, R>
-	}
-
-	clone() {
-		const newChain = new AssetLoaderChain(this.keyTransform)
-		newChain.chains = [...this.chains]
-		return newChain
+	async loadAsync<K extends string>(glob: Record<string, T>) {
+		return await this.#fn(glob) as Promise<Record< K, T[keyof T]>>
 	}
 }
 
@@ -51,6 +29,15 @@ export const loadImage = (path: string): Promise<HTMLImageElement> => new Promis
 export const getFileName = (path: string) => {
 	return	path.split(/[./]/g).at(-2) ?? ''
 }
+export const getFolderName = (path: string) => {
+	return	path.split(/[./]/g).at(-3) ?? ''
+}
+export const getAnimationName = (path: string) => {
+	const parts = getFileName(path).split(/(?=[A-Z])/).map(s => s.toLowerCase())
+	parts.shift()
+	return parts.join('')
+}
+export const getCharacterName = (path: string) => getFolderName(path).replace('_', '') as characterNames
 
 export const splitTexture = (tiles: number) => (img: HTMLImageElement) => {
 	const result: HTMLCanvasElement[] = []
@@ -65,7 +52,7 @@ export const splitTexture = (tiles: number) => (img: HTMLImageElement) => {
 }
 
 export const createAtlas = (img: HTMLImageElement, dimension: number) => {
-	const result: Array<Array<CanvasRenderingContext2D>> = []
+	const result: Array<Array<PixelTexture>> = []
 	const spriteNb = img.width / dimension
 	for (let y = 0; y < img.height / dimension; y++) {
 		result[y] = []
@@ -76,45 +63,28 @@ export const createAtlas = (img: HTMLImageElement, dimension: number) => {
 				x * dimension, y * dimension, dimension, dimension,
 				0, 0, dimension, dimension,
 			)
-			result[y].push(buffer)
+			result[y].push(new PixelTexture(buffer.canvas))
 		}
 	}
 	return result
 }
-export const joinAtlas = <K extends string>(atlas: Record<string, Array<Array<CanvasRenderingContext2D>>>, animationData: typeof animations) => {
-	const result: Record<string, Record<string, { normal: CanvasRenderingContext2D[]; shadow: CanvasRenderingContext2D[] }>> = {}
-	for (const [key, images] of Object.entries(atlas)) {
-		const parts = key.split(/(?=[A-Z])/).map(s => s.toLowerCase())
-		const character = parts[0]
-		const animation = parts.filter(key => key !== character && key !== 'shadow').join('')
-		const shadow = parts.at(-1) === 'shadow'
-		const directions = images.length === 4 ? ['right-down', 'left-down', 'right-up', 'left-up'] : ['']
-		for (let i = 0; i < directions.length; i++) {
-			const direction = directions[i]
-			const animationName = direction ? `${animation}-${direction}` : animation
-			if (!result[character]) {
-				result[character] = {}
-			}
-			if (!result[character][animationName]) {
-				result[character][animationName] = { normal: [], shadow: [] }
-			}
-			result[character][animationName][shadow ? 'shadow' : 'normal'] = images[i]
-		}
-	}
-	const finalResult: Record<string, TextureAltasStates<K>> = { }
-	for (const [character, animations] of Object.entries(result)) {
-		if (!finalResult[character]) {
-			finalResult[character] = { states: {}, speed: animationData[character as characterNames].speed } as TextureAltasStates<K>
-		}
-		for (const [animationName, textures] of Object.entries(animations)) {
-			const finalTextures: PixelTexture[] = []
-			for (let i = 0; i < textures.normal?.length; i++) {
-				// textures.shadow[i].drawImage(textures.normal[i].canvas, 0, 0)
-				finalTextures.push(new PixelTexture(textures.normal[i].canvas))
-			}
-			finalResult[character].states[animationName as K] = finalTextures
-		}
-	}
 
-	return finalResult
+export const joinAtlas = (path: string, atlas: PixelTexture[][]) => {
+	const key = getAnimationName(path)
+	if (atlas.length === 1) {
+		return { [key]: atlas[0] }
+	} else {
+		return {
+			[`${key}-right-down`]: atlas[0],
+			[`${key}-left-down`]: atlas[1],
+			[`${key}-right-up`]: atlas[2],
+			[`${key}-left-up`]: atlas[3],
+		}
+	}
+}
+export const addAnimationsData = (atlas: Record<string, PixelTexture[]>, key: characterNames): TextureAltasStates<any> => {
+	return {
+		speed: animations[key]?.speed ?? animations.default.speed,
+		states: atlas,
+	}
 }

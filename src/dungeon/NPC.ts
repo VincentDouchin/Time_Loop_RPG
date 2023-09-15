@@ -1,19 +1,19 @@
 import { Collider, ColliderDesc, RigidBodyDesc } from '@dimforge/rapier2d-compat'
-import { Group } from 'three'
 import { LDTKEntityInstance } from '../level/LDTKEntity'
 import { PlayerInputMap } from './playerInputs'
 import type { characterNames } from '@/constants/animations'
+import { dialog } from '@/constants/dialog'
+import { assets } from '@/globals/assets'
 import { ecs } from '@/globals/init'
+import type { EntityInstance, LayerInstance } from '@/level/LDTK'
 import type { Class } from '@/lib/ECS'
 import { Component, Entity } from '@/lib/ECS'
-import { world } from '@/lib/world'
-import { Position } from '@/lib/transforms'
-import type { EntityInstance, LayerInstance } from '@/level/LDTK'
-import { assets } from '@/globals/assets'
 import { textureAtlasBundle } from '@/lib/bundles'
-import { dialog } from '@/constants/dialog'
-import { TextElement, UIElement } from '@/ui/UiElement'
+import { Position } from '@/lib/transforms'
+import { world } from '@/lib/world'
 import { NineSlice } from '@/ui/NineSlice'
+import { TextElement, UIElement } from '@/ui/UiElement'
+import { Menu } from '@/ui/menu'
 
 interface NPCLDTK {
 	name: characterNames
@@ -25,14 +25,14 @@ export class NPC extends LDTKEntityInstance<NPCLDTK> {}
 @Component(ecs)
 export class Dialog {
 	#dialog: Generator
-	current: string = ''
+	current?: string | string[]
 	constructor(dialogResolver: () => Generator) {
 		this.#dialog = dialogResolver()
 		this.step()
 	}
 
-	step() {
-		this.current = this.#dialog.next().value
+	step(index?: number) {
+		this.current = this.#dialog.next(index).value
 		return this.current
 	}
 }
@@ -41,7 +41,8 @@ export const NPCBundle = (entityInstance: EntityInstance, layerInstance: LayerIn
 
 	const components: InstanceType<Class>[] = [
 		...textureAtlasBundle(assets.characters[npc.data.name], 'idle', 'left', 'down'),
-		...npc.withPosition(layerInstance),
+		npc,
+		npc.position(layerInstance),
 	]
 	const npcDialog = dialog[npc.data.name]
 	if (npcDialog) {
@@ -58,29 +59,47 @@ export class DialogArea {
 const addedDialogQuery = ecs.query.pick(Entity, Dialog).added(Dialog)
 export const spawnDialogArea = () => {
 	for (const [entity, dialog] of addedDialogQuery.getAll()) {
-		entity.spawn(new DialogArea(dialog), RigidBodyDesc.fixed(), ColliderDesc.ball(16).setSensor(true), new Position())
+		entity.spawn(new DialogArea(dialog), RigidBodyDesc.fixed(), ColliderDesc.ball(16).setSensor(true), new Position(), new Menu())
 	}
 }
 
-const dialogAreasQuery = ecs.query.pick(Entity, Collider, DialogArea, Position)
+@Component(ecs)
+export class DialogOption {
+	constructor(public index = 0) {}
+}
+
+const dialogAreasQuery = ecs.query.pick(Entity, Collider, DialogArea, Position, Menu)
 const playerQuery = ecs.query.pick(PlayerInputMap, Collider)
 export const startDialog = () => {
 	for (const [playerInputs, playerCollider] of playerQuery.getAll()) {
-		for (const [entity, collider, dialogArea, pos] of dialogAreasQuery.getAll()) {
+		for (const [entity, collider, dialogArea, pos, menu] of dialogAreasQuery.getAll()) {
 			if (world.intersectionPair(playerCollider, collider)) {
 				if (playerInputs.get('interact').justPressed) {
 					if (!dialogArea.bubble) {
-						const text = new TextElement(dialogArea.dialog.current)
 						const bubble = entity
 							.spawn(
-								...new UIElement({ color: 'black' }).withWorldPosition(pos.x, pos.y + 8),
+								...new UIElement({ color: 'black', display: 'grid', gap: '0.2rem', padding: '0.2rem' }).withWorldPosition(pos.x, pos.y + 8),
 								new NineSlice(assets.ui.textbox.path, 4, 3),
 							)
-						bubble.spawn(text)
 						dialogArea.bubble = bubble
-						dialogArea.text = text
-					} else if (dialogArea.text) {
-						dialogArea.text.textContent = dialogArea.dialog.step()
+					}
+					dialogArea.bubble.despawnChildren()
+					const line = dialogArea.dialog.step(menu.selectedEntity?.getComponent(DialogOption)?.index ?? 0)
+					if (line) {
+						const lines = typeof line === 'string' ? [line] : line
+						const boxes = lines.map((line, index) => {
+							if (dialogArea.bubble) {
+								const box = dialogArea.bubble.spawn(new UIElement(), new DialogOption(index))
+								box.spawn(new TextElement(line))
+								return box
+							}
+							return null
+						}).filter(Boolean)
+						if (boxes.length > 1) {
+							menu.fromColumn(...boxes)
+						}
+					} else {
+						dialogArea.bubble.despawn()
 					}
 				}
 			} else if (dialogArea.bubble) {

@@ -192,6 +192,12 @@ export class Entity {
 		this.ecs.despawn(this)
 	}
 
+	despawnChildren() {
+		for (const children of this.children) {
+			children.despawn()
+		}
+	}
+
 	getComponent<C extends Class>(component: C) {
 		return this.ecs.getComponentsMap(component).get(this)
 	}

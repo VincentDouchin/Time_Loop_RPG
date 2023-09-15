@@ -17,16 +17,17 @@ const uiElementQuery = ecs.query.pick(Entity, UIElement).added(UIElement).withou
 const uiTextElementQuery = ecs.query.pick(Entity, TextElement).added(TextElement).without(UIRoot)
 const UIRootQuery = ecs.query.pick(UIElement).with(UIRoot)
 const removedUiElements = ecs.query.pick(UIElement).removed(UIElement)
+const removedTextElements = ecs.query.pick(TextElement).removed(TextElement)
 export const addUIElementsToDOM = () => {
 	const root = UIRootQuery.extract()
 	if (root) {
 		for (const [entity, uiElement] of uiElementQuery.getAll()) {
-			if (entity.parent?.getComponent(Group)) {
+			if (entity.parent?.getComponent(Group) && !entity.parent?.getComponent(CSS2DObject)) {
 				entity.addComponent(new CSS2DObject(uiElement))
-			} else {
-				const parent = entity.parent?.getComponent(UIElement) ?? root
-				parent.appendChild(uiElement)
 			}
+
+			const parent = entity.parent?.getComponent(UIElement) ?? root
+			parent.appendChild(uiElement)
 		}
 		for (const [entity, textElement] of uiTextElementQuery.getAll()) {
 			const parent = entity.parent?.getComponent(UIElement) ?? root
@@ -34,6 +35,9 @@ export const addUIElementsToDOM = () => {
 		}
 	}
 	for (const [uiElement] of removedUiElements.getAll()) {
+		uiElement.remove()
+	}
+	for (const [uiElement] of removedTextElements.getAll()) {
 		uiElement.remove()
 	}
 }

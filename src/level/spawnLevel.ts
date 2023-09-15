@@ -20,7 +20,6 @@ export const drawLayer = (layerInstance: LayerInstance, buffer: CanvasRenderingC
 		const tiles = layerInstance.__type === 'IntGrid' ? 'autoLayerTiles' : 'gridTiles'
 		const tilesets = [assets.tilesets[getFileName(layerInstance.__tilesetRelPath) as tilesets]]
 		const shadowMap = assets.tilesets?.[`${getFileName(layerInstance.__tilesetRelPath)}Shadows` as tilesets]
-		debugger
 		if (shadowMap) {
 			tilesets.unshift(shadowMap)
 		}
@@ -75,14 +74,13 @@ export const spawnIntGridEntities = (map: LDTKMap, layer: LayerInstance, target:
 
 		const tileEntity = ecs.spawn(position)
 		fn(tileEntity, w, h)
-
-		// ecs.spawn(position, RigidBodyDesc.fixed(), ColliderDesc.cuboid(w / 2, h / 2), new Wall())
 	}
 }
 
 const createNavNodes = (parent: Entity, layerInstance: LayerInstance) => {
 	for (const entityInstance of layerInstance.entityInstances) {
-		const entity = parent.spawn(...new NavNode(entityInstance).withPosition(layerInstance))
+		const navNode = new NavNode(entityInstance)
+		const entity = parent.spawn(navNode, navNode.position(layerInstance))
 		LDTKEntityInstance.register(entity, entityInstance)
 	}
 }
@@ -91,7 +89,7 @@ export const spawnLevel = (level: Level, ...components: InstanceType<Class>[]) =
 	const buffer = getBuffer(level.pxWid, level.pxHei)
 	const map = ecs.spawn(...components)
 	if (level.layerInstances) {
-		for (const layerInstance of level.layerInstances.reverse()) {
+		for (const layerInstance of level.layerInstances.toReversed()) {
 			switch (layerInstance.__type) {
 			case 'IntGrid':
 			case 'Tiles': drawLayer(layerInstance, buffer)

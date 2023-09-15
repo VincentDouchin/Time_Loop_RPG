@@ -1,13 +1,16 @@
 import { OrthographicCamera } from 'three'
 import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer'
 import { displayHealth, updateHealthDisplay } from './battle/health'
-import { spawnBattleBackground } from './battle/spawnBattleBackground'
-import { battleTurn, outlineSelectedEnemy, removeDeadBattlers, spawnBattlers, winOrLose } from './battle/spawnBattlers'
+import { despawnBattle, spawnBattleBackground as spawnBattle } from './battle/spawnBattleBackground'
+import { battleTurn, outlineSelectedEnemy, removeDeadBattlers, winOrLose } from './battle/spawnBattlers'
+import { spawnDialogArea, startDialog } from './dungeon/NPC'
 import { PlayerInputMap } from './dungeon/playerInputs'
-import { isPlayerInside, movePlayer, spawnDungeon, spawnPlayer, updateCamera } from './dungeon/spawnDungeon'
+import { movePlayer } from './dungeon/playerMovement'
+import { exitDungeon, isPlayerInside, spawnDungeon } from './dungeon/spawnDungeon'
 import { ecs } from './globals/init'
+import { State } from './lib/ECS'
 import { animateSprites } from './lib/animation'
-import { adjustScreenSize, cameraFollow, initializeCameraBounds, render, spawnCamera } from './lib/camera'
+import { adjustScreenSize, cameraFollow, initializeCameraBounds, render, spawnCamera, updateCameraZoom } from './lib/camera'
 import { resetInputs } from './lib/inputs'
 import { detectInteractions, updateMousePosition } from './lib/interactions'
 import { initThree } from './lib/rendering'
@@ -19,6 +22,7 @@ import { createWorld, stepWorld } from './lib/world'
 import { MenuInputMap, spawnMenuInputs } from './menus/menuInputs'
 import { moveOverworldCharacter } from './overworld/navigation'
 import { despawnOverworld, spawnOverworld } from './overworld/spawnOverworld'
+import { spawnOverworldCharacter } from './overworld/spawnOverworldCharacter'
 import { ColorShader } from './shaders/ColorShader'
 import { OutlineShader, addOutlineShader } from './shaders/OutlineShader'
 import { addNineSlicetoUI } from './ui/NineSlice'
@@ -26,14 +30,12 @@ import { addUIElementsToDOM, spawnUIRoot } from './ui/UI'
 import { setDefaultFontSize } from './ui/UiElement'
 import { selectUiElement, unSelectDespawnMenus, updateMenus } from './ui/menu'
 import { addToScene, addToWorld, registerShader } from './utils/registerComponents'
-import { spawnOverworldCharacter } from './overworld/spawnOverworldCharacter'
-import { State } from './lib/ECS'
-import { spawnDialogArea, startDialog } from './dungeon/NPC'
 
 ecs.core
 	.onEnter(createWorld, initThree, updateMousePosition, spawnCamera, spawnMenuInputs, spawnUIRoot, setDefaultFontSize)
+	.onPreUpdate(updatePosition)
 	.onUpdate(detectInteractions, updateMenus, addOutlineShader, animateSprites, addNineSlicetoUI, addUIElementsToDOM, selectUiElement, unSelectDespawnMenus, () => Tween.update(time.delta), adjustScreenSize(), initializeCameraBounds)
-	.onPostUpdate(updatePosition, updateSpritePosition, stepWorld, cameraFollow, render)
+	.onPostUpdate(updateSpritePosition, cameraFollow, render, stepWorld)
 	.enable()
 
 addToScene(OrthographicCamera, Sprite, CSS2DObject)
@@ -44,17 +46,18 @@ export const overworldState = ecs.state
 	.onEnter(spawnOverworld)
 	.onUpdate(moveOverworldCharacter, spawnOverworldCharacter)
 	.onExit(despawnOverworld)
-	// .enable()
+	.enable()
 
 export const battleState = ecs.state
-	.onEnter(spawnBattleBackground, spawnBattlers)
+	.onEnter(spawnBattle)
 	.onUpdate(displayHealth, updateHealthDisplay, battleTurn, outlineSelectedEnemy, removeDeadBattlers, winOrLose)
+	.onExit(despawnBattle)
 	// .enable()
 
 export const dungeonState = ecs.state
-	.onEnter(spawnDungeon, spawnPlayer)
-	.onUpdate(movePlayer, isPlayerInside, updateCamera, startDialog, spawnDialogArea)
-	.enable()
+	.onEnter(spawnDungeon)
+	.onUpdate(movePlayer, isPlayerInside, updateCameraZoom(7), startDialog, spawnDialogArea, exitDungeon)
+	// .enable()
 State.exclusive(overworldState, battleState, dungeonState)
 const animate = () => {
 	ecs.update()

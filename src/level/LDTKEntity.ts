@@ -1,3 +1,4 @@
+import { ColliderDesc, RigidBody, RigidBodyDesc } from '@dimforge/rapier2d-compat'
 import type { EntityInstance, FieldInstance, LayerInstance } from './LDTK'
 import { ecs } from '@/globals/init'
 import type { Entity } from '@/lib/ECS'
@@ -10,11 +11,10 @@ export type LDTKEntityRef = () => Entity
 export class LDTKEntityInstance<EntityInstanceDef extends Record<string, any> > {
 	static refs: Record<string, Entity> = {}
 	data = {} as EntityInstanceDef
+	id: string
 	constructor(private entityInstance: EntityInstance) {
+		this.id = entityInstance.iid
 		for (const field of this.entityInstance.fieldInstances) {
-			// if (field.__type === 'Array<EntityRef>') {
-			// 	this.data[field.__identifier as keyof EntityInstanceDef] = field.__value.map((val: ForcedRefs['ReferenceToAnEntityInstance']) => () => LDTKEntityInstance.refs[val.entityIid])
-			// } else
 			this.data[field.__identifier as keyof EntityInstanceDef] = this.getValue(field)
 		}
 	}
@@ -29,24 +29,22 @@ export class LDTKEntityInstance<EntityInstanceDef extends Record<string, any> > 
 		}
 	}
 
-	withPosition(layer: LayerInstance) {
+	position(layer: LayerInstance) {
 		const w = layer.__cWid * layer.__gridSize
 		const h = layer.__cHei * layer.__gridSize
-		return [this, new Position(this.entityInstance.px[0] - w / 2, -this.entityInstance.px[1] + h / 2)]
+		return new Position(this.entityInstance.px[0] - w / 2, -this.entityInstance.px[1] + h / 2)
+	}
+
+	body(sensor = false) {
+		return [
+			RigidBodyDesc.fixed(),
+			ColliderDesc
+				.cuboid(this.entityInstance.width / 2, this.entityInstance.height / 2)
+				.setSensor(sensor),
+		]
 	}
 
 	static register(entity: Entity, entityInstance: EntityInstance) {
 		LDTKEntityInstance.refs[entityInstance.iid] = entity
 	}
-	// static new<EntityInstanceDef extends { [key: string]: any }>(entityInstance: EntityInstance, position: boolean, ...tags: Class[]) {
-	// 	return (parent: Entity) => {
-	// 		const entity = parent.spawn(new LDTKEntityInstance<EntityInstanceDef>(entityInstance), ...tags)
-
-	// 		LDTKEntityInstance.refs[entityInstance.iid] = entity
-	// 		if (position) {
-	// 			entity.addComponent(new Position(entityInstance.px[0], entityInstance.px[1]))
-	// 		}
-	// 		return entity
-	// 	}
-	// }
 }

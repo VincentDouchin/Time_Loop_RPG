@@ -3,21 +3,49 @@ interface PlayerData {
 }
 interface saveData {
 	players: PlayerData[]
+	lastNodeUUID?: string
 }
 
-let save: saveData = {
+let saveObject: saveData = {
 	players: [],
+}
+function saveToLocalStorage() {
+	localStorage.setItem('saveData', JSON.stringify(saveObject))
+}
+function createRecursiveProxy(target: any, path: string[] = []): any {
+	return new Proxy(target, {
+		get(subTarget, key) {
+			if (typeof subTarget[key] === 'object' && subTarget[key] !== null) {
+				// If the property is an object, create a Proxy for it recursively
+				return createRecursiveProxy(subTarget[key], [...path, String(key)])
+			}
+			return subTarget[key]
+		},
+		set(subTarget, key, value) {
+			subTarget[key] = value
+			saveToLocalStorage()
+			return true // Indicates success
+		},
+		deleteProperty(subTarget, key) {
+			if (key in subTarget) {
+				delete subTarget[key]
+				saveToLocalStorage()
+				return true // Indicates success
+			}
+			return false // Property not found
+		},
+	})
 }
 
 export const getSave = () => {
 	const saveDataString = localStorage.getItem('saveData')
 	if (saveDataString) {
-		save = JSON.parse(saveDataString)
+		saveObject = JSON.parse(saveDataString) as saveData
 	}
-	return new Proxy(save, {
-		set() {
-			localStorage.setItem('saveData', JSON.stringify(save))
-			return true
-		},
-	})
+
+	// Create a recursive Proxy for the save object to automatically save changes to localStorage
+	const saveProxy = createRecursiveProxy(saveObject)
+
+	return saveProxy
 }
+export const save = getSave()

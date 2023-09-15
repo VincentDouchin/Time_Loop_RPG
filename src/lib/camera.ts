@@ -55,6 +55,14 @@ export const sceneQuery = ecs.query.pick(Scene)
 export const mainCameraQuery = ecs.query.pick(OrthographicCamera).with(MainCamera)
 export const rendererQuery = ecs.query.pick(WebGLRenderer)
 export const cameraBoundsQuery = ecs.query.pick(CameraBounds)
+
+export const updateCameraZoom = (zoom: number) => () => {
+	for (const [camera] of mainCameraQuery.getAll()) {
+		camera.zoom = zoom
+		camera.updateProjectionMatrix()
+	}
+}
+
 export const cameraFollow = () => {
 	for (const [cameraPosition, camera] of mainCameraPositionQuery.getAll()) {
 		for (const [followCamera, position] of followCameraQuery.getAll()) {

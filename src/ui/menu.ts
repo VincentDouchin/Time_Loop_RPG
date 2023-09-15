@@ -10,17 +10,29 @@ export class Menu {
 	selectedEntity: Entity | null = null
 	entities: Entity[][] = []
 	#active = true
-	constructor(entities: Entity[][]) {
+	constructor(entities: Entity[][] = []) {
 		this.entities = entities
-		this.selectEntity(this.entities[0][0])
+		this.selectEntity(this.entities?.[0]?.[0])
 	}
 
 	static fromRow(...entities: Entity[]) {
-		return new Menu([entities])
+		return new Menu().fromRow(...entities)
+	}
+
+	fromRow(...entities: Entity[]) {
+		this.entities = [entities]
+		this.selectEntity(this.entities?.[0]?.[0])
+		return this
 	}
 
 	static fromColumn(...entities: Entity[]) {
-		return new Menu(entities.map(entity => [entity]))
+		return new Menu().fromColumn(...entities)
+	}
+
+	fromColumn(...entities: Entity[]) {
+		this.entities = entities.map(entity => [entity])
+		this.selectEntity(this.entities?.[0]?.[0])
+		return this
 	}
 
 	set active(active: boolean) {
@@ -44,8 +56,8 @@ export class Menu {
 		return this.#active
 	}
 
-	selectEntity(newSelectedEntity: Entity) {
-		if (this.selectedEntity !== newSelectedEntity) {
+	selectEntity(newSelectedEntity?: Entity) {
+		if (newSelectedEntity && this.selectedEntity !== newSelectedEntity) {
 			this.selectedEntity?.removeComponent(Selected)
 			this.selectedEntity = newSelectedEntity
 			this.selectedEntity.addComponent(new Selected(this))

@@ -1,20 +1,26 @@
-import { Collider, ColliderDesc, RigidBody, RigidBodyDesc } from '@dimforge/rapier2d-compat'
+import { Collider, ColliderDesc, RigidBodyDesc } from '@dimforge/rapier2d-compat'
 import { Vector2 } from 'three'
-import { PlayerInputMap, getPlayerInputMap } from './playerInputs'
+import { getPlayerInputMap } from './playerInputs'
 import { Player } from '@/battle/spawnBattlers'
-import { NPCBundle } from '@/dungeon/NPC'
+import { dialog } from '@/constants/dialog'
+import { Dialog, NPCBundle } from '@/dungeon/NPC'
 import { assets } from '@/globals/assets'
 import { ecs } from '@/globals/init'
-import type { LayerInstance } from '@/level/LDTK'
+import type { EntityInstance, LayerInstance } from '@/level/LDTK'
+import { LDTKEntityInstance } from '@/level/LDTKEntity'
 import { drawLayer, spawnIntGridEntities } from '@/level/spawnLevel'
-import { Component } from '@/lib/ECS'
+import type { Class } from '@/lib/ECS'
+import { Component, Entity } from '@/lib/ECS'
 import { textureAtlasBundle } from '@/lib/bundles'
-import { CameraBounds, CameraTarget, mainCameraQuery } from '@/lib/camera'
-import { Sprite, TextureAtlas } from '@/lib/sprite'
+import { CameraBounds, CameraTarget } from '@/lib/camera'
+import { Sprite } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
-import { worldQuery } from '@/lib/world'
+import { world, worldQuery } from '@/lib/world'
 import { getBuffer } from '@/utils/buffer'
+import { overworldState } from '@/main'
 
+@Component(ecs)
+export class Dungeon {}
 @Component(ecs)
 export class Inside {}
 @Component(ecs)
@@ -23,18 +29,53 @@ export class InsideTrigger {}
 export class Wall {}
 @Component(ecs)
 export class Outside {}
+@Component(ecs)
+export class Exit {}
 const spawnLayer = (layer: LayerInstance) => {
 	const buffer = getBuffer(layer.__cWid * layer.__gridSize, layer.__cHei * layer.__gridSize)
 	drawLayer(layer, buffer)
 	return Sprite.fromBuffer(buffer).setRenderOrder(layer.__identifier.includes('top') ? 100 : -1)
 }
 
+@Component(ecs)
+export class SignPost extends LDTKEntityInstance<{ dialog: string }> {}
+
+export const SignBundle = (sign: EntityInstance, layerInstance: LayerInstance) => {
+	const signPost = new SignPost(sign)
+	const components: InstanceType<Class>[] = [
+		signPost,
+		signPost.position(layerInstance),
+		RigidBodyDesc.fixed(),
+		ColliderDesc.cuboid(4, 4),
+	]
+	const signDialog = dialog[`sign${signPost.data.dialog}`]
+	if (signDialog) {
+		components.push(new Dialog(signDialog))
+	}
+	return components
+}
+export const PlayerBundle = (entityInstance: EntityInstance, layerInstance: LayerInstance) => {
+	const pos = new LDTKEntityInstance(entityInstance).position(layerInstance)
+	return [
+		...textureAtlasBundle(assets.characters.paladin, 'idle', 'left', 'down'),
+		pos,
+		getPlayerInputMap(),
+		new CameraTarget(),
+		new Player(),
+		RigidBodyDesc.dynamic(),
+		ColliderDesc.cuboid(3, 3),
+	]
+}
+
 export const spawnDungeon = () => {
 	const mapFile = assets.levels.tavern
 	const level = mapFile.levels[0]
-	const map = ecs.spawn(new CameraBounds().setFromCenterAndSize(new Vector2(), new Vector2(level.pxWid, level.pxHei)))
+	const map = ecs.spawn(
+		new CameraBounds().setFromCenterAndSize(new Vector2(), new Vector2(level.pxWid, level.pxHei)),
+		new Dungeon(),
+	)
 	if (level.layerInstances) {
-		for (const layerInstance of level.layerInstances.reverse()) {
+		for (const layerInstance of level.layerInstances.toReversed()) {
 			if (layerInstance.__identifier.toLowerCase().includes('outside')) {
 				map.spawn(spawnLayer(layerInstance), new Position(), new Outside())
 			} else if (layerInstance.__identifier.toLowerCase().includes('inside')) {
@@ -51,63 +92,32 @@ export const spawnDungeon = () => {
 					(wall, w, h) => {
 						wall.addComponent(new InsideTrigger(), RigidBodyDesc.fixed(), ColliderDesc.cuboid(w / 2, h / 2).setSensor(true))
 					})
+				spawnIntGridEntities(mapFile, layerInstance, t => t?.identifier === 'Shadow',
+					(wall, w, h) => {
+						const buffer = getBuffer(w + 16, h + 8)
+						buffer.fillStyle = 'black'
+						buffer.fillRect(0, 0, w + 16, h + 8)
+						wall.addComponent(Sprite.fromBuffer(buffer), new Inside())
+					})
 			}
 			if (layerInstance.__type === 'Entities') {
 				for (const entityInstance of layerInstance.entityInstances) {
 					if (entityInstance.__identifier === 'NPC') {
 						map.spawn(...NPCBundle(entityInstance, layerInstance))
 					}
+					if (entityInstance.__identifier === 'Sign') {
+						map.spawn(...SignBundle(entityInstance, layerInstance))
+					}
+					if (entityInstance.__identifier === 'Entrance') {
+						map.spawn(...PlayerBundle(entityInstance, layerInstance))
+					}
+					if (entityInstance.__identifier === 'Exit') {
+						const exit = new LDTKEntityInstance(entityInstance)
+						map.spawn(exit, exit.position(layerInstance), ...exit.body(true), new Exit())
+					}
 				}
 			}
 		}
-	}
-}
-export const spawnPlayer = () => {
-	ecs.spawn(
-		...textureAtlasBundle(assets.characters.paladin, 'idle', 'left', 'down'),
-		new Position(-50),
-		getPlayerInputMap(),
-		new CameraTarget(),
-		new Player(),
-		RigidBodyDesc.dynamic(),
-		ColliderDesc.cuboid(3, 3),
-	)
-}
-export const updateCamera = () => {
-	for (const [camera] of mainCameraQuery.getAll()) {
-		camera.zoom = 7
-		camera.updateProjectionMatrix()
-	}
-}
-
-const playerQuery = ecs.query.pick(PlayerInputMap, RigidBody, TextureAtlas<'idle' | 'walk'>, Sprite)
-export const movePlayer = () => {
-	for (const [inputs, body, atlas] of playerQuery.getAll()) {
-		const speed = 50
-		let isMoving = false
-		const vel = { x: 0, y: 0 }
-		if (inputs.get('up').pressed) {
-			isMoving = true
-			vel.y += speed
-			atlas.directionY = 'up'
-		}
-		if (inputs.get('down').pressed) {
-			isMoving = true
-			vel.y -= speed
-			atlas.directionY = 'down'
-		}
-		if (inputs.get('right').pressed) {
-			isMoving = true
-			vel.x += speed
-			atlas.directionX = 'right'
-		}
-		if (inputs.get('left').pressed) {
-			isMoving = true
-			vel.x -= speed
-			atlas.directionX = 'left'
-		}
-		body.setLinvel(vel, true)
-		atlas.state = isMoving ? 'walk' : 'idle'
 	}
 }
 
@@ -125,6 +135,21 @@ export const isPlayerInside = () => {
 		}
 		for (const [sprite] of outsideQuery.getAll()) {
 			sprite.setOpacity(isInside ? 0 : 1)
+		}
+	}
+}
+
+const exitQuery = ecs.query.pick(Collider).with(Exit)
+const dungeonQuery = ecs.query.pick(Entity).with(Dungeon)
+export const exitDungeon = () => {
+	for (const [playerCollider] of playerColliderQuery.getAll()) {
+		for (const [exitCollider] of exitQuery.getAll()) {
+			if (world.intersectionPair(playerCollider, exitCollider)) {
+				for (const [entity] of dungeonQuery.getAll()) {
+					entity.despawn()
+				}
+				overworldState.enable()
+			}
 		}
 	}
 }

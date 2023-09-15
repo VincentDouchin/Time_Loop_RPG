@@ -9,10 +9,12 @@ import { Interactable } from '@/lib/interactions'
 import { type TextureAltasStates, TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { Tween } from '@/lib/tween'
+import { overworldState } from '@/main'
 import { OutlineShader } from '@/shaders/OutlineShader'
 import { NineSlice } from '@/ui/NineSlice'
 import { TextElement, UIElement } from '@/ui/UiElement'
 import { Selected } from '@/ui/menu'
+import { sleep } from '@/utils/timing'
 
 @Component(ecs)
 export class Player {}
@@ -39,18 +41,20 @@ const battlerSpriteBundle = (side: 'left' | 'right', textureAtlas: TextureAltasS
 	return [...bundle, position, new Interactable()]
 }
 
-export const spawnBattlers = () => {
+export const spawnBattlers = (battle: Entity) => {
 	const bundle = battlerSpriteBundle('right', assets.characters.paladin)
-	const player = ecs.spawn(...bundle, new Health(20), new Player())
-	new Tween(2000).onComplete(() => player.addComponent(new Battler(BattlerType.Player, [PlayerActions.attack, PlayerActions.flee], ActionSelector.PlayerMenu, TargetSelector.PlayerTargetMenu)))
+	const player = battle.spawn(...bundle, new Health(20), new Player())
+	new Tween(2000)
+		.onComplete(() => player.addComponent(new Battler(BattlerType.Player, [PlayerActions.attack, PlayerActions.flee], ActionSelector.PlayerMenu, TargetSelector.PlayerTargetMenu)))
 
 	const enemies = [
 		assets.characters.paladin,
 	]
 	for (let i = 0; i < enemies.length; i++) {
 		const bundle = battlerSpriteBundle('left', enemies[i], i, enemies.length)
-		const enemy = ecs.spawn(...bundle, new Health(2))
-		new Tween(2000).onComplete(() => enemy.addComponent(new Battler(BattlerType.Enemy, [EnemyActions.attack], ActionSelector.EnemyAuto, TargetSelector.EnemyAuto)))
+		const enemy = battle.spawn(...bundle, new Health(2))
+		new Tween(2000)
+			.onComplete(() => enemy.addComponent(new Battler(BattlerType.Enemy, [EnemyActions.attack], ActionSelector.EnemyAuto, TargetSelector.EnemyAuto)))
 	}
 	spawnBattleUi()
 }
@@ -113,7 +117,7 @@ export const outlineSelectedEnemy = () => {
 @Component(ecs)
 export class WinOrLose {}
 
-const winOrLoseUiQuery = ecs.query.with(WinOrLose)
+export const winOrLoseUiQuery = ecs.query.pick(Entity).with(WinOrLose)
 const playerQuery = ecs.query.with(Player, Battler)
 const notPlayerQuery = ecs.query.with(Battler).without(Player)
 const battlerMenuQuery = ecs.query.pick(Entity).with(BattlerMenu)
@@ -132,6 +136,7 @@ export const winOrLose = () => {
 		if (notPlayerQuery.size === 0 && playerQuery.size > 0) {
 			ecs.spawn(...winOrLoseBundle()).spawn(new TextElement('You won!'))
 			despawnBattleMenu()
+			sleep(3000).then(() => overworldState.enable())
 		}
 	}
 }
