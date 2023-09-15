@@ -4,7 +4,6 @@ import { currentLevel } from './spawnBattleBackground'
 import { assets } from '@/globals/assets'
 import { ecs } from '@/globals/init'
 import { Component, Entity } from '@/lib/ECS'
-import { textureAtlasBundle } from '@/lib/bundles'
 import { Interactable } from '@/lib/interactions'
 import { type TextureAltasStates, TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
@@ -27,14 +26,15 @@ const spawnBattleUi = () => {
 	)
 }
 const battlerSpriteBundle = (side: 'left' | 'right', textureAtlas: TextureAltasStates<'walk' | 'idle'>, index: number = 0, length: number = 1) => {
-	const bundle = textureAtlasBundle<'walk' | 'idle'>(textureAtlas, 'walk', side, 'down')
+	const bundle = TextureAtlas.bundle<'walk' | 'idle'>(textureAtlas, 'walk', side, 'down')
 	const [sprite, _, atlas] = bundle
-	sprite.anchor(0, 0).setScale(1).setRenderOrder(10)
+	sprite.setRenderOrder(10)
 
 	const direction = side === 'right' ? -1 : 1
 	const width = sprite.scaledDimensions.x / 2
+	const height = sprite.scaledDimensions.y / 2
 	const edge = (currentLevel.pxWid / 2 - (width / 2)) * direction
-	const position = new Position(edge, index * width - width * (length - 1) / 2)
+	const position = new Position(edge, index * height - height * length / 2)
 	new Tween(1500)
 		.onUpdate(x => position.x = x, edge, edge - width * direction)
 		.onComplete(() => atlas.state = 'idle')
@@ -42,13 +42,17 @@ const battlerSpriteBundle = (side: 'left' | 'right', textureAtlas: TextureAltasS
 }
 
 export const spawnBattlers = (battle: Entity) => {
+	// ! PLAYER
 	const bundle = battlerSpriteBundle('right', assets.characters.paladin)
 	const player = battle.spawn(...bundle, new Health(20), new Player())
 	new Tween(2000)
 		.onComplete(() => player.addComponent(new Battler(BattlerType.Player, [PlayerActions.attack, PlayerActions.flee], ActionSelector.PlayerMenu, TargetSelector.PlayerTargetMenu)))
 
+	// !ENEMIES
 	const enemies = [
-		assets.characters.paladin,
+		assets.characters.goblin,
+		assets.characters.orc,
+		assets.characters.goblin,
 	]
 	for (let i = 0; i < enemies.length; i++) {
 		const bundle = battlerSpriteBundle('left', enemies[i], i, enemies.length)

@@ -14,29 +14,16 @@ for (const path of asespriteFiles) {
 	}
 }
 
-// const files = await glob('./assets/*/*')
-
-// const getFile = (parts: string[]) => {
-// 	return parts.at(-1)?.split('.')[0]
-// }
 const folders: Record<string, string[]> = {}
 const assetsDir = await readdir('./assets', { recursive: true, withFileTypes: true })
 for (const dir of assetsDir) {
 	if (dir.isDirectory()) {
-		folders[dir.name] = (await readdir(`./assets/${dir.name}`)).map(x => x.split('.')[0])
+		folders[dir.name] = (await readdir(`./assets/${dir.name}`))
+			.filter(x => !x.includes('.ase'))
+			.map(x => x.split('.')[0])
 	}
 }
-// for (const path of files) {
-// 	if (path?.includes('.') && ['.d.ts', '.aseprite', '.ase'].every(ext => !path.includes(ext))) {
-// 		const parts = path.split('\\')
-// 		const folder = parts.at(-2)?.replace(/[ &]/g, '')
-// 		const file = getFile(parts)
-// 		console.log(folder, file)
-// 		// folders[folder] ??= []
 
-// 		// folders[folder].push(file)
-// 	}
-// }
 let result = ''
 for (const [folder, files] of Object.entries(folders)) {
 	result += `type ${folder} = ${files.map(x => `'${x}'`).join(' | ')}\n`

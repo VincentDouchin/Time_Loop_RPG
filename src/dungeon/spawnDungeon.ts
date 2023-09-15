@@ -11,13 +11,14 @@ import { LDTKEntityInstance } from '@/level/LDTKEntity'
 import { drawLayer, spawnIntGridEntities } from '@/level/spawnLevel'
 import type { Class } from '@/lib/ECS'
 import { Component, Entity } from '@/lib/ECS'
-import { textureAtlasBundle } from '@/lib/bundles'
 import { CameraBounds, CameraTarget } from '@/lib/camera'
-import { Sprite } from '@/lib/sprite'
+import { Sprite, TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { world, worldQuery } from '@/lib/world'
-import { getBuffer } from '@/utils/buffer'
 import { overworldState } from '@/main'
+import { getBuffer } from '@/utils/buffer'
+import { createDebugtexture } from '@/utils/debugTexture'
+import { ColorShader } from '@/shaders/ColorShader'
 
 @Component(ecs)
 export class Dungeon {}
@@ -31,6 +32,7 @@ export class Wall {}
 export class Outside {}
 @Component(ecs)
 export class Exit {}
+
 const spawnLayer = (layer: LayerInstance) => {
 	const buffer = getBuffer(layer.__cWid * layer.__gridSize, layer.__cHei * layer.__gridSize)
 	drawLayer(layer, buffer)
@@ -57,7 +59,7 @@ export const SignBundle = (sign: EntityInstance, layerInstance: LayerInstance) =
 export const PlayerBundle = (entityInstance: EntityInstance, layerInstance: LayerInstance) => {
 	const pos = new LDTKEntityInstance(entityInstance).position(layerInstance)
 	return [
-		...textureAtlasBundle(assets.characters.paladin, 'idle', 'left', 'down'),
+		...TextureAtlas.bundle(assets.characters.paladin, 'idle', 'left', 'down'),
 		pos,
 		getPlayerInputMap(),
 		new CameraTarget(),
@@ -74,6 +76,7 @@ export const spawnDungeon = () => {
 		new CameraBounds().setFromCenterAndSize(new Vector2(), new Vector2(level.pxWid, level.pxHei)),
 		new Dungeon(),
 	)
+
 	if (level.layerInstances) {
 		for (const layerInstance of [...level.layerInstances].reverse()) {
 			if (layerInstance.__identifier.toLowerCase().includes('outside')) {
@@ -124,17 +127,23 @@ export const spawnDungeon = () => {
 const playerColliderQuery = ecs.query.pick(Collider, Position).with(Player)
 const insideTriggersQuery = ecs.query.pick(Collider).with(InsideTrigger)
 const insideQuery = ecs.query.pick(Sprite).with(Inside)
-const outsideQuery = ecs.query.pick(Sprite).with(Outside)
+const outsideQuery = ecs.query.pick(Sprite, Entity).with(Outside)
 export const isPlayerInside = () => {
 	const playerCollider = playerColliderQuery.extract()
 	const world = worldQuery.extract()
 	if (playerCollider && world) {
 		const isInside = insideTriggersQuery.toArray().some(([collider]) => world.intersectionPair(playerCollider, collider))
+
 		for (const [sprite] of insideQuery.getAll()) {
 			sprite.setOpacity(isInside ? 1 : 0)
 		}
-		for (const [sprite] of outsideQuery.getAll()) {
+		for (const [sprite, entity] of outsideQuery.getAll()) {
 			sprite.setOpacity(isInside ? 0 : 1)
+			if (isInside && !entity.getComponent(ColorShader)) {
+				entity.addComponent(new ColorShader([0, 0, 0, 0.3]))
+			} else if (entity.getComponent(ColorShader)) {
+				entity.removeComponent(ColorShader)
+			}
 		}
 	}
 }

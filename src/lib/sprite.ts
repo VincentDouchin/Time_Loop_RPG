@@ -3,6 +3,7 @@ import type { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
 import { Component } from './ECS'
 import { PixelTexture } from './pixelTexture'
 import { ShaderComposer } from './shader'
+import { Timer } from './time'
 import { ecs, renderer } from '@/globals/init'
 
 @Component(ecs)
@@ -74,7 +75,11 @@ export type directionX = 'left' | 'right'
 export type directionY = 'up' | 'down'
 export interface TextureAltasStates<K extends string > {
 	speed: { default: number } & Record<string, number>
-	states: Record<K | `${K}-${directionX}-${directionY}`, PixelTexture[]>
+	states: { [k in (K | `${K}-${directionX}-${directionY}`)]?: PixelTexture[] }
+}
+
+@Component(ecs)
+export class Animator extends Timer {
 }
 
 @Component(ecs)
@@ -84,6 +89,15 @@ export class TextureAtlas<K extends string> {
 	constructor(public atlas: TextureAltasStates<K>, public state: K, public directionX: directionX = 'left', public directionY: directionY = 'down') {}
 	get currentSpeed() {
 		return this.atlas.speed[this.state] ?? this.atlas.speed.default
+	}
+
+	static single(atlas: PixelTexture[]) {
+		return this.bundle({ states: { default: atlas }, speed: { default: 100 } }, 'default')
+	}
+
+	static bundle<K extends string>(textureAtlas: TextureAltasStates<K>, defaultState: K, directionX: directionX = 'left', directionY: directionY = 'down') {
+		const atlas = new TextureAtlas(textureAtlas, defaultState, directionX, directionY)
+		return [new Sprite(atlas.currentTexture), new Animator(100), atlas] as const
 	}
 
 	get #currentAtlas() {
@@ -97,8 +111,8 @@ export class TextureAtlas<K extends string> {
 	}
 
 	changeIndex(nb: number) {
-		const newIndex = (this.index + nb) % (this.#currentAtlas.length)
-		if (newIndex === this.#currentAtlas.length - 1) {
+		const newIndex = (this.index + nb) % (this.#currentAtlas?.length ?? 0)
+		if (newIndex === (this.#currentAtlas?.length ?? 0) - 1) {
 			for (const resolve of this.animationsPlaying) {
 				resolve()
 				this.animationsPlaying.delete(resolve)
@@ -110,7 +124,7 @@ export class TextureAtlas<K extends string> {
 	}
 
 	get currentTexture() {
-		return this.#currentAtlas[this.index]
+		return this.#currentAtlas![this.index]
 	}
 
 	increment() {

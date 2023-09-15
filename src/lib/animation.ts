@@ -1,12 +1,7 @@
 import { Component } from './ECS'
-import { Sprite, TextureAtlas } from './sprite'
+import { Animator, Sprite, TextureAtlas } from './sprite'
 import { Timer, time } from './time'
 import { ecs } from '@/globals/init'
-
-@Component(ecs)
-export class Animator extends Timer {
-
-}
 
 const animateQuery = ecs.query.pick(Animator, Sprite, TextureAtlas)
 export const animateSprites = () => {

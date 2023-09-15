@@ -1,6 +1,6 @@
-import { AssetLoader, addAnimationsData, createAtlas, getCharacterName, getFileName, joinAtlas, loadImage } from '../utils/assetLoader'
-import { type characterNames } from '@/constants/animations'
+import { AssetLoader, addAnimationsData, createAtlas, getCharacterName, getFileName, getFolderName, joinAtlas, loadImage } from '../utils/assetLoader'
 import type { LDTKMap } from '@/level/LDTK'
+import { getBuffer } from '@/utils/buffer'
 import { asyncMapValues, entries, groupByObject, mapKeys, mapValues, reduce } from '@/utils/mapFunctions'
 
 const tileSetLoader = new AssetLoader()
@@ -39,11 +39,29 @@ const fontLoader = new AssetLoader()
 			document.fonts.add(font)
 		}
 	})
+const mergeImages = (images: Record<string, HTMLImageElement>) => {
+	const img = entries(images)
+		.sort(([pathA], [pathB]) => pathA.localeCompare(pathB))
+		.map(([_, i]) => i)
+	const buffer = getBuffer(img[0].width, img[0].height)
+	for (const i of img) {
+		buffer.drawImage(i, 0, 0, i.width, i.height)
+	}
+	return buffer.canvas
+}
+const animateSpritesLoader = new AssetLoader()
+	.pipe(async (glob) => {
+		const img = await asyncMapValues(glob, m => loadImage(m.default))
+		const items = groupByObject(img, getFolderName)
+		const merged = mapValues(items, mergeImages)
+		return mapValues(merged, t => createAtlas(t)[0])
+	})
 
 export const assets = {
 	levels: await levelLoader.loadAsync<levels>(import.meta.glob('./../../assets/levels/*.json', { eager: true })),
-	tilesets: await tileSetLoader.loadAsync<tilesets>(import.meta.glob('./../../assets/levels/tilesets/*.png', { eager: true })),
-	characters: await characterLoader.loadAsync<characterNames>(import.meta.glob('./../../assets/characters/**/*[!Shadows].png', { eager: true })),
+	tilesets: await tileSetLoader.loadAsync<tilesets>(import.meta.glob('./../../assets/tilesets/*.png', { eager: true })),
+	characters: await characterLoader.loadAsync<characters>(import.meta.glob('./../../assets/characters/**/*[!Shadows].png', { eager: true })),
 	ui: await uiLoader.loadAsync<ui>(import.meta.glob('./../../assets/ui/*.png', { eager: true })),
 	fonts: await fontLoader.loadAsync<fonts>(import.meta.glob('./../../assets/fonts/*.*', { eager: true })),
+	animatedTextures: await animateSpritesLoader.loadAsync<items>(import.meta.glob('./../../assets/items/**/*.png', { eager: true })),
 }

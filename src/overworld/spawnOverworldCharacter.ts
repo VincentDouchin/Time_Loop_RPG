@@ -2,8 +2,8 @@ import { mapQuery } from './spawnOverworld'
 import { assets } from '@/globals/assets'
 import { ecs } from '@/globals/init'
 import { NavNode } from '@/level/NavNode'
-import { textureAtlasBundle } from '@/lib/bundles'
 import { CameraTarget } from '@/lib/camera'
+import { TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { Navigator } from '@/overworld/navigation'
 import { save } from '@/save/saveData'
@@ -18,7 +18,7 @@ export const spawnOverworldCharacter = () => {
 			const nodeEntity = lastNode ?? startNode
 			if (nodeEntity) {
 				const [node, position] = nodeEntity
-				const [sprite, animator, textureAtlas] = textureAtlasBundle(assets.characters.paladin, 'idle', 'left', 'down')
+				const [sprite, animator, textureAtlas] = TextureAtlas.bundle(assets.characters.paladin, 'idle', 'left', 'down')
 				sprite.anchor(0, 0)
 				mapEntity.spawn(
 					sprite,

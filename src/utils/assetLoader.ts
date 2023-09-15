@@ -1,6 +1,5 @@
 import { getBuffer } from './buffer'
 
-import type { characterNames } from '@/constants/animations'
 import { animations } from '@/constants/animations'
 import { PixelTexture } from '@/lib/pixelTexture'
 import type { TextureAltasStates } from '@/lib/sprite'
@@ -33,11 +32,15 @@ export const getFolderName = (path: string) => {
 	return	path.split(/[./]/g).at(-3) ?? ''
 }
 export const getAnimationName = (path: string) => {
-	const parts = getFileName(path).split(/(?=[A-Z])/).map(s => s.toLowerCase())
+	let parts = getFileName(path).split(/(?=[A-Z])/).map(s => s.toLowerCase())
 	parts.shift()
+	const fromCreatures = parts.indexOf('creatures')
+	if (fromCreatures !== -1) {
+		parts = parts.filter((_, i) => i !== fromCreatures && i !== fromCreatures + 1)
+	}
 	return parts.join('')
 }
-export const getCharacterName = (path: string) => getFolderName(path).replace('_', '') as characterNames
+export const getCharacterName = (path: string) => getFolderName(path).replace('_', '') as characters
 
 export const splitTexture = (tiles: number) => (img: HTMLImageElement) => {
 	const result: HTMLCanvasElement[] = []
@@ -51,7 +54,8 @@ export const splitTexture = (tiles: number) => (img: HTMLImageElement) => {
 	return result
 }
 
-export const createAtlas = (img: HTMLImageElement, dimension: number) => {
+export const createAtlas = (img: HTMLImageElement | HTMLCanvasElement, dim?: number) => {
+	const dimension = dim ?? img.height
 	const result: Array<Array<PixelTexture>> = []
 	const spriteNb = img.width / dimension
 	for (let y = 0; y < img.height / dimension; y++) {
@@ -82,7 +86,7 @@ export const joinAtlas = (path: string, atlas: PixelTexture[][]) => {
 		}
 	}
 }
-export const addAnimationsData = (atlas: Record<string, PixelTexture[]>, key: characterNames): TextureAltasStates<any> => {
+export const addAnimationsData = (atlas: Record<string, PixelTexture[]>, key: characters): TextureAltasStates<any> => {
 	return {
 		speed: animations[key]?.speed ?? animations.default.speed,
 		states: atlas,

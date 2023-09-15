@@ -8,12 +8,12 @@ import { ecs } from '@/globals/init'
 import type { EntityInstance, LayerInstance } from '@/level/LDTK'
 import type { Class } from '@/lib/ECS'
 import { Component, Entity } from '@/lib/ECS'
-import { textureAtlasBundle } from '@/lib/bundles'
 import { Position } from '@/lib/transforms'
 import { world } from '@/lib/world'
 import { NineSlice } from '@/ui/NineSlice'
 import { TextElement, UIElement } from '@/ui/UiElement'
 import { Menu } from '@/ui/menu'
+import { TextureAtlas } from '@/lib/sprite'
 
 interface NPCLDTK {
 	name: characterNames
@@ -40,7 +40,7 @@ export const NPCBundle = (entityInstance: EntityInstance, layerInstance: LayerIn
 	const npc = new NPC(entityInstance)
 
 	const components: InstanceType<Class>[] = [
-		...textureAtlasBundle(assets.characters[npc.data.name], 'idle', 'left', 'down'),
+		...TextureAtlas.bundle(assets.characters[npc.data.name], 'idle', 'left', 'down'),
 		npc,
 		npc.position(layerInstance),
 	]
