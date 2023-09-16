@@ -46,7 +46,7 @@ export const overworldState = ecs.state
 	.onEnter(spawnOverworld)
 	.onUpdate(moveOverworldCharacter, spawnOverworldCharacter)
 	.onExit(despawnOverworld)
-	.enable()
+	// .enable()
 
 export const battleState = ecs.state
 	.onEnter(spawnBattle)
@@ -57,11 +57,12 @@ export const battleState = ecs.state
 export const dungeonState = ecs.state
 	.onEnter(spawnDungeon)
 	.onUpdate(movePlayer, isPlayerInside, updateCameraZoom(7), startDialog, spawnDialogArea, exitDungeon)
-	// .enable()
+	.enable()
 State.exclusive(overworldState, battleState, dungeonState)
 const animate = () => {
 	ecs.update()
 	time.tick(Date.now())
 	requestAnimationFrame(animate)
 }
+await new Promise(resolve => setTimeout(resolve, 5000))
 animate()

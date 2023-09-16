@@ -2,7 +2,7 @@ import { Box2, OrthographicCamera, Scene, Texture, Vector2, WebGLRenderer } from
 
 import { Sprite } from './sprite'
 import { cssRenderer, ecs, renderer } from '@/globals/init'
-import { Component } from '@/lib/ECS'
+import { Component, SystemSet } from '@/lib/ECS'
 import { Position } from '@/lib/transforms'
 import type { Level } from '@/level/LDTK'
 
@@ -126,7 +126,7 @@ export const adjustScreenSize = () => {
 		screenSize.changed = true
 	})
 	const cameraBoundsQuery = ecs.query.pick(Sprite, Position).with(CameraBounds)
-	return () => {
+	return SystemSet(() => {
 		if (screenSize.changed) {
 			for (const anyRenderer of [renderer, cssRenderer]) {
 				anyRenderer.setSize(window.innerWidth, window.innerHeight)
@@ -149,5 +149,5 @@ export const adjustScreenSize = () => {
 				camera.updateProjectionMatrix()
 			}
 		}
-	}
+	}).throttle(100)
 }
