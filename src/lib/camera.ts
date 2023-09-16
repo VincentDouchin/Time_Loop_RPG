@@ -119,7 +119,7 @@ export const initializeCameraBounds = () => {
 	}
 }
 export const adjustScreenSize = () => {
-	const screenSize = { x: window.innerWidth, y: window.innerHeight, changed: false }
+	const screenSize = { x: window.innerWidth, y: window.innerHeight / 2, changed: false }
 	window.addEventListener('resize', () => {
 		screenSize.x = window.innerWidth
 		screenSize.y = window.innerHeight

@@ -1,8 +1,6 @@
 import { ActionSelector, Battler, BattlerMenu, BattlerType, EnemyActions, PlayerActions, TargetSelector, selectAction, selectNextBattler, selectTargets, takeAction } from './battleActions'
 import { Health } from './health'
-import { currentLevel } from './spawnBattleBackground'
-import { assets } from '@/globals/assets'
-import { ecs } from '@/globals/init'
+import { assets, ecs } from '@/globals/init'
 import { Component, Entity } from '@/lib/ECS'
 import { Interactable } from '@/lib/interactions'
 import { type TextureAltasStates, TextureAtlas } from '@/lib/sprite'
@@ -33,7 +31,7 @@ const battlerSpriteBundle = (side: 'left' | 'right', textureAtlas: TextureAltasS
 	const direction = side === 'right' ? -1 : 1
 	const width = sprite.scaledDimensions.x / 2
 	const height = sprite.scaledDimensions.y / 2
-	const edge = (currentLevel.pxWid / 2 - (width / 2)) * direction
+	const edge = (assets.levels.minibattle.levels[0].pxWid / 2 - (width / 2)) * direction
 	const position = new Position(edge, index * height - height * length / 2)
 	new Tween(1500)
 		.onUpdate(x => position.x = x, edge, edge - width * direction)

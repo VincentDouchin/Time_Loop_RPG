@@ -1,7 +1,8 @@
 import { RigidBody } from '@dimforge/rapier2d-compat'
 import { Group, Vector2, Vector3 } from 'three'
 import { Component, Entity } from './ECS'
-import { ecs } from '@/globals/init'
+import { time } from './time'
+import { ecs, world } from '@/globals/init'
 
 @Component(ecs)
 export class Position extends Vector3 {
@@ -43,4 +44,8 @@ export const updatePosition = () => {
 			pos.init = true
 		}
 	}
+}
+export const stepWorld = () => {
+	world.timestep = time.delta / 1000
+	world.step()
 }

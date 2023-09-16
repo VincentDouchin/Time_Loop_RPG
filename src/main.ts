@@ -16,9 +16,8 @@ import { detectInteractions, updateMousePosition } from './lib/interactions'
 import { initThree } from './lib/rendering'
 import { Sprite } from './lib/sprite'
 import { time } from './lib/time'
-import { updatePosition, updateSpritePosition } from './lib/transforms'
+import { stepWorld, updatePosition, updateSpritePosition } from './lib/transforms'
 import { Tween } from './lib/tween'
-import { createWorld, stepWorld } from './lib/world'
 import { MenuInputMap, spawnMenuInputs } from './menus/menuInputs'
 import { moveOverworldCharacter } from './overworld/navigation'
 import { despawnOverworld, spawnOverworld } from './overworld/spawnOverworld'
@@ -32,7 +31,7 @@ import { selectUiElement, unSelectDespawnMenus, updateMenus } from './ui/menu'
 import { addToScene, addToWorld, registerShader } from './utils/registerComponents'
 
 ecs.core
-	.onEnter(createWorld, initThree, updateMousePosition, spawnCamera, spawnMenuInputs, spawnUIRoot, setDefaultFontSize)
+	.onEnter(initThree, updateMousePosition, spawnCamera, spawnMenuInputs, spawnUIRoot, setDefaultFontSize)
 	.onPreUpdate(updatePosition)
 	.onUpdate(detectInteractions, updateMenus, addOutlineShader, animateSprites, addNineSlicetoUI, addUIElementsToDOM, selectUiElement, unSelectDespawnMenus, () => Tween.update(time.delta), adjustScreenSize(), initializeCameraBounds)
 	.onPostUpdate(updateSpritePosition, cameraFollow, render, stepWorld)
@@ -58,11 +57,12 @@ export const dungeonState = ecs.state
 	.onEnter(spawnDungeon)
 	.onUpdate(movePlayer, isPlayerInside, updateCameraZoom(7), startDialog, spawnDialogArea, exitDungeon)
 	.enable()
+
 State.exclusive(overworldState, battleState, dungeonState)
-const animate = () => {
+const animate = async (delta: number) => {
+	time.tick(delta)
 	ecs.update()
-	time.tick(Date.now())
 	requestAnimationFrame(animate)
 }
-await new Promise(resolve => setTimeout(resolve, 5000))
-animate()
+
+animate(performance.now())

@@ -1,6 +1,5 @@
-import { Component } from './ECS'
 import { Animator, Sprite, TextureAtlas } from './sprite'
-import { Timer, time } from './time'
+import { time } from './time'
 import { ecs } from '@/globals/init'
 
 const animateQuery = ecs.query.pick(Animator, Sprite, TextureAtlas)

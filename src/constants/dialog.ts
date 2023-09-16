@@ -1,7 +1,6 @@
-import type { characterNames } from './animations'
 import { lockPlayer, unlockPlayer } from './dialogHelpers'
 
-export const dialog: Partial<Record<characterNames | `sign${string}`, () => Generator>> = {
+export const dialog: Partial<Record<characters | `sign${string}`, () => Generator>> = {
 	*howard() {
 		yield 'Hello adventurer!'
 		lockPlayer()

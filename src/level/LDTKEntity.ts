@@ -37,7 +37,7 @@ export class LDTKEntityInstance<EntityInstanceDef extends Record<string, any> > 
 
 	body(sensor = false) {
 		return [
-			RigidBodyDesc.fixed(),
+			RigidBodyDesc.fixed().lockRotations(),
 			ColliderDesc
 				.cuboid(this.entityInstance.width / 2, this.entityInstance.height / 2)
 				.setSensor(sensor),

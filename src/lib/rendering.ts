@@ -15,7 +15,6 @@ export const initThree = () => {
 	initRenderer(cssRenderer)
 	cssRenderer.domElement.style.position = 'fixed'
 	renderer.outputColorSpace = LinearSRGBColorSpace
-	renderer.setPixelRatio(devicePixelRatio)
 	renderer.setClearColor(0xFFFFFF, 0)
 	renderer.autoClear = false
 

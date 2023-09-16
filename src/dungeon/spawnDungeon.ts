@@ -4,8 +4,7 @@ import { getPlayerInputMap } from './playerInputs'
 import { Player } from '@/battle/spawnBattlers'
 import { dialog } from '@/constants/dialog'
 import { Dialog, NPCBundle } from '@/dungeon/NPC'
-import { assets } from '@/globals/assets'
-import { ecs } from '@/globals/init'
+import { assets, ecs, world } from '@/globals/init'
 import type { EntityInstance, LayerInstance } from '@/level/LDTK'
 import { LDTKEntityInstance } from '@/level/LDTKEntity'
 import { drawLayer, spawnIntGridEntities } from '@/level/spawnLevel'
@@ -14,11 +13,9 @@ import { Component, Entity } from '@/lib/ECS'
 import { CameraBounds, CameraTarget } from '@/lib/camera'
 import { Sprite, TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
-import { world, worldQuery } from '@/lib/world'
 import { overworldState } from '@/main'
-import { getBuffer } from '@/utils/buffer'
-import { createDebugtexture } from '@/utils/debugTexture'
 import { ColorShader } from '@/shaders/ColorShader'
+import { getBuffer } from '@/utils/buffer'
 
 @Component(ecs)
 export class Dungeon {}
@@ -47,7 +44,7 @@ export const SignBundle = (sign: EntityInstance, layerInstance: LayerInstance) =
 	const components: InstanceType<Class>[] = [
 		signPost,
 		signPost.position(layerInstance),
-		RigidBodyDesc.fixed(),
+		RigidBodyDesc.fixed().lockRotations(),
 		ColliderDesc.cuboid(4, 4),
 	]
 	const signDialog = dialog[`sign${signPost.data.dialog}`]
@@ -56,6 +53,7 @@ export const SignBundle = (sign: EntityInstance, layerInstance: LayerInstance) =
 	}
 	return components
 }
+
 export const PlayerBundle = (entityInstance: EntityInstance, layerInstance: LayerInstance) => {
 	const pos = new LDTKEntityInstance(entityInstance).position(layerInstance)
 	return [
@@ -64,7 +62,7 @@ export const PlayerBundle = (entityInstance: EntityInstance, layerInstance: Laye
 		getPlayerInputMap(),
 		new CameraTarget(),
 		new Player(),
-		RigidBodyDesc.dynamic(),
+		RigidBodyDesc.dynamic().lockRotations(),
 		ColliderDesc.cuboid(3, 3),
 	]
 }
@@ -89,11 +87,11 @@ export const spawnDungeon = () => {
 			if (layerInstance.__identifier === 'Collisions') {
 				spawnIntGridEntities(mapFile, layerInstance, t => t?.identifier === 'Wall',
 					(wall, w, h) => {
-						wall.addComponent(RigidBodyDesc.fixed(), ColliderDesc.cuboid(w / 2, h / 2), new Wall())
+						wall.addComponent(RigidBodyDesc.fixed().lockRotations(), ColliderDesc.cuboid(w / 2, h / 2), new Wall())
 					})
 				spawnIntGridEntities(mapFile, layerInstance, t => t?.identifier === 'Inside',
 					(wall, w, h) => {
-						wall.addComponent(new InsideTrigger(), RigidBodyDesc.fixed(), ColliderDesc.cuboid(w / 2, h / 2).setSensor(true))
+						wall.addComponent(new InsideTrigger(), RigidBodyDesc.fixed().lockRotations(), ColliderDesc.cuboid(w / 2, h / 2).setSensor(true))
 					})
 				spawnIntGridEntities(mapFile, layerInstance, t => t?.identifier === 'Shadow',
 					(wall, w, h) => {
@@ -130,8 +128,8 @@ const insideQuery = ecs.query.pick(Sprite).with(Inside)
 const outsideQuery = ecs.query.pick(Sprite, Entity).with(Outside)
 export const isPlayerInside = () => {
 	const playerCollider = playerColliderQuery.extract()
-	const world = worldQuery.extract()
-	if (playerCollider && world) {
+
+	if (playerCollider) {
 		const isInside = insideTriggersQuery.toArray().some(([collider]) => world.intersectionPair(playerCollider, collider))
 
 		for (const [sprite] of insideQuery.getAll()) {

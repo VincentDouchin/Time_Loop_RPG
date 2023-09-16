@@ -1,6 +1,6 @@
 import { spawnBattlers, winOrLoseUiQuery } from './spawnBattlers'
-import { assets } from '@/globals/assets'
-import { ecs } from '@/globals/init'
+
+import { assets, ecs } from '@/globals/init'
 import { campfireBundle } from '@/items/campfire'
 import { drawLayer } from '@/level/spawnLevel'
 import { Component, Entity } from '@/lib/ECS'
@@ -11,7 +11,6 @@ import { getBuffer } from '@/utils/buffer'
 
 @Component(ecs)
 export class Battle {}
-export const currentLevel = assets.levels.minibattle.levels[0]
 export const spawnBattleBackground = () => {
 	const level = assets.levels.minibattle.levels[0]
 	const buffer = getBuffer(level.pxWid, level.pxHei)

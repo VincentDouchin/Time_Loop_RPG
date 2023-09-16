@@ -1,6 +1,5 @@
 import { mapQuery } from './spawnOverworld'
-import { assets } from '@/globals/assets'
-import { ecs } from '@/globals/init'
+import { assets, ecs } from '@/globals/init'
 import { NavNode } from '@/level/NavNode'
 import { CameraTarget } from '@/lib/camera'
 import { TextureAtlas } from '@/lib/sprite'

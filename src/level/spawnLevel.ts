@@ -1,8 +1,7 @@
 import type { IntGridValueDefinition, LDTKMap, LayerInstance, Level } from './LDTK'
 import { LDTKEntityInstance } from './LDTKEntity'
 import { NavNode } from './NavNode'
-import { assets } from '@/globals/assets'
-import { ecs } from '@/globals/init'
+import { assets, ecs } from '@/globals/init'
 import type { Class, Entity } from '@/lib/ECS'
 import { Component } from '@/lib/ECS'
 

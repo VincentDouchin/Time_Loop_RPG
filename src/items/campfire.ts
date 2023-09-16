@@ -1,4 +1,4 @@
-import { assets } from '@/globals/assets'
+import { assets } from '@/globals/init'
 import type { EntityInstance, LayerInstance } from '@/level/LDTK'
 import { LDTKEntityInstance } from '@/level/LDTKEntity'
 import { TextureAtlas } from '@/lib/sprite'

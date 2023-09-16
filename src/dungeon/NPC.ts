@@ -1,22 +1,19 @@
 import { Collider, ColliderDesc, RigidBodyDesc } from '@dimforge/rapier2d-compat'
 import { LDTKEntityInstance } from '../level/LDTKEntity'
 import { PlayerInputMap } from './playerInputs'
-import type { characterNames } from '@/constants/animations'
 import { dialog } from '@/constants/dialog'
-import { assets } from '@/globals/assets'
-import { ecs } from '@/globals/init'
+import { assets, ecs, world } from '@/globals/init'
 import type { EntityInstance, LayerInstance } from '@/level/LDTK'
 import type { Class } from '@/lib/ECS'
 import { Component, Entity } from '@/lib/ECS'
+import { TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
-import { world } from '@/lib/world'
 import { NineSlice } from '@/ui/NineSlice'
 import { TextElement, UIElement } from '@/ui/UiElement'
 import { Menu } from '@/ui/menu'
-import { TextureAtlas } from '@/lib/sprite'
 
 interface NPCLDTK {
-	name: characterNames
+	name: characters
 }
 
 @Component(ecs)
@@ -59,7 +56,7 @@ export class DialogArea {
 const addedDialogQuery = ecs.query.pick(Entity, Dialog).added(Dialog)
 export const spawnDialogArea = () => {
 	for (const [entity, dialog] of addedDialogQuery.getAll()) {
-		entity.spawn(new DialogArea(dialog), RigidBodyDesc.fixed(), ColliderDesc.ball(16).setSensor(true), new Position(), new Menu())
+		entity.spawn(new DialogArea(dialog), RigidBodyDesc.fixed().lockRotations(), ColliderDesc.ball(16).setSensor(true), new Position(), new Menu())
 	}
 }
 
