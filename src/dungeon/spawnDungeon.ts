@@ -1,6 +1,5 @@
 import { Collider, ColliderDesc, RigidBodyDesc } from '@dimforge/rapier2d-compat'
 import { Vector2 } from 'three'
-import nipplejs from 'nipplejs'
 import { getPlayerInputMap } from './playerInputs'
 import { Player } from '@/battle/spawnBattlers'
 import { dialog } from '@/constants/dialog'

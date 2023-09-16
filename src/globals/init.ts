@@ -1,7 +1,6 @@
 import { Collider, ColliderDesc, ImpulseJoint, RigidBody, RigidBodyDesc, World } from '@dimforge/rapier2d-compat'
 import { Group, OrthographicCamera, Scene, WebGLRenderer } from 'three'
 import { CSS2DObject, CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer'
-import nipplejs from 'nipplejs'
 import { loadAssets } from './assets'
 import { createWorld } from '@/lib/world'
 import { PixelTexture } from '@/lib/pixelTexture'

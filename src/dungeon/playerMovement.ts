@@ -11,7 +11,6 @@ export class LockedMovement {}
 const playerQuery = ecs.query.pick(PlayerInputMap, RigidBody, TextureAtlas<'idle' | 'walk'>, Sprite).without(LockedMovement)
 export const movePlayer = () => {
 	for (const [inputs, body, atlas] of playerQuery.getAll()) {
-		const speed = 1
 		let isMoving = false
 		const vel = new Vector2()
 		if (inputs.get('up').pressed) {
