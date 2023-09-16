@@ -1,6 +1,6 @@
 import { ecs } from '@/globals/init'
 import { Component } from '@/lib/ECS'
-import { InputMap } from '@/lib/inputs'
+import { GAMEPAD_AXIS, GAMEPAD_BUTTON, InputMap } from '@/lib/inputs'
 
 const PlayerInputs = ['up', 'down', 'left', 'right', 'interact'] as const
 @Component(ecs)
@@ -11,11 +11,11 @@ export class PlayerInputMap extends InputMap<typeof PlayerInputs> {
 }
 
 export const getPlayerInputMap = () => {
-	const map = new PlayerInputMap()
-	map.get('up').setKey('KeyW')
-	map.get('down').setKey('KeyS')
-	map.get('left').setKey('KeyA')
-	map.get('right').setKey('KeyD')
-	map.get('interact').setKey('Enter')
+	const map = new PlayerInputMap().setGamepad(0)
+	map.get('up').setKey('KeyW').setButton(GAMEPAD_BUTTON.UP).setAxis(GAMEPAD_AXIS.LEFT_Y, 'up')
+	map.get('down').setKey('KeyS').setButton(GAMEPAD_BUTTON.DOWN).setAxis(GAMEPAD_AXIS.LEFT_Y, 'down')
+	map.get('left').setKey('KeyA').setButton(GAMEPAD_BUTTON.LEFT).setAxis(GAMEPAD_AXIS.LEFT_X, 'up')
+	map.get('right').setKey('KeyD').setButton(GAMEPAD_BUTTON.RIGHT).setAxis(GAMEPAD_AXIS.LEFT_X, 'down')
+	map.get('interact').setKey('Enter').setButton(GAMEPAD_BUTTON.A)
 	return map
 }

@@ -2,9 +2,8 @@ import { RigidBody } from '@dimforge/rapier2d-compat'
 import { Vector2 } from 'three'
 import { PlayerInputMap } from './playerInputs'
 import { ecs } from '@/globals/init'
-import { Sprite, TextureAtlas } from '@/lib/sprite'
 import { Component } from '@/lib/ECS'
-import { time } from '@/lib/time'
+import { Sprite, TextureAtlas } from '@/lib/sprite'
 
 @Component(ecs)
 export class LockedMovement {}
@@ -17,25 +16,27 @@ export const movePlayer = () => {
 		const vel = new Vector2()
 		if (inputs.get('up').pressed) {
 			isMoving = true
-			vel.y += speed
+			vel.y += inputs.get('up').pressed
 			atlas.directionY = 'up'
 		}
 		if (inputs.get('down').pressed) {
 			isMoving = true
-			vel.y -= speed
+			vel.y -= inputs.get('down').pressed
 			atlas.directionY = 'down'
 		}
 		if (inputs.get('right').pressed) {
 			isMoving = true
-			vel.x += speed
+			vel.x += inputs.get('right').pressed
 			atlas.directionX = 'right'
 		}
 		if (inputs.get('left').pressed) {
 			isMoving = true
-			vel.x -= speed
+			vel.x -= inputs.get('left').pressed
 			atlas.directionX = 'left'
 		}
-		vel.normalize().multiplyScalar(70)
+		const normalized = vel.clone().normalize()
+		vel.max(normalized).multiplyScalar(70)
+
 		body.setLinvel(vel, true)
 		atlas.state = isMoving ? 'walk' : 'idle'
 	}

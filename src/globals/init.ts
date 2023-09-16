@@ -1,13 +1,12 @@
-import { Collider, ColliderDesc, ImpulseJoint, RigidBody, RigidBodyDesc, World, init } from '@dimforge/rapier2d-compat'
+import { Collider, ColliderDesc, ImpulseJoint, RigidBody, RigidBodyDesc, World } from '@dimforge/rapier2d-compat'
 import { Group, OrthographicCamera, Scene, WebGLRenderer } from 'three'
 import { CSS2DObject, CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer'
 import { loadAssets } from './assets'
+import { createWorld } from '@/lib/world'
 import { PixelTexture } from '@/lib/pixelTexture'
 import { ECS } from '@/lib/ECS'
-import { createWorld } from '@/lib/world'
 
 export const world = await createWorld()
-world.timestep = 60 / 1000
 export const assets = await loadAssets()
 export const ecs = new ECS()
 // await new Promise(resolve => setTimeout(resolve, 5000))
