@@ -1,3 +1,4 @@
+import nipplejs from 'nipplejs'
 import type { Class } from './ECS'
 import { Component } from './ECS'
 import { ecs } from '@/globals/init'
@@ -41,17 +42,59 @@ window.addEventListener('keyup', (e) => {
 	}
 })
 
+const touchJoystickInputs = {
+	up: 0,
+	down: 0,
+	right: 0,
+	left: 0,
+}
+const touchJoystick = nipplejs.create({})
+touchJoystick.on('move', (_, data) => {
+	const force = Math.min(30, data.distance) / 30
+	if (Math.abs(data.vector.x) > 0.1) {
+		if (data.vector.x > 0) {
+			touchJoystickInputs.right = Math.abs(data.vector.x)
+			touchJoystickInputs.left = 0
+		} else {
+			touchJoystickInputs.left = Math.abs(data.vector.x)
+			touchJoystickInputs.right = 0
+		}
+	}
+	if (Math.abs(data.vector.y) > 0.1) {
+		if (data.vector.y > 0) {
+			touchJoystickInputs.up = Math.abs(data.vector.y)
+			touchJoystickInputs.down = 0
+		} else {
+			touchJoystickInputs.down = Math.abs(data.vector.y)
+			touchJoystickInputs.up = 0
+		}
+	}
+})
+
+touchJoystick.on('removed', () => {
+	touchJoystickInputs.up = 0
+	touchJoystickInputs.down = 0
+	touchJoystickInputs.left = 0
+	touchJoystickInputs.right = 0
+})
+
 class Input {
 	pressed = 0
 	wasPressed = 0
 	#buttons: number[] = []
 	#axis: { index: number; direction: 'up' | 'down' }[] = []
 	#codes: string[] = []
+	#touchAxis?: keyof typeof touchJoystickInputs
 	setKey(...codes: string[]) {
 		for (const code of codes) {
 			keys[code] = false
 		}
 		this.#codes.push(...codes)
+		return this
+	}
+
+	setTouchAxis(axis: keyof typeof touchJoystickInputs) {
+		this.#touchAxis = axis
 		return this
 	}
 
@@ -70,6 +113,9 @@ class Input {
 			if (keys[code]) {
 				this.pressed = 1
 			}
+		}
+		if (this.#touchAxis && Math.abs(touchJoystickInputs[this.#touchAxis]) > 0.01) {
+			this.pressed = touchJoystickInputs[this.#touchAxis]
 		}
 		if (gamepad) {
 			for (const button of this.#buttons) {
