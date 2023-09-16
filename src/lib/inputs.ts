@@ -42,6 +42,10 @@ window.addEventListener('keyup', (e) => {
 	}
 })
 
+window.addEventListener('touchstart', () => {
+	document.body.requestFullscreen()
+})
+
 const touchJoystickInputs = {
 	up: 0,
 	down: 0,
@@ -50,7 +54,6 @@ const touchJoystickInputs = {
 }
 const touchJoystick = nipplejs.create({})
 touchJoystick.on('move', (_, data) => {
-	const force = Math.min(30, data.distance) / 30
 	if (Math.abs(data.vector.x) > 0.1) {
 		if (data.vector.x > 0) {
 			touchJoystickInputs.right = Math.abs(data.vector.x)
