@@ -1,3 +1,4 @@
+import type { JoystickManager } from 'nipplejs'
 import nipplejs from 'nipplejs'
 import type { Class } from './ECS'
 import { Component } from './ECS'
@@ -51,35 +52,45 @@ const touchJoystickInputs = {
 	down: 0,
 	right: 0,
 	left: 0,
+	reset() {
+		this.up = 0
+		this.down = 0
+		this.left = 0
+		this.right = 0
+	},
 }
-const touchJoystick = nipplejs.create({})
-touchJoystick.on('move', (_, data) => {
-	if (Math.abs(data.vector.x) > 0.1) {
-		if (data.vector.x > 0) {
-			touchJoystickInputs.right = Math.abs(data.vector.x)
-			touchJoystickInputs.left = 0
-		} else {
-			touchJoystickInputs.left = Math.abs(data.vector.x)
-			touchJoystickInputs.right = 0
+type touchDirection = 'up' | 'down' | 'left' | 'right'
+let touchJoystick: null | JoystickManager = null
+export const enableTouchJoystick = () => {
+	touchJoystick = nipplejs.create({})
+	touchJoystick.on('move', (_, data) => {
+		const force = data.distance / 50
+		if (Math.abs(data.vector.x) > 0.1) {
+			if (data.vector.x > 0) {
+				touchJoystickInputs.right = Math.abs(data.vector.x) * force
+				touchJoystickInputs.left = 0
+			} else {
+				touchJoystickInputs.left = Math.abs(data.vector.x) * force
+				touchJoystickInputs.right = 0
+			}
 		}
-	}
-	if (Math.abs(data.vector.y) > 0.1) {
-		if (data.vector.y > 0) {
-			touchJoystickInputs.up = Math.abs(data.vector.y)
-			touchJoystickInputs.down = 0
-		} else {
-			touchJoystickInputs.down = Math.abs(data.vector.y)
-			touchJoystickInputs.up = 0
+		if (Math.abs(data.vector.y) > 0.1) {
+			if (data.vector.y > 0) {
+				touchJoystickInputs.up = Math.abs(data.vector.y) * force
+				touchJoystickInputs.down = 0
+			} else {
+				touchJoystickInputs.down = Math.abs(data.vector.y) * force
+				touchJoystickInputs.up = 0
+			}
 		}
-	}
-})
-
-touchJoystick.on('removed', () => {
-	touchJoystickInputs.up = 0
-	touchJoystickInputs.down = 0
-	touchJoystickInputs.left = 0
-	touchJoystickInputs.right = 0
-})
+	})
+	touchJoystick.on('removed', () => touchJoystickInputs.reset())
+}
+export const disableTouchJoystick = () => {
+	touchJoystick?.destroy()
+	touchJoystick = null
+	touchJoystickInputs.reset()
+}
 
 class Input {
 	pressed = 0
@@ -87,7 +98,7 @@ class Input {
 	#buttons: number[] = []
 	#axis: { index: number; direction: 'up' | 'down' }[] = []
 	#codes: string[] = []
-	#touchAxis?: keyof typeof touchJoystickInputs
+	#touchAxis?: touchDirection
 	setKey(...codes: string[]) {
 		for (const code of codes) {
 			keys[code] = false
@@ -96,7 +107,7 @@ class Input {
 		return this
 	}
 
-	setTouchAxis(axis: keyof typeof touchJoystickInputs) {
+	setTouchAxis(axis: touchDirection) {
 		this.#touchAxis = axis
 		return this
 	}

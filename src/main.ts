@@ -11,7 +11,7 @@ import { ecs } from './globals/init'
 import { State } from './lib/ECS'
 import { animateSprites } from './lib/animation'
 import { adjustScreenSize, cameraFollow, initializeCameraBounds, render, spawnCamera, updateCameraZoom } from './lib/camera'
-import { resetInputs } from './lib/inputs'
+import { disableTouchJoystick, resetInputs } from './lib/inputs'
 import { detectInteractions, updateMousePosition } from './lib/interactions'
 import { initThree } from './lib/rendering'
 import { Sprite } from './lib/sprite'
@@ -56,6 +56,7 @@ export const battleState = ecs.state
 export const dungeonState = ecs.state
 	.onEnter(spawnDungeon)
 	.onUpdate(movePlayer, isPlayerInside, updateCameraZoom(7), startDialog, spawnDialogArea, exitDungeon)
+	.onExit(disableTouchJoystick)
 	.enable()
 
 State.exclusive(overworldState, battleState, dungeonState)

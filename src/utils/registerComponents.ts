@@ -14,7 +14,7 @@ export const addToScene = (...components: Class[]) => {
 		// ! CREATE GROUP
 		const withoutGroupQuery = ecs.query.pick(Entity, component).without(Group).added(component)
 
-		ecs.core.onUpdate(() => {
+		ecs.core.onPostUpdate(() => {
 			for (const [entity, component] of withoutGroupQuery.getAll()) {
 				const group = new Group()
 				group.add(component)

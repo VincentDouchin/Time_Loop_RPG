@@ -1,5 +1,5 @@
 import { Collider, ColliderDesc, RigidBodyDesc } from '@dimforge/rapier2d-compat'
-import { Vector2 } from 'three'
+import { Group, Vector2 } from 'three'
 import { getPlayerInputMap } from './playerInputs'
 import { Player } from '@/battle/spawnBattlers'
 import { dialog } from '@/constants/dialog'
@@ -46,6 +46,7 @@ export const SignBundle = (sign: EntityInstance, layerInstance: LayerInstance) =
 		signPost.position(layerInstance),
 		RigidBodyDesc.fixed().lockRotations(),
 		ColliderDesc.cuboid(4, 4),
+		new Group(),
 	]
 	const signDialog = dialog[`sign${signPost.data.dialog}`]
 	if (signDialog) {

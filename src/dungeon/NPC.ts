@@ -1,8 +1,7 @@
-import { Collider, ColliderDesc, RigidBodyDesc } from '@dimforge/rapier2d-compat'
 import { LDTKEntityInstance } from '../level/LDTKEntity'
 import { PlayerInputMap } from './playerInputs'
 import { dialog } from '@/constants/dialog'
-import { assets, ecs, world } from '@/globals/init'
+import { assets, ecs } from '@/globals/init'
 import type { EntityInstance, LayerInstance } from '@/level/LDTK'
 import type { Class } from '@/lib/ECS'
 import { Component, Entity } from '@/lib/ECS'
@@ -23,6 +22,8 @@ export class NPC extends LDTKEntityInstance<NPCLDTK> {}
 export class Dialog {
 	#dialog: Generator
 	current?: string | string[]
+	bubble: Entity | null = null
+	text: TextElement | null = null
 	constructor(dialogResolver: () => Generator) {
 		this.#dialog = dialogResolver()
 		this.step()
@@ -55,8 +56,9 @@ export class DialogArea {
 
 const addedDialogQuery = ecs.query.pick(Entity, Dialog).added(Dialog)
 export const spawnDialogArea = () => {
-	for (const [entity, dialog] of addedDialogQuery.getAll()) {
-		entity.spawn(new DialogArea(dialog), RigidBodyDesc.fixed().lockRotations(), ColliderDesc.ball(16).setSensor(true), new Position(), new Menu())
+	for (const [entity] of addedDialogQuery.getAll()) {
+		entity.addComponent(new Menu())
+		// entity.spawn(new DialogArea(dialog), RigidBodyDesc.fixed().lockRotations(), ColliderDesc.ball(16).setSensor(true), new Position(), new Menu())
 	}
 }
 
@@ -65,28 +67,27 @@ export class DialogOption {
 	constructor(public index = 0) {}
 }
 
-const dialogAreasQuery = ecs.query.pick(Entity, Collider, DialogArea, Position, Menu)
-const playerQuery = ecs.query.pick(PlayerInputMap, Collider)
+const dialogAreasQuery = ecs.query.pick(Entity, Position, Dialog, Menu)
+const playerQuery = ecs.query.pick(PlayerInputMap, Position)
 export const startDialog = () => {
-	for (const [playerInputs, playerCollider] of playerQuery.getAll()) {
-		for (const [entity, collider, dialogArea, pos, menu] of dialogAreasQuery.getAll()) {
-			if (world.intersectionPair(playerCollider, collider)) {
+	for (const [playerInputs, playerPosition] of playerQuery.getAll()) {
+		for (const [entity, position, dialog, menu] of dialogAreasQuery.getAll()) {
+			if (playerPosition.distanceTo(position) < 32) {
 				if (playerInputs.get('interact').justPressed) {
-					if (!dialogArea.bubble) {
-						const bubble = entity
+					if (!dialog.bubble) {
+						dialog.bubble = entity
 							.spawn(
-								...new UIElement({ color: 'black', display: 'grid', gap: '0.2rem', padding: '0.2rem' }).withWorldPosition(pos.x, pos.y + 8),
+								...new UIElement({ color: 'black', display: 'grid', gap: '0.2rem', padding: '0.2rem' }).withWorldPosition(0, 8),
 								new NineSlice(assets.ui.textbox.path, 4, 3),
-							)
-						dialogArea.bubble = bubble
+							).label('bubble')
 					}
-					dialogArea.bubble.despawnChildren()
-					const line = dialogArea.dialog.step(menu.selectedEntity?.getComponent(DialogOption)?.index ?? 0)
+					dialog.bubble.despawnChildren()
+					const line = dialog.step(menu.selectedEntity?.getComponent(DialogOption)?.index ?? 0)
 					if (line) {
 						const lines = typeof line === 'string' ? [line] : line
 						const boxes = lines.map((line, index) => {
-							if (dialogArea.bubble) {
-								const box = dialogArea.bubble.spawn(new UIElement(), new DialogOption(index))
+							if (dialog.bubble) {
+								const box = dialog.bubble.spawn(new UIElement(), new DialogOption(index))
 								box.spawn(new TextElement(line))
 								return box
 							}
@@ -96,12 +97,12 @@ export const startDialog = () => {
 							menu.fromColumn(...boxes)
 						}
 					} else {
-						dialogArea.bubble.despawn()
+						dialog.bubble.despawn()
 					}
 				}
-			} else if (dialogArea.bubble) {
-				dialogArea.bubble.despawn()
-				dialogArea.bubble = null
+			} else if (dialog.bubble) {
+				dialog.bubble.despawn()
+				dialog.bubble = null
 			}
 		}
 	}

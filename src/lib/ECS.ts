@@ -181,6 +181,16 @@ export class Entity {
 	children = new Set<Entity>()
 	parent?: Entity
 	constructor(private ecs: ECS) { }
+	_label?: string
+	label(label: string) {
+		this._label = label
+		return this
+	}
+
+	get components() {
+		return this.ecs.getComponents(this)
+	}
+
 	spawn(...components: InstanceType<Class>[]) {
 		const entity = this.ecs.spawn(...components)
 		entity.parent = this
@@ -315,6 +325,10 @@ export class ECS {
 	eventBus = new EventBus<Record<Class['name'], [Entity, 'added' | 'removed' | 'deleted'] >>()
 	constructor() {
 		this.registerComponent(Entity)
+	}
+
+	getComponents(entity: Entity) {
+		return [...this.#components.values()].map(componentMap => componentMap.get(entity)).filter(Boolean)
 	}
 
 	onNextTick(func: () => void) {
