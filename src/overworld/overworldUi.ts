@@ -33,7 +33,7 @@ export const spawnStepsUi = () => {
 		})
 }
 
-const stepsQuery = ecs.query.pick(StepsUi)
+export const stepsQuery = ecs.query.pick(StepsUi)
 export const updateSteps = (stepsNb: number) => {
 	for (const [steps] of stepsQuery.getAll()) {
 		steps.update(stepsNb)

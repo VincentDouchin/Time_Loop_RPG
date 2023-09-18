@@ -91,8 +91,8 @@ export class TextureAtlas<K extends string> {
 		return this.atlas.speed[this.state] ?? this.atlas.speed.default
 	}
 
-	static single(atlas: PixelTexture[]) {
-		return this.bundle({ states: { default: atlas }, speed: { default: 100 } }, 'default')
+	static single(atlas: PixelTexture[], speed = 100) {
+		return this.bundle({ states: { default: atlas }, speed: { default: speed } }, 'default')
 	}
 
 	static bundle<K extends string>(textureAtlas: TextureAltasStates<K>, defaultState: K, directionX: directionX = 'left', directionY: directionY = 'down') {

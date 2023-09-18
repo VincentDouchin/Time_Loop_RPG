@@ -30,6 +30,7 @@ import { setDefaultFontSize } from './ui/UiElement'
 import { selectUiElement, unSelectDespawnMenus, updateMenus } from './ui/menu'
 import { addToScene, addToWorld, registerShader } from './utils/registerComponents'
 import { StepsUi, spawnStepsUi } from './overworld/overworldUi'
+import { triggerApocalypse } from './overworld/apocalypse'
 
 ecs.core
 	.onEnter(initThree, updateMousePosition, spawnCamera, spawnMenuInputs, spawnUIRoot, setDefaultFontSize)
@@ -44,7 +45,7 @@ resetInputs(MenuInputMap, PlayerInputMap)
 addToWorld()
 export const overworldState = ecs.state
 	.onEnter(spawnOverworld, spawnStepsUi)
-	.onUpdate(moveOverworldCharacter, spawnOverworldCharacter)
+	.onUpdate(moveOverworldCharacter, spawnOverworldCharacter, triggerApocalypse)
 	.onExit(despawnOverworld, ...despawnEntities(StepsUi))
 	.enable()
 

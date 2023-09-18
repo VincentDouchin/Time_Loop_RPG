@@ -1,10 +1,13 @@
-import { Box2, OrthographicCamera, Scene, Texture, Vector2, WebGLRenderer } from 'three'
+import { Box2, OrthographicCamera, Scene, ShaderMaterial, Texture, Uniform, Vector2, WebGLRenderer } from 'three'
 
+import { FullScreenQuad } from 'three/examples/jsm/postprocessing/Pass'
+import { CopyShader } from 'three/examples/jsm/shaders/CopyShader'
 import { Sprite } from './sprite'
 import { cssRenderer, ecs, renderer } from '@/globals/init'
 import { Component, SystemSet } from '@/lib/ECS'
 import { Position } from '@/lib/transforms'
 import type { Level } from '@/level/LDTK'
+import { ColorShader, colorShader } from '@/shaders/ColorShader'
 
 @Component(ecs)
 export class MainCamera {}
@@ -98,6 +101,10 @@ export const cameraFollow = () => {
 	}
 }
 
+const mat = colorShader
+
+mat.uniforms.color = new Uniform([1, 0, 0, 1])
+const q = new FullScreenQuad(mat)
 export const render = () => {
 	const scene = sceneQuery.extract()
 	const renderer = rendererQuery.extract()
@@ -106,6 +113,8 @@ export const render = () => {
 		if (scene && camera) {
 			cssRenderer.render(scene, camera)
 			renderer.render(scene, camera)
+
+			q.render(renderer)
 		}
 	}
 }

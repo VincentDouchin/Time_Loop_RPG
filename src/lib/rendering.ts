@@ -1,6 +1,7 @@
 import type { WebGLRenderer } from 'three'
 import { LinearSRGBColorSpace, Scene } from 'three'
 import type { CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer'
+import { FullScreenQuad } from 'three/examples/jsm/postprocessing/Pass'
 import { PixelTexture } from './pixelTexture'
 import { cssRenderer, ecs, renderer } from '@/globals/init'
 
@@ -9,8 +10,9 @@ const initRenderer = (renderer: WebGLRenderer | CSS2DRenderer) => {
 	document.body.appendChild(renderer.domElement)
 }
 
+export const scene = new Scene()
 export const initThree = () => {
-	ecs.spawn(new Scene())
+	ecs.spawn(scene)
 	initRenderer(renderer)
 	initRenderer(cssRenderer)
 	cssRenderer.domElement.style.position = 'fixed'

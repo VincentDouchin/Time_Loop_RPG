@@ -13,12 +13,12 @@ export class ShaderComposer {
 	targets: WebGLRenderTarget[] = []
 	initialTarget: WebGLRenderTarget
 	target: WebGLRenderTarget
-	constructor(private renderer: WebGLRenderer, texture: Texture) {
-		this.width = texture.image.width
-		this.height = texture.image.height
+	constructor(private renderer: WebGLRenderer, texture?: Texture) {
+		this.width = texture?.image.width ?? window.innerWidth
+		this.height = texture?.image.height ?? window.innerHeight
 		this.target = this.newTarget()
 		this.initialTarget = this.newTarget()
-		this.initialTarget.texture = texture
+		this.initialTarget.texture = texture ?? this.newTarget().texture
 	}
 
 	setInitialTexture(texture: PixelTexture) {
