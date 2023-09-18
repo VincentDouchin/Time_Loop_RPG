@@ -26,7 +26,6 @@ export class Dialog {
 	text: TextElement | null = null
 	constructor(dialogResolver: () => Generator) {
 		this.#dialog = dialogResolver()
-		this.step()
 	}
 
 	step(index?: number) {
@@ -58,7 +57,6 @@ const addedDialogQuery = ecs.query.pick(Entity, Dialog).added(Dialog)
 export const spawnDialogArea = () => {
 	for (const [entity] of addedDialogQuery.getAll()) {
 		entity.addComponent(new Menu())
-		// entity.spawn(new DialogArea(dialog), RigidBodyDesc.fixed().lockRotations(), ColliderDesc.ball(16).setSensor(true), new Position(), new Menu())
 	}
 }
 

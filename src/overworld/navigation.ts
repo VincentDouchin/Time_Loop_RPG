@@ -1,3 +1,4 @@
+import { updateSteps } from './overworldUi'
 import { ecs } from '@/globals/init'
 import { NavNode } from '@/level/NavNode'
 import { Component, Entity } from '@/lib/ECS'
@@ -64,7 +65,7 @@ export const moveOverworldCharacter = () => {
 								entity.removeComponent(Navigating)
 
 								save.lastNodeUUID = targetNode.id
-
+								updateSteps(-1)
 								if (targetNode.data.type === 'Battle') {
 									battleState.enable()
 								}

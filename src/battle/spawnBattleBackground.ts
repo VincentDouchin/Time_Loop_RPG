@@ -12,7 +12,7 @@ import { getBuffer } from '@/utils/buffer'
 @Component(ecs)
 export class Battle {}
 export const spawnBattleBackground = () => {
-	const level = assets.levels.minibattle.levels[0]
+	const level = assets.levels.minibattle.levels[1]
 	const buffer = getBuffer(level.pxWid, level.pxHei)
 	const battle = ecs.spawn()
 	if (level.layerInstances) {

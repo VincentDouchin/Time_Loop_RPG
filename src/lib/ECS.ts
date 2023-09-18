@@ -232,6 +232,11 @@ export class Entity {
 			}
 		})
 	}
+
+	withChildren(fn: (entity: Entity) => void) {
+		fn(this)
+		return this
+	}
 }
 
 export class State {

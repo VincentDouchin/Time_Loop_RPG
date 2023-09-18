@@ -7,7 +7,7 @@ export const animations: Partial<Record<characters, AnimationData >> & Record<'d
 	default: {
 		size: 32,
 		speed: {
-			default: 100,
+			default: 200,
 			idle: 300,
 			die: 200,
 		},
@@ -16,7 +16,7 @@ export const animations: Partial<Record<characters, AnimationData >> & Record<'d
 	howard: {
 		size: 32,
 		speed: {
-			default: 100,
+			default: 200,
 			idle: 200,
 			die: 200,
 		},

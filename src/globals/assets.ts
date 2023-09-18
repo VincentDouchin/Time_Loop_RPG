@@ -7,6 +7,7 @@ const tileSetLoader = new AssetLoader()
 	.pipe(async (glob) => {
 		return asyncMapValues(mapKeys(glob, getFileName), m => loadImage(m.default))
 	})
+
 const levelLoader = new AssetLoader<LDTKMap>()
 	.pipe(glob => mapKeys(glob, getFileName))
 const characterLoader = new AssetLoader()

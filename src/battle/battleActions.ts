@@ -36,6 +36,7 @@ export interface BattleAction {
 	targetAmount: number
 	power: number
 	type: ActionType
+	animation: string
 }
 export enum ActionSelector {
 	PlayerMenu,
@@ -52,6 +53,7 @@ export const PlayerActions: Record<string, BattleAction> = {
 		power: 1,
 		targetAmount: 1,
 		type: ActionType.Damage,
+		animation: 'attack',
 	},
 	flee: {
 		label: 'Flee',
@@ -59,6 +61,7 @@ export const PlayerActions: Record<string, BattleAction> = {
 		power: 0,
 		targetAmount: 0,
 		type: ActionType.Flee,
+		animation: 'walk',
 	},
 }
 
@@ -69,6 +72,7 @@ export const EnemyActions: Record<string, BattleAction> = {
 		power: 1,
 		targetAmount: 1,
 		type: ActionType.Damage,
+		animation: 'dagger',
 	},
 }
 
@@ -216,7 +220,7 @@ export const takeAction = (battlerTakingAction: Battler) => {
 	battlerTakingAction.takingAction = true
 	for (const [_entity, atlas, _health, battler] of battlerToTakeActionOnQuery.getAll()) {
 		if (battler === battlerTakingAction) {
-			atlas.playAnimation('attack').then(() => {
+			atlas.playAnimation(battler.currentAction!.animation).then(() => {
 				atlas.state = 'idle'
 				for (const [enemyEntity, enemyAtlas, enemyHealth, _enemyBattler] of battlerToTakeActionOnQuery.getAll()) {
 					if (battler.targets.includes(enemyEntity)) {

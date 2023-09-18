@@ -11,7 +11,7 @@ import { ecs } from './globals/init'
 import { State } from './lib/ECS'
 import { animateSprites } from './lib/animation'
 import { adjustScreenSize, cameraFollow, initializeCameraBounds, render, spawnCamera, updateCameraZoom } from './lib/camera'
-import { disableTouchJoystick, resetInputs } from './lib/inputs'
+import { despawnEntities, disableTouchJoystick, resetInputs } from './lib/inputs'
 import { detectInteractions, updateMousePosition } from './lib/interactions'
 import { initThree } from './lib/rendering'
 import { Sprite } from './lib/sprite'
@@ -29,6 +29,7 @@ import { addUIElementsToDOM, spawnUIRoot } from './ui/UI'
 import { setDefaultFontSize } from './ui/UiElement'
 import { selectUiElement, unSelectDespawnMenus, updateMenus } from './ui/menu'
 import { addToScene, addToWorld, registerShader } from './utils/registerComponents'
+import { StepsUi, spawnStepsUi } from './overworld/overworldUi'
 
 ecs.core
 	.onEnter(initThree, updateMousePosition, spawnCamera, spawnMenuInputs, spawnUIRoot, setDefaultFontSize)
@@ -42,10 +43,10 @@ registerShader(ColorShader, OutlineShader)
 resetInputs(MenuInputMap, PlayerInputMap)
 addToWorld()
 export const overworldState = ecs.state
-	.onEnter(spawnOverworld)
+	.onEnter(spawnOverworld, spawnStepsUi)
 	.onUpdate(moveOverworldCharacter, spawnOverworldCharacter)
-	.onExit(despawnOverworld)
-	// .enable()
+	.onExit(despawnOverworld, ...despawnEntities(StepsUi))
+	.enable()
 
 export const battleState = ecs.state
 	.onEnter(spawnBattle)
@@ -57,7 +58,7 @@ export const dungeonState = ecs.state
 	.onEnter(spawnDungeon)
 	.onUpdate(movePlayer, isPlayerInside, updateCameraZoom(7), startDialog, spawnDialogArea, exitDungeon)
 	.onExit(disableTouchJoystick)
-	.enable()
+	// .enable()
 
 State.exclusive(overworldState, battleState, dungeonState)
 const animate = async (delta: number) => {

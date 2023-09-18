@@ -48,9 +48,9 @@ export const spawnBattlers = (battle: Entity) => {
 
 	// !ENEMIES
 	const enemies = [
-		assets.characters.goblin,
-		assets.characters.orc,
-		assets.characters.goblin,
+		// assets.characters.bandit2,
+		// assets.characters.bandit,
+		assets.characters.angelOfDeath,
 	]
 	for (let i = 0; i < enemies.length; i++) {
 		const bundle = battlerSpriteBundle('left', enemies[i], i, enemies.length)

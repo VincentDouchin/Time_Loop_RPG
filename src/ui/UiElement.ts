@@ -41,11 +41,12 @@ customElements.define('ui-element', UIElement, { extends: 'div' })
 
 @Component(ecs)
 export class TextElement extends HTMLSpanElement {
-	constructor(text: string) {
+	constructor(text: string, fontSize: number = 1) {
 		super()
 		this.textContent = text
 		this.style.pointerEvents = 'none'
 		this.style.fontFamily = 'm5x7'
+		this.style.fontSize = `${fontSize}em`
 	}
 }
 
