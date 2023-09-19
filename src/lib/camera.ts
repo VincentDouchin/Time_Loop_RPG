@@ -1,13 +1,12 @@
-import { Box2, OrthographicCamera, Scene, ShaderMaterial, Texture, Uniform, Vector2, WebGLRenderer } from 'three'
+import { Box2, OrthographicCamera, Scene, Texture, Vector2, WebGLRenderer } from 'three'
 
-import { FullScreenQuad } from 'three/examples/jsm/postprocessing/Pass'
-import { CopyShader } from 'three/examples/jsm/shaders/CopyShader'
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
+import { composer, scene } from './rendering'
 import { Sprite } from './sprite'
 import { cssRenderer, ecs, renderer } from '@/globals/init'
+import type { Level } from '@/level/LDTK'
 import { Component, SystemSet } from '@/lib/ECS'
 import { Position } from '@/lib/transforms'
-import type { Level } from '@/level/LDTK'
-import { ColorShader, colorShader } from '@/shaders/ColorShader'
 
 @Component(ecs)
 export class MainCamera {}
@@ -38,15 +37,28 @@ export class FollowCamera {
 		return new FollowCamera(false, true)
 	}
 }
+export const mainCameraQuery = ecs.query.pick(OrthographicCamera).with(MainCamera)
+
+export const render = () => {
+	const camera = mainCameraQuery.extract()
+	composer.render()
+	if (camera) {
+		cssRenderer.render(scene, camera)
+	}
+}
+
 export const spawnCamera = () => {
 	const width = window.innerWidth
 	const height = window.innerHeight
 
+	const camera = new OrthographicCamera(width / -2, width / 2, height / 2, height / -2, 0.1, 1000)
 	ecs.spawn(
-		new OrthographicCamera(width / -2, width / 2, height / 2, height / -2, 0.1, 1000),
+		camera,
 		new Position(0, 0, 10),
 		new MainCamera(),
 	)
+	composer.addPass(new RenderPass(scene, camera))
+	composer.setSize(window.innerWidth, window.innerHeight)
 }
 
 const targetQuery = ecs.query.pick(Position).with(CameraTarget)
@@ -55,7 +67,7 @@ const followCameraQuery = ecs.query.pick(FollowCamera, Position)
 const followCameraSpriteQuery = ecs.query.pick(FollowCamera, Sprite)
 
 export const sceneQuery = ecs.query.pick(Scene)
-export const mainCameraQuery = ecs.query.pick(OrthographicCamera).with(MainCamera)
+
 export const rendererQuery = ecs.query.pick(WebGLRenderer)
 export const cameraBoundsQuery = ecs.query.pick(CameraBounds)
 
@@ -101,23 +113,6 @@ export const cameraFollow = () => {
 	}
 }
 
-const mat = colorShader
-
-mat.uniforms.color = new Uniform([1, 0, 0, 1])
-const q = new FullScreenQuad(mat)
-export const render = () => {
-	const scene = sceneQuery.extract()
-	const renderer = rendererQuery.extract()
-	const camera = mainCameraQuery.extract()
-	if (renderer) {
-		if (scene && camera) {
-			cssRenderer.render(scene, camera)
-			renderer.render(scene, camera)
-
-			q.render(renderer)
-		}
-	}
-}
 const addedBoundsQuery = ecs.query.pick(CameraBounds, Position, Sprite).added(CameraBounds)
 export const initializeCameraBounds = () => {
 	for (const [bounds, pos, sprite] of addedBoundsQuery.getAll()) {

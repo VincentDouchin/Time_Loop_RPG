@@ -57,7 +57,12 @@ const animateSpritesLoader = new AssetLoader()
 		const merged = mapValues(items, mergeImages)
 		return mapValues(merged, t => createAtlas(t)[0])
 	})
-
+const animationsLoader = new AssetLoader()
+	.pipe(async (glob) => {
+		const img = await asyncMapValues(glob, m => loadImage(m.default))
+		const anim = mapKeys(img, getFileName)
+		return mapValues(anim, t => createAtlas(t)[0])
+	})
 export const loadAssets = async () => {
 	const levels = await levelLoader.loadAsync<levels>(import.meta.glob('./../../assets/levels/*.json', { eager: true }))
 	const tilesets = await tileSetLoader.loadAsync<tilesets>(import.meta.glob('./../../assets/tilesets/*.png', { eager: true }))
@@ -65,5 +70,6 @@ export const loadAssets = async () => {
 	const ui = await uiLoader.loadAsync<ui>(import.meta.glob('./../../assets/ui/*.png', { eager: true }))
 	const fonts = await fontLoader.loadAsync<fonts>(import.meta.glob('./../../assets/fonts/*.*', { eager: true }))
 	const animatedTextures = await animateSpritesLoader.loadAsync<items>(import.meta.glob('./../../assets/items/**/*.png', { eager: true }))
-	return { levels, tilesets, characters, ui, fonts, animatedTextures } as const
+	const animations = await animationsLoader.loadAsync<animations>(import.meta.glob('./../../assets/animations/*.png', { eager: true }))
+	return { levels, tilesets, characters, ui, fonts, animatedTextures, animations } as const
 }

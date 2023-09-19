@@ -1,6 +1,6 @@
 import type { JoystickManager } from 'nipplejs'
 import nipplejs from 'nipplejs'
-import type { Class, System } from './ECS'
+import type { Class, ECS } from './ECS'
 import { Component, Entity } from './ECS'
 import { ecs } from '@/globals/init'
 
@@ -193,7 +193,7 @@ export class InputMap<T extends readonly string[]> {
 	}
 }
 
-export const resetInputs = (...inputClasses: Class[]) => {
+export const registerInput = (...inputClasses: Class[]) => (ecs: ECS) => {
 	for (const inputClass of inputClasses) {
 		const inputsQuery = ecs.query.pick(inputClass)
 		ecs.core.onPreUpdate(() => {

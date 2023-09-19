@@ -1,7 +1,7 @@
 import type { WebGLRenderer } from 'three'
 import { LinearSRGBColorSpace, Scene } from 'three'
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
 import type { CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer'
-import { FullScreenQuad } from 'three/examples/jsm/postprocessing/Pass'
 import { PixelTexture } from './pixelTexture'
 import { cssRenderer, ecs, renderer } from '@/globals/init'
 
@@ -11,6 +11,7 @@ const initRenderer = (renderer: WebGLRenderer | CSS2DRenderer) => {
 }
 
 export const scene = new Scene()
+export const composer = new EffectComposer(renderer)
 export const initThree = () => {
 	ecs.spawn(scene)
 	initRenderer(renderer)

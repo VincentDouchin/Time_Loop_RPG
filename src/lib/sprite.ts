@@ -80,6 +80,11 @@ export interface TextureAltasStates<K extends string > {
 
 @Component(ecs)
 export class Animator extends Timer {
+	stopped = false
+	stop() {
+		this.stopped = true
+		return this
+	}
 }
 
 @Component(ecs)
@@ -142,3 +147,6 @@ export class TextureAtlas<K extends string> {
 		})
 	}
 }
+
+@Component(ecs)
+export class FullScreenShader {}

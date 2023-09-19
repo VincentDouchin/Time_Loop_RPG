@@ -332,6 +332,13 @@ export class ECS {
 		this.registerComponent(Entity)
 	}
 
+	addPlugin(...plugins: Array<(ecs: ECS) => void>) {
+		for (const plugin of plugins) {
+			plugin(this)
+		}
+		return this
+	}
+
 	getComponents(entity: Entity) {
 		return [...this.#components.values()].map(componentMap => componentMap.get(entity)).filter(Boolean)
 	}

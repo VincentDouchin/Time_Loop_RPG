@@ -17,6 +17,10 @@ export class Timer {
 
 	}
 
+	get percentFinished() {
+		return this.elapsed / this.delay
+	}
+
 	tick(delta: number) {
 		this.elapsed += delta
 		this.#lastTick = this.#tick

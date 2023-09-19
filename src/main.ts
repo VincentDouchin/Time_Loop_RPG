@@ -11,7 +11,7 @@ import { ecs } from './globals/init'
 import { State } from './lib/ECS'
 import { animateSprites } from './lib/animation'
 import { adjustScreenSize, cameraFollow, initializeCameraBounds, render, spawnCamera, updateCameraZoom } from './lib/camera'
-import { despawnEntities, disableTouchJoystick, resetInputs } from './lib/inputs'
+import { despawnEntities, disableTouchJoystick, registerInput } from './lib/inputs'
 import { detectInteractions, updateMousePosition } from './lib/interactions'
 import { initThree } from './lib/rendering'
 import { Sprite } from './lib/sprite'
@@ -31,18 +31,17 @@ import { selectUiElement, unSelectDespawnMenus, updateMenus } from './ui/menu'
 import { addToScene, addToWorld, registerShader } from './utils/registerComponents'
 import { StepsUi, spawnStepsUi } from './overworld/overworldUi'
 import { triggerApocalypse } from './overworld/apocalypse'
+import { ApocalypseShader, updateApocalypseShader } from './shaders/ApocalypseShader'
 
-ecs.core
-	.onEnter(initThree, updateMousePosition, spawnCamera, spawnMenuInputs, spawnUIRoot, setDefaultFontSize)
+ecs.addPlugin(addToScene(OrthographicCamera, Sprite, CSS2DObject))
+	.addPlugin(registerInput(MenuInputMap, PlayerInputMap))
+ecs
+	.core.onEnter(initThree, updateMousePosition, spawnCamera, spawnMenuInputs, spawnUIRoot, setDefaultFontSize)
 	.onPreUpdate(updatePosition)
-	.onUpdate(detectInteractions, updateMenus, addOutlineShader, animateSprites, addNineSlicetoUI, addUIElementsToDOM, selectUiElement, unSelectDespawnMenus, () => Tween.update(time.delta), adjustScreenSize(), initializeCameraBounds)
+	.onUpdate(detectInteractions, updateMenus, addOutlineShader, animateSprites, addNineSlicetoUI, addUIElementsToDOM, selectUiElement, unSelectDespawnMenus, () => Tween.update(time.delta), adjustScreenSize(), initializeCameraBounds, ...registerShader(ColorShader, OutlineShader, ApocalypseShader), addToWorld, updateApocalypseShader)
 	.onPostUpdate(updateSpritePosition, cameraFollow, render, stepWorld)
 	.enable()
 
-addToScene(OrthographicCamera, Sprite, CSS2DObject)
-registerShader(ColorShader, OutlineShader)
-resetInputs(MenuInputMap, PlayerInputMap)
-addToWorld()
 export const overworldState = ecs.state
 	.onEnter(spawnOverworld, spawnStepsUi)
 	.onUpdate(moveOverworldCharacter, spawnOverworldCharacter, triggerApocalypse)
