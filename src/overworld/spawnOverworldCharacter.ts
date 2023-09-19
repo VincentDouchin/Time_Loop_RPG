@@ -1,4 +1,5 @@
 import { mapQuery } from './spawnOverworld'
+import { Player } from '@/battle/spawnBattlers'
 import { assets, ecs } from '@/globals/init'
 import { NavNode } from '@/level/NavNode'
 import { CameraTarget } from '@/lib/camera'
@@ -26,6 +27,7 @@ export const spawnOverworldCharacter = () => {
 					new CameraTarget(),
 					new Position(position.x, position.y),
 					new Navigator(node),
+					new Player(),
 				)
 			}
 		}

@@ -33,15 +33,14 @@ import { StepsUi, spawnStepsUi } from './overworld/overworldUi'
 import { triggerApocalypse } from './overworld/apocalypse'
 import { ApocalypseShader, updateApocalypseShader } from './shaders/ApocalypseShader'
 
-ecs.addPlugin(addToScene(OrthographicCamera, Sprite, CSS2DObject))
-	.addPlugin(registerInput(MenuInputMap, PlayerInputMap))
 ecs
 	.core.onEnter(initThree, updateMousePosition, spawnCamera, spawnMenuInputs, spawnUIRoot, setDefaultFontSize)
 	.onPreUpdate(updatePosition)
 	.onUpdate(detectInteractions, updateMenus, addOutlineShader, animateSprites, addNineSlicetoUI, addUIElementsToDOM, selectUiElement, unSelectDespawnMenus, () => Tween.update(time.delta), adjustScreenSize(), initializeCameraBounds, ...registerShader(ColorShader, OutlineShader, ApocalypseShader), addToWorld, updateApocalypseShader)
 	.onPostUpdate(updateSpritePosition, cameraFollow, render, stepWorld)
 	.enable()
-
+ecs.addPlugin(addToScene(OrthographicCamera, Sprite, CSS2DObject))
+	.addPlugin(registerInput(MenuInputMap, PlayerInputMap))
 export const overworldState = ecs.state
 	.onEnter(spawnOverworld, spawnStepsUi)
 	.onUpdate(moveOverworldCharacter, spawnOverworldCharacter, triggerApocalypse)

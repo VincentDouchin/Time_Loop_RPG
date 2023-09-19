@@ -12,10 +12,11 @@ import { Position } from '@/lib/transforms'
 
 export const addToScene = (...components: Class[]) => (ecs: ECS) => {
 	// ! SCENE
-	const withGroupquery = ecs.query.pick(Entity, Group, Position).added(Group)
+
 	for (const component of components) {
 		// ! CREATE GROUP
 		const withoutGroupQuery = ecs.query.pick(Entity, component).without(Group).added(component)
+		const removedQuery = ecs.query.pick(component).removed(component)
 
 		ecs.core.onPostUpdate(() => {
 			for (const [entity, component] of withoutGroupQuery.getAll()) {
@@ -24,7 +25,13 @@ export const addToScene = (...components: Class[]) => (ecs: ECS) => {
 				entity.addComponent(group)
 			}
 		})
+		ecs.core.onPreUpdate(() => {
+			for (const [component] of removedQuery.getAll()) {
+				component.removeFromParent()
+			}
+		})
 	}
+	const withGroupquery = ecs.query.pick(Entity, Group, Position).added(Group)
 	ecs.core.onUpdate(() => {
 		for (const [entity, group, position] of withGroupquery.getAll()) {
 			group.position.add(position)

@@ -1,4 +1,4 @@
-type animations = 'explosion-1' | 'explosion-2' | 'explosion-4' | 'explosion-6'
+type animations = 'explosion-1' | 'explosion-2' | 'explosion-4' | 'explosion-6' | 'portalEnd' | 'portalMiddle' | 'portalStart'
 type backgrounds = 'forest'
 type characters = 'angelOfDeath' | 'bandit' | 'bandit2' | 'goblin' | 'howard' | 'orc' | 'paladin'
 type fonts = 'm5x7'
