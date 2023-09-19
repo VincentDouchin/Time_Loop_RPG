@@ -84,7 +84,7 @@ const createNavNodes = (parent: Entity, layerInstance: LayerInstance) => {
 	}
 }
 
-export const spawnLevel = (level: Level, ...components: InstanceType<Class>[]) => () => {
+export const spawnLevel = (level: Level, ...components: InstanceType<Class>[]) => {
 	const buffer = getBuffer(level.pxWid, level.pxHei)
 	const map = ecs.spawn(...components)
 	if (level.layerInstances) {

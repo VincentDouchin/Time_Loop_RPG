@@ -42,7 +42,7 @@ ecs
 ecs.addPlugin(addToScene(OrthographicCamera, Sprite, CSS2DObject))
 	.addPlugin(registerInput(MenuInputMap, PlayerInputMap))
 export const overworldState = ecs.state
-	.onEnter(spawnOverworld, spawnStepsUi)
+	.onEnter(spawnOverworld, updateCameraZoom(11))
 	.onUpdate(moveOverworldCharacter, spawnOverworldCharacter, triggerApocalypse)
 	.onExit(despawnOverworld, ...despawnEntities(StepsUi))
 	.enable()

@@ -1,14 +1,14 @@
 import { easing } from 'ts-easing'
-import { Group } from 'three'
 import { stepsQuery } from './overworldUi'
+import { Navigating } from './navigation'
+import { Player } from '@/battle/spawnBattlers'
 import { assets, ecs } from '@/globals/init'
 import { Component, Entity } from '@/lib/ECS'
+import { mainCameraQuery } from '@/lib/camera'
 import { FullScreenShader, Sprite, TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { Tween } from '@/lib/tween'
 import { ApocalypseShader } from '@/shaders/ApocalypseShader'
-import { mainCameraQuery } from '@/lib/camera'
-import { Player } from '@/battle/spawnBattlers'
 
 @Component(ecs)
 export class Apocalypse {}
@@ -43,6 +43,7 @@ const meteor = () => new Promise<void>((resolve) => {
 })
 const teleportPlayer = () => new Promise<void>((resolve) => {
 	for (const [player, pos, atlas] of playerPositionQuery.getAll()) {
+		player.addComponent(new Navigating())
 		const bundle = TextureAtlas.bundle<'start' | 'middle' | 'end'>({
 			states: {
 				start: assets.animations.portalStart,
@@ -91,8 +92,8 @@ const apocalypseState = ecs.state
 
 export const triggerApocalypse = () => {
 	for (const [steps] of stepsQuery.getAll()) {
-		if (steps.amount === 0) {
-			apocalypseState.enable()
+		if (steps.amount === 4) {
+			// apocalypseState.enable()
 		}
 	}
 }
