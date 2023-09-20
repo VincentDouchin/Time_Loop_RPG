@@ -1,4 +1,5 @@
 import { updateSteps } from './overworldUi'
+import { BattleRessource } from '@/battle/spawnBattleBackground'
 import { ecs } from '@/globals/init'
 import { NavNode } from '@/level/NavNode'
 import { Component, Entity } from '@/lib/ECS'
@@ -6,9 +7,10 @@ import { Component, Entity } from '@/lib/ECS'
 import { Sprite, TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { Tween } from '@/lib/tween'
-import { battleState, dungeonState } from '@/main'
+import { battleState } from '@/main'
 import { menuInputQuery } from '@/menus/menuInputs'
 import { save } from '@/save/saveData'
+import { battles } from '@/constants/battles'
 
 @Component(ecs)
 export class Navigator {
@@ -66,11 +68,9 @@ export const moveOverworldCharacter = () => {
 
 								save.lastNodeUUID = targetNode.id
 								updateSteps(-1)
-								if (targetNode.data.type === 'Battle') {
+								if (targetNode.data.Battle) {
+									BattleRessource.data = battles[targetNode.data.Battle]
 									battleState.enable()
-								}
-								if (targetNode.data.type === 'Dungeon') {
-									dungeonState.enable()
 								}
 							}
 						})

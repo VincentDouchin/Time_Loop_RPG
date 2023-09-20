@@ -35,7 +35,6 @@ export class Dialog {
 }
 export const NPCBundle = (entityInstance: EntityInstance, layerInstance: LayerInstance) => {
 	const npc = new NPC(entityInstance)
-
 	const components: InstanceType<Class>[] = [
 		...TextureAtlas.bundle(assets.characters[npc.data.name], 'idle', 'left', 'down'),
 		npc,

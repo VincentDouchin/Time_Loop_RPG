@@ -1,5 +1,10 @@
 import { lockPlayer, unlockPlayer } from './dialogHelpers'
+import { getSave } from '@/save/saveData'
 
+const save = getSave()
+export const keys = ['oldManBandit'] as const
+const addKey = (key: typeof keys[number]) => save.keys = [...save.keys, key]
+const hasKey = (key: typeof keys[number]) => save.keys.includes(key)
 export const dialog: Partial<Record<characters | `sign${string}`, () => Generator>> = {
 	*howard() {
 		lockPlayer()
@@ -8,12 +13,33 @@ export const dialog: Partial<Record<characters | `sign${string}`, () => Generato
 		yield 'I am the innkeeper'
 		yield 'Do you want a drink?'
 		const answer = yield ['yes', 'no']
-		if (answer === 0) {
-			yield 'Here you go'
-		} else if (answer === 1) {
-			yield 'Alright!'
+		switch (answer) {
+		case 0:yield 'Here you go'
+			break
+		case 1:yield 'Alright!'
+			break
 		}
+
 		yield unlockPlayer()
+	},
+	*banditOldMan() {
+		while (true) {
+			lockPlayer()
+			yield 'Hello adventurer'
+			if (hasKey('oldManBandit')) {
+				yield 'Have you seen Tyler?'
+			} else {
+				yield 'Have you seem my son Tyler on the way here?'
+				yield 'He hangs out in the woods near by'
+				yield 'and tries to scare the travellers'
+				yield 'Can you tell him to come home'
+				yield 'if you see him?'
+				yield 'His mother is worried and her health is getting worse'
+				yield 'I would really appreciate it.'
+				addKey('oldManBandit')
+			}
+			unlockPlayer()
+		}
 	},
 	*signTavern() {
 		while (true) {

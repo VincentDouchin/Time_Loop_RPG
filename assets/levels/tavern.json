@@ -1763,6 +1763,25 @@
 								"id": "V_String",
 								"params": ["Tavern"]
 							}] }]
+						},
+						{
+							"__identifier": "NPC",
+							"__grid": [15,11],
+							"__pivot": [0.5,0.5],
+							"__tags": [],
+							"__tile": null,
+							"__smartColor": "#BE4A2F",
+							"__worldX": 92,
+							"__worldY": 92,
+							"iid": "da598f20-3b70-11ee-b53e-1d2f2e07d797",
+							"width": 8,
+							"height": 8,
+							"defUid": 102,
+							"px": [124,92],
+							"fieldInstances": [{ "__identifier": "name", "__type": "String", "__value": "banditOldMan", "__tile": null, "defUid": 103, "realEditorValues": [{
+								"id": "V_String",
+								"params": ["banditOldMan"]
+							}] }]
 						}
 					]
 				},
@@ -1968,7 +1987,7 @@
 					"layerDefUid": 55,
 					"pxOffsetX": 0,
 					"pxOffsetY": 0,
-					"visible": false,
+					"visible": true,
 					"optionalRules": [],
 					"intGridCsv": [],
 					"autoLayerTiles": [],
@@ -2250,7 +2269,7 @@
 					"layerDefUid": 57,
 					"pxOffsetX": 0,
 					"pxOffsetY": 0,
-					"visible": false,
+					"visible": true,
 					"optionalRules": [],
 					"intGridCsv": [],
 					"autoLayerTiles": [],

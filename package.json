@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "generateAssetNames": "npx tsx ./scripts/generateAssetNames.ts"
+    "generate_Asset_Names": "npx tsx ./scripts/generateAssetNames.ts",
+    "export_LDTK_enums": "npx tsx ./scripts/exportDataToLDTK.ts"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.41.0",
@@ -24,7 +25,6 @@
   "dependencies": {
     "@dimforge/rapier2d-compat": "^0.11.2",
     "nipplejs": "^0.10.1",
-    "radash": "^11.0.0",
     "three": "^0.148.0",
     "ts-easing": "^0.2.0"
   }

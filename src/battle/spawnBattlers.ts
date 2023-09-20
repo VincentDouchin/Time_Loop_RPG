@@ -1,5 +1,6 @@
 import { ActionSelector, Battler, BattlerMenu, BattlerType, EnemyActions, PlayerActions, TargetSelector, selectAction, selectNextBattler, selectTargets, takeAction } from './battleActions'
 import { Health } from './health'
+import { BattleRessource } from './spawnBattleBackground'
 import { assets, ecs } from '@/globals/init'
 import { Component, Entity } from '@/lib/ECS'
 import { Interactable } from '@/lib/interactions'
@@ -31,7 +32,7 @@ const battlerSpriteBundle = (side: 'left' | 'right', textureAtlas: TextureAltasS
 	const direction = side === 'right' ? -1 : 1
 	const width = sprite.scaledDimensions.x / 2
 	const height = sprite.scaledDimensions.y / 2
-	const edge = (assets.levels.minibattle.levels[0].pxWid / 2 - (width / 2)) * direction
+	const edge = (assets.levels.minibattle.levels[BattleRessource.data.background].pxWid / 2 - (width / 2)) * direction
 	const position = new Position(edge, index * height - height * length / 2)
 	new Tween(1500)
 		.onUpdate(x => position.x = x, edge, edge - width * direction)
@@ -47,11 +48,7 @@ export const spawnBattlers = (battle: Entity) => {
 		.onComplete(() => player.addComponent(new Battler(BattlerType.Player, [PlayerActions.attack, PlayerActions.flee], ActionSelector.PlayerMenu, TargetSelector.PlayerTargetMenu)))
 
 	// !ENEMIES
-	const enemies = [
-		// assets.characters.bandit2,
-		// assets.characters.bandit,
-		assets.characters.angelOfDeath,
-	]
+	const enemies = BattleRessource.data.enemies.map(enemy => assets.characters[enemy.atlas])
 	for (let i = 0; i < enemies.length; i++) {
 		const bundle = battlerSpriteBundle('left', enemies[i], i, enemies.length)
 		const enemy = battle.spawn(...bundle, new Health(2))

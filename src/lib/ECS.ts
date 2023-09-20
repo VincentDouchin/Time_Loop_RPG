@@ -6,6 +6,17 @@ export function Component(ecs: ECS) {
 	}
 }
 
+export class Ressource<T> {
+	constructor(private _data: T) {}
+	get data() {
+		return this._data
+	}
+
+	set data(newData: T) {
+		this._data = newData
+	}
+}
+
 interface systemSet extends System {
 	conditions: (() => boolean)[]
 	timeout: number

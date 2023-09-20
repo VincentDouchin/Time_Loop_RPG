@@ -92,8 +92,8 @@ const apocalypseState = ecs.state
 
 export const triggerApocalypse = () => {
 	for (const [steps] of stepsQuery.getAll()) {
-		if (steps.amount === 4) {
-			// apocalypseState.enable()
+		if (steps.amount === 0) {
+			apocalypseState.enable()
 		}
 	}
 }
