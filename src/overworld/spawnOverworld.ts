@@ -7,7 +7,7 @@ import { CameraBounds } from '@/lib/camera'
 export class Map {}
 
 export const spawnOverworld = () => {
-	spawnLevel(assets.levels.overworld.levels[0], new Map(), CameraBounds.fromLevel(assets.levels.overworld.levels[0]))
+	spawnLevel(assets.levels.overworld.levels[1], new Map(), CameraBounds.fromLevel(assets.levels.overworld.levels[1]))
 }
 export const mapQuery = ecs.query.pick(Entity).with(Map)
 export const despawnOverworld = () => {

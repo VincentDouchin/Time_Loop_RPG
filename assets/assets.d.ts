@@ -1,6 +1,6 @@
 type animations = 'explosion-1' | 'explosion-2' | 'explosion-4' | 'explosion-6' | 'portalEnd' | 'portalMiddle' | 'portalStart'
 type backgrounds = 'forest'
-type characters = 'angelOfDeath' | 'bandit' | 'bandit2' | 'banditOldMan' | 'goblin' | 'howard' | 'orc' | 'paladin'
+type characters = 'angelOfDeath' | 'bandit' | 'bandit2' | 'banditOldMan' | 'bat' | 'goblin' | 'howard' | 'orc' | 'paladin' | 'wolf'
 type fonts = 'm5x7'
 type items = 'campfire'
 type levels = 'minibattle' | 'overworld' | 'tavern'

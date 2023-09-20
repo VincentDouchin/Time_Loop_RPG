@@ -14,4 +14,8 @@ export const battles = {
 		enemies: [enemies.angelOfDeath],
 		background: 1,
 	},
+	ForestAnimals: {
+		enemies: [enemies.bat, enemies.wolf, enemies.bat],
+		background: 1,
+	},
 } as const satisfies Record<string, BattleData>

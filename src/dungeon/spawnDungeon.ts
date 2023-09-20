@@ -9,13 +9,15 @@ import type { EntityInstance, LayerInstance } from '@/level/LDTK'
 import { LDTKEntityInstance } from '@/level/LDTKEntity'
 import { drawLayer, spawnIntGridEntities } from '@/level/spawnLevel'
 import type { Class } from '@/lib/ECS'
-import { Component, Entity } from '@/lib/ECS'
+import { Component, Entity, Ressource } from '@/lib/ECS'
 import { CameraBounds, CameraTarget } from '@/lib/camera'
 import { Sprite, TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { overworldState } from '@/main'
 import { ColorShader } from '@/shaders/ColorShader'
 import { getBuffer } from '@/utils/buffer'
+
+export const DungeonRessource = new Ressource(assets.levels.tavern)
 
 @Component(ecs)
 export class Dungeon {}
@@ -69,7 +71,7 @@ export const PlayerBundle = (entityInstance: EntityInstance, layerInstance: Laye
 }
 
 export const spawnDungeon = () => {
-	const mapFile = assets.levels.tavern
+	const mapFile = DungeonRessource.data
 	const level = mapFile.levels[0]
 	const map = ecs.spawn(
 		new CameraBounds().setFromCenterAndSize(new Vector2(), new Vector2(level.pxWid, level.pxHei)),

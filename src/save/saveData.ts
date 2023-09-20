@@ -1,5 +1,4 @@
 import type { keys } from '@/constants/dialog'
-import { objectKeys } from '@/utils/mapFunctions'
 
 interface PlayerData {
 	name: characters
@@ -13,6 +12,8 @@ interface saveData {
 let saveObject: saveData = {
 	players: [],
 	keys: [],
+	lastNodeUUID: '',
+
 }
 function saveToLocalStorage() {
 	localStorage.setItem('saveData', JSON.stringify(saveObject))
@@ -45,13 +46,14 @@ function createRecursiveProxy(target: any, path: string[] = []): any {
 export const getSave = () => {
 	const saveDataString = localStorage.getItem('saveData')
 	if (saveDataString) {
-		const localSaveObject = JSON.parse(saveDataString) as saveData
-		for (const key of objectKeys(saveObject)) {
-			if (!(key in localSaveObject)) {
-				Object.assign(localSaveObject, { [key]: saveObject[key] })
-			}
-		}
-		saveObject = localSaveObject
+		saveObject = JSON.parse(saveDataString) as saveData
+		// for (const key of objectKeys(saveObject)) {
+		// 	if (!(key in localSaveObject)) {
+		// 		Object.assign(localSaveObject, { [key]: saveObject[key] })
+		// 	}
+		// }
+		// console.log(localSaveObject)
+		// saveObject = { ...localSaveObject }
 	}
 
 	// Create a recursive Proxy for the save object to automatically save changes to localStorage

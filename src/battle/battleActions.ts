@@ -72,7 +72,7 @@ export const EnemyActions: Record<string, BattleAction> = {
 		power: 1,
 		targetAmount: 1,
 		type: ActionType.Damage,
-		animation: 'dagger',
+		animation: 'attack',
 	},
 }
 

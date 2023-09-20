@@ -11,4 +11,10 @@ export const enemies = {
 	angelOfDeath: {
 		atlas: 'angelOfDeath',
 	},
+	bat: {
+		atlas: 'bat',
+	},
+	wolf: {
+		atlas: 'wolf',
+	},
 } as const satisfies Record<string, Enemy>

@@ -9,7 +9,6 @@ import { ECS } from '@/lib/ECS'
 export const world = await createWorld()
 export const assets = await loadAssets()
 export const ecs = new ECS()
-// await new Promise(resolve => setTimeout(resolve, 5000))
 // ! THREE
 ecs.registerComponent(WebGLRenderer)
 ecs.registerComponent(CSS2DRenderer)

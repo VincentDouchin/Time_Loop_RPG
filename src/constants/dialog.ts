@@ -39,6 +39,7 @@ export const dialog: Partial<Record<characters | `sign${string}`, () => Generato
 				addKey('oldManBandit')
 			}
 			unlockPlayer()
+			yield
 		}
 	},
 	*signTavern() {

@@ -1,16 +1,17 @@
 import { updateSteps } from './overworldUi'
 import { BattleRessource } from '@/battle/spawnBattleBackground'
-import { ecs } from '@/globals/init'
-import { NavNode } from '@/level/NavNode'
+import { assets, ecs } from '@/globals/init'
+import { NavNode, getLevelName } from '@/level/NavNode'
 import { Component, Entity } from '@/lib/ECS'
 
 import { Sprite, TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { Tween } from '@/lib/tween'
-import { battleState } from '@/main'
+import { battleState, dungeonState } from '@/main'
 import { menuInputQuery } from '@/menus/menuInputs'
-import { save } from '@/save/saveData'
+import { getSave } from '@/save/saveData'
 import { battles } from '@/constants/battles'
+import { DungeonRessource } from '@/dungeon/spawnDungeon'
 
 @Component(ecs)
 export class Navigator {
@@ -19,7 +20,7 @@ export class Navigator {
 
 @Component(ecs)
 export class Navigating {}
-
+const save = getSave()
 const nodeQuery = ecs.query.pick(Entity, NavNode)
 const navigatorQuery = ecs.query.pick(Entity, Navigator, Position, TextureAtlas, Sprite).without(Navigating)
 export const moveOverworldCharacter = () => {
@@ -66,11 +67,16 @@ export const moveOverworldCharacter = () => {
 								navigator.currentNode = targetNode
 								entity.removeComponent(Navigating)
 
-								save.lastNodeUUID = targetNode.id
 								updateSteps(-1)
 								if (targetNode.data.Battle) {
 									BattleRessource.data = battles[targetNode.data.Battle]
 									battleState.enable()
+								} else {
+									save.lastNodeUUID = targetNode.id
+									if (targetNode.data.Dungeon) {
+										DungeonRessource.data = assets.levels[getLevelName(targetNode.data.Dungeon)]
+										dungeonState.enable()
+									}
 								}
 							}
 						})

@@ -14,12 +14,11 @@ export const spawnOverworldCharacter = () => {
 	if (!navigatorQuery.size) {
 		for (const [mapEntity] of mapQuery.getAll()) {
 			const lastNode = startNodeQuery.toArray().find(([node]) => node.id === save?.lastNodeUUID)
-			const startNode = startNodeQuery.toArray().find(([node]) => node.data.type === 'Start')
+			const startNode = startNodeQuery.toArray().find(([node]) => node.data.Start)
 			const nodeEntity = lastNode ?? startNode
 			if (nodeEntity) {
 				const [node, position] = nodeEntity
 				const [sprite, animator, textureAtlas] = TextureAtlas.bundle(assets.characters.paladin, 'idle', 'left', 'down')
-				sprite.anchor(0, 0)
 				mapEntity.spawn(
 					sprite,
 					animator,

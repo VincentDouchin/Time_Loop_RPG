@@ -10,6 +10,7 @@ import { Sprite } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { getFileName } from '@/utils/assetLoader'
 import { getBuffer } from '@/utils/buffer'
+import { createDebugtexture } from '@/utils/debugTexture'
 
 @Component(ecs)
 export class Map {}
@@ -80,6 +81,7 @@ const createNavNodes = (parent: Entity, layerInstance: LayerInstance) => {
 	for (const entityInstance of layerInstance.entityInstances) {
 		const navNode = new NavNode(entityInstance)
 		const entity = parent.spawn(navNode, navNode.position(layerInstance))
+
 		LDTKEntityInstance.register(entity, entityInstance)
 	}
 }

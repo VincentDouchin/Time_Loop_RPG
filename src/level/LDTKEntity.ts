@@ -32,7 +32,10 @@ export class LDTKEntityInstance<EntityInstanceDef extends Record<string, any> > 
 	position(layer: LayerInstance) {
 		const w = layer.__cWid * layer.__gridSize
 		const h = layer.__cHei * layer.__gridSize
-		return new Position(this.entityInstance.px[0] - w / 2, -this.entityInstance.px[1] + h / 2)
+		return new Position(
+			this.entityInstance.px[0] - w / 2 + this.entityInstance.__pivot[0] * this.entityInstance.width / 2,
+			-this.entityInstance.px[1] + h / 2,
+		)
 	}
 
 	body(sensor = false) {
