@@ -147,14 +147,14 @@ export const winOrLose = () => {
 			despawnBattleMenu()
 			sleep(3000).then(() => {
 				gameOver()
-				overworldState.enable(true)
+				overworldState.enable()
 			})
 		}
 		if (notPlayerQuery.size === 0 && playerQuery.size > 0) {
 			ecs.spawn(...winOrLoseBundle()).spawn(new TextElement('You won!'))
 			despawnBattleMenu()
 			sleep(3000).then(() => {
-				overworldState.enable(true)
+				overworldState.enable()
 				saveToLocalStorage()
 			})
 		}
