@@ -1,6 +1,7 @@
 import { Health } from './health'
 import { ActionSelector, TargetSelector, TargetType } from '@/constants/actions'
 import type { BattleAction, BattlerType } from '@/constants/actions'
+import { DialogOption } from '@/dungeon/NPC'
 import { ecs } from '@/globals/init'
 import { Component, Entity } from '@/lib/ECS'
 import { Interactable } from '@/lib/interactions'
@@ -41,11 +42,11 @@ export class Battler {
 		this.currentAction = null
 	}
 
-	hasSelectedTargets() {
+	get hasSelectedTargets() {
 		return this.currentAction && (this.currentAction.targetAmount === this.targets.length)
 	}
 
-	canSelectTarget() {
+	get canSelectTarget() {
 		return this.currentAction?.target && [TargetType.Others, TargetType.Same].includes(this.currentAction.target)
 	}
 
@@ -79,13 +80,13 @@ const playerActionItemQuery = ecs.query.pick(PlayerActionItem, Interactable)
 export const selectNextBattler = (battlers: Battler[]) => {
 	return battlers[0]
 }
-
+const dialogOptionQuery = ecs.query.with(DialogOption)
 export const selectAction = (battler: Battler) => {
 	switch (battler.actionSelector) {
 	case ActionSelector.PlayerMenu:{
 		const battlerMenu = battlerMenuQuery.extract()
 		const existingMenu = battlerMenu?.getComponent(Menu)
-		if (!actionItemsQuery.size) {
+		if (!actionItemsQuery.size && dialogOptionQuery.size === 0) {
 			if (battlerMenu) {
 				const items: Entity[] = []
 				for (const action of battler.actions) {
@@ -128,18 +129,18 @@ export const selectTargets = (battler: Battler) => {
 		.filter(([_, otherBattler]) => battler.compareTo(otherBattler))
 		.map(([entity]) => entity)
 
-	if (battler.canSelectTarget()) {
+	if (battler.canSelectTarget) {
 		switch (battler.targetSelector) {
 		case TargetSelector.PlayerTargetMenu:{
 			const enemySelectMenu = enemySelectMenuQuery.extract()
-			if (!enemySelectMenu && !battler.hasSelectedTargets()) {
-				ecs.spawn(Menu.fromRow(...potentialTargets.reverse()), new EnemySelectMenu())
+			if (!enemySelectMenu && !battler.hasSelectedTargets) {
+				ecs.spawn(Menu.fromColumn(...potentialTargets), new EnemySelectMenu())
 			}
 			for (const [entity, interactable] of possibleTargetsQuery.getAll()) {
 				if (interactable.justPressed) {
 					battler.targets.push(entity)
 					entity.addComponent(new ColorShader([1, 0, 0, 1]))
-					if (battler.hasSelectedTargets()) {
+					if (battler.hasSelectedTargets) {
 						enemySelectMenu?.despawn()
 					}
 				}

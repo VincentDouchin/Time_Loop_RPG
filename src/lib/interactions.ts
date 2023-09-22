@@ -117,6 +117,7 @@ export const detectInteractions = () => {
 				interactable.hover = true
 				interactable.pressed = touchingPointer.pressed
 				interactable.lastTouchedBy = touchingPointer
+				break
 			} else {
 				interactable.pressed = false
 				interactable.hover = false

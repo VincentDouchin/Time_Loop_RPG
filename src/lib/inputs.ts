@@ -1,7 +1,7 @@
 import type { JoystickManager } from 'nipplejs'
 import nipplejs from 'nipplejs'
 import type { Class, ECS } from './ECS'
-import { Component, Entity } from './ECS'
+import { Component } from './ECS'
 import { ecs } from '@/globals/init'
 
 export const GAMEPAD_AXIS = {
@@ -207,15 +207,4 @@ export const registerInput = (...inputClasses: Class[]) => (ecs: ECS) => {
 			}
 		})
 	}
-}
-
-export const despawnEntities = (...components: Class[]) => {
-	return components.map((component) => {
-		const query = ecs.query.pick(Entity).with(component)
-		return () => {
-			for (const [entity] of query.getAll()) {
-				entity.despawn()
-			}
-		}
-	})
 }

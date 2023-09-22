@@ -25,7 +25,7 @@ interface systemSet extends System {
 export function SystemSet(...systems: System[]): systemSet {
 	let time = Date.now()
 	const set: systemSet = function () {
-		if (set.timeout > 0 && (time + set.timeout - Date.now()) < 0) {
+		if ((set.timeout > 0 && (time + set.timeout - Date.now()) < 0) || set.timeout === 0) {
 			if (set.conditions.every(condition => condition())) {
 				systems.forEach(system => system())
 				time = Date.now()

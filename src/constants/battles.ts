@@ -1,14 +1,17 @@
 import { type Enemy, enemies } from './enemies'
+import { banditCutscene } from '@/battle/battleCutscene'
 
 export interface BattleData {
 	enemies: readonly Enemy[]
 	background: number
+	cutscene?: () => void
 }
 
 export const battles = {
 	Bandits: {
 		enemies: [enemies.bandit, enemies.banditLeader, enemies.bandit],
 		background: 0,
+		cutscene: banditCutscene,
 	},
 	BossBattleIntro: {
 		enemies: [enemies.angelOfDeath],

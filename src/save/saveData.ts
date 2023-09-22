@@ -5,7 +5,7 @@ import type { direction } from '@/dungeon/spawnDungeon'
 interface saveData {
 	players: PlayerData[]
 	lastDungeon: levels | null
-	lastState: 'dungeon' | 'overworld'
+	lastState: 'dungeon' | 'overworld' | 'battle'
 	lastLevelIndex: number | null
 	lastNodeUUID: string | null
 	keys: Array<typeof keys[number]>

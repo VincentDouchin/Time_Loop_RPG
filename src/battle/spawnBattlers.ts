@@ -1,6 +1,7 @@
 import { Health } from './health'
 import { Battler, BattlerMenu, selectAction, selectNextBattler, selectTargets, takeAction } from './battleActions'
-import { assets, ecs } from '@/globals/init'
+import { Cutscene } from './cutscenes'
+import { assets, despawnEntities, ecs } from '@/globals/init'
 import { Component, Entity } from '@/lib/ECS'
 import { Interactable } from '@/lib/interactions'
 import { type TextureAltasStates, TextureAtlas } from '@/lib/sprite'
@@ -15,15 +16,15 @@ import { sleep } from '@/utils/timing'
 import { ActionSelector, BattlerType, PlayerActions, TargetSelector } from '@/constants/actions'
 import { save, saveToLocalStorage } from '@/save/saveData'
 import type { Enemy } from '@/constants/enemies'
-
-@Component(ecs)
-export class Player {}
+import { DialogContainer } from '@/dungeon/NPC'
+import { Player } from '@/genericComponents/components'
 
 const spawnBattleUi = () => {
 	ecs.spawn(
 		new UIElement({ width: '50%', height: '50px', alignSelf: 'end', justifySelf: 'center', display: 'grid', gridTemplateColumns: '1fr 1fr', placeItems: 'center' }),
 		new NineSlice(assets.ui.frameBig.path, 16, 2),
 		new BattlerMenu(),
+		new DialogContainer(),
 	)
 }
 const battlerSpriteBundle = (side: 'left' | 'right', textureAtlas: TextureAltasStates<'walk' | 'idle'>, background: number, index: number = 0, length: number = 1) => {
@@ -58,38 +59,43 @@ export const spawnBattlers = (battle: Entity, background: number, enemies: reado
 		const enemy = battle.spawn(...bundle, new Health(2))
 		new Tween(2000).onComplete(() => {
 			enemy.addComponent(new Battler(BattlerType.Enemy, enemyData.actions, ActionSelector.EnemyAuto, TargetSelector.EnemyAuto))
+			if (enemyData.additionalComponents) {
+				enemy.addComponent(...enemyData.additionalComponents?.map(getComponent => getComponent()))
+			}
 		})
 	}
 	spawnBattleUi()
 }
-const battlersQuery = ecs.query.pick(Entity, Battler)
-
+const battlersQuery = ecs.query.pick(Battler)
+const cutsceneQuery = ecs.query.with(Cutscene)
 export const battleTurn = () => {
-	// !Select next turn
-	if (battlersQuery.toArray().every(([_, battler]) => !battler.currentTurn)) {
-		for (const [_, battler] of battlersQuery.getAll()) {
-			if (
-				battler === selectNextBattler(battlersQuery.toArray()
-					.filter(([_, battler]) => !battler.finishedTurn)
-					.map(([_, battler]) => battler))
-			) {
-				battler.currentTurn = true
+	if (cutsceneQuery.size === 0) {
+		// !Select next turn
+		if (battlersQuery.toArray().every(([battler]) => !battler.currentTurn)) {
+			for (const [battler] of battlersQuery.getAll()) {
+				if (
+					battler === selectNextBattler(battlersQuery.toArray()
+						.filter(([battler]) => !battler.finishedTurn)
+						.map(([battler]) => battler))
+				) {
+					battler.currentTurn = true
+				}
 			}
 		}
-	}
-	if (battlersQuery.toArray().every(([_, battler]) => battler.finishedTurn)) {
-		for (const [_, battler] of battlersQuery.getAll()) {
-			battler.reset()
+		if (battlersQuery.toArray().every(([battler]) => battler.finishedTurn)) {
+			for (const [battler] of battlersQuery.getAll()) {
+				battler.reset()
+			}
 		}
-	}
-	for (const [_, battler] of battlersQuery.getAll()) {
-		if (battler.currentTurn) {
-			if (!battler.currentAction) {
-				selectAction(battler)
-			} else if (!battler.hasSelectedTargets()) {
-				selectTargets(battler)
-			} else if (!battler.takingAction) {
-				takeAction(battler)
+		for (const [battler] of battlersQuery.getAll()) {
+			if (battler.currentTurn) {
+				if (!battler.currentAction) {
+					selectAction(battler)
+				} else if (!battler.hasSelectedTargets) {
+					selectTargets(battler)
+				} else if (!battler.takingAction) {
+					takeAction(battler)
+				}
 			}
 		}
 	}
@@ -124,14 +130,8 @@ export class WinOrLose {}
 export const winOrLoseUiQuery = ecs.query.pick(Entity).with(WinOrLose)
 const playerQuery = ecs.query.with(Player, Battler)
 const notPlayerQuery = ecs.query.with(Battler).without(Player)
-const battlerMenuQuery = ecs.query.pick(Entity).with(BattlerMenu)
 const winOrLoseBundle = () => [new UIElement({ position: 'absolute', placeSelf: 'center', width: 'fit-content', padding: '5%', color: 'black', placeContent: 'center', display: 'grid', fontSize: '3em' }), new NineSlice(assets.ui.framedisplay.path, 8, 3), new WinOrLose()]
-const despawnBattleMenu = () => {
-	for (const [entity] of battlerMenuQuery.getAll()) {
-		entity.despawn()
-	}
-}
-
+export const despawnBattleMenu = despawnEntities(BattlerMenu)
 const gameOver = () => {
 	for (const player of save.players) {
 		player.currentHealth = player.health
@@ -147,14 +147,14 @@ export const winOrLose = () => {
 			despawnBattleMenu()
 			sleep(3000).then(() => {
 				gameOver()
-				overworldState.enable()
+				overworldState.enable(true)
 			})
 		}
 		if (notPlayerQuery.size === 0 && playerQuery.size > 0) {
 			ecs.spawn(...winOrLoseBundle()).spawn(new TextElement('You won!'))
 			despawnBattleMenu()
 			sleep(3000).then(() => {
-				overworldState.enable()
+				overworldState.enable(true)
 				saveToLocalStorage()
 			})
 		}

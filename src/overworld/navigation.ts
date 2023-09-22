@@ -73,10 +73,12 @@ export const moveOverworldCharacter = () => {
 								entity.removeComponent(Navigating)
 
 								updateSteps(-1)
-								save.lastNodeUUID = targetNode.id
+								save.lastDirection = selectedDirection
+								saveToLocalStorage()
 								if (targetNode.data.Battle) {
 									battleState.enable(battles[targetNode.data.Battle])
 								} else {
+									save.lastNodeUUID = targetNode.id
 									saveToLocalStorage()
 									if (targetNode.data.Dungeon) {
 										dungeonState.enable(getLevelName(targetNode.data.Dungeon), targetNode.data.Level, selectedDirection)

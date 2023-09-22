@@ -22,7 +22,6 @@ export class NPC extends LDTKEntityInstance<NPCLDTK> {}
 export class Dialog {
 	#dialog: Generator
 	current?: string | string[]
-	bubble: Entity | null = null
 	text: TextElement | null = null
 	constructor(dialogResolver: () => Generator) {
 		this.#dialog = dialogResolver()
@@ -47,13 +46,8 @@ export const NPCBundle = (entityInstance: EntityInstance, layerInstance: LayerIn
 	return components
 }
 
-@Component(ecs)
-export class DialogArea {
-	constructor(public dialog: Dialog, public bubble: Entity | null = null, public text: TextElement | null = null) {}
-}
-
 const addedDialogQuery = ecs.query.pick(Entity, Dialog).added(Dialog)
-export const spawnDialogArea = () => {
+export const spawnDialogMenu = () => {
 	for (const [entity] of addedDialogQuery.getAll()) {
 		entity.addComponent(new Menu())
 	}
@@ -63,45 +57,62 @@ export const spawnDialogArea = () => {
 export class DialogOption {
 	constructor(public index = 0) {}
 }
-
-const dialogAreasQuery = ecs.query.pick(Entity, Position, Dialog, Menu)
+@Component(ecs)
+export class DialogContainer {
+	constructor(public dialog?: Dialog) {}
+}
+const dialogQuery = ecs.query.pick(Entity, Position, Dialog, Menu)
+const dialogContainerQuery = ecs.query.pick(Entity, DialogContainer)
 const playerQuery = ecs.query.pick(PlayerInputMap, Position)
-export const startDialog = () => {
+const dialogOptionsQuery = ecs.query.pick(Entity).with(DialogOption)
+export const stepDialog = (dialog: Dialog, menu: Menu) => {
+	const bubble = dialogContainerQuery.extract()
+	if (bubble) {
+		for (const [dialogOption] of dialogOptionsQuery.getAll()) {
+			dialogOption.despawn()
+		}
+		const line = dialog.step(menu.selectedEntity?.getComponent(DialogOption)?.index ?? 0)
+		if (line) {
+			const lines = typeof line === 'string' ? [line] : line
+			const boxes = lines.map((line, index) => {
+				const box = bubble.spawn(new UIElement(), new DialogOption(index))
+				box.spawn(new TextElement(line))
+				return box
+			}).filter(Boolean)
+			if (boxes.length > 1) {
+				menu.fromColumn(...boxes)
+			}
+		}
+	}
+}
+
+export const startDialogDungeon = () => {
 	for (const [playerInputs, playerPosition] of playerQuery.getAll()) {
-		for (const [entity, position, dialog, menu] of dialogAreasQuery.getAll()) {
-			if (playerPosition.distanceTo(position) < 32) {
+		for (const [entity, position, dialog, menu] of dialogQuery.getAll()) {
+			if (playerPosition.distanceTo(position) < 16) {
 				if (playerInputs.get('interact').justPressed) {
-					if (!dialog.bubble) {
-						dialog.bubble = entity
-							.spawn(
-								...new UIElement({ color: 'black', display: 'grid', gap: '0.2rem', padding: '0.2rem' }).withWorldPosition(0, 8),
-								new NineSlice(assets.ui.textbox.path, 4, 3),
-							)
-							.label('bubble')
+					if (!dialogContainerQuery.size) {
+						entity.spawn(
+							...new UIElement({ color: 'black', display: 'grid', gap: '0.2rem', padding: '0.2rem' }).withWorldPosition(0, 8),
+							new NineSlice(assets.ui.textbox.path, 4, 3),
+							new DialogContainer(dialog),
+						)
 					}
-					dialog.bubble.despawnChildren()
-					const line = dialog.step(menu.selectedEntity?.getComponent(DialogOption)?.index ?? 0)
-					if (line) {
-						const lines = typeof line === 'string' ? [line] : line
-						const boxes = lines.map((line, index) => {
-							if (dialog.bubble) {
-								const box = dialog.bubble.spawn(new UIElement(), new DialogOption(index))
-								box.spawn(new TextElement(line))
-								return box
-							}
-							return null
-						}).filter(Boolean)
-						if (boxes.length > 1) {
-							menu.fromColumn(...boxes)
+					ecs.onNextTick(() => stepDialog(dialog, menu))
+				}
+				if (!dialog.current) {
+					for (const [entity, container] of dialogContainerQuery.getAll()) {
+						if (container.dialog === dialog) {
+							entity.despawn()
 						}
-					} else {
-						dialog.bubble.despawn()
-						dialog.bubble = null
 					}
 				}
-			} else if (dialog.bubble) {
-				dialog.bubble.despawn()
-				dialog.bubble = null
+			} else {
+				for (const [entity, container] of dialogContainerQuery.getAll()) {
+					if (container.dialog === dialog) {
+						entity.despawn()
+					}
+				}
 			}
 		}
 	}

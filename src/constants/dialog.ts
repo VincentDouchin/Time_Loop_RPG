@@ -1,4 +1,6 @@
 import { lockPlayer, unlockPlayer } from './dialogHelpers'
+import { despwawnCutscene } from '@/battle/cutscenes'
+import { overworldState } from '@/main'
 import { save, saveToLocalStorage } from '@/save/saveData'
 
 export const keys = ['oldManBandit'] as const
@@ -6,6 +8,7 @@ const addKey = (key: typeof keys[number]) => {
 	save.keys = [...save.keys, key]
 	saveToLocalStorage()
 }
+
 const hasKey = (key: typeof keys[number]) => save.keys.includes(key)
 export const dialog: Partial<Record<characters | `sign${string}`, () => Generator>> = {
 	*howard() {
@@ -43,6 +46,19 @@ export const dialog: Partial<Record<characters | `sign${string}`, () => Generato
 			unlockPlayer()
 			yield
 		}
+	},
+	*banditLeader() {
+		if (hasKey('oldManBandit')) {
+			yield 'You talked to my old man?'
+			yield '...'
+			yield 'Mom is not doing well?'
+			yield '...'
+			yield 'Just go'
+			overworldState.enable()
+		} else {
+			yield 'Give us all your stuff!'
+		}
+		yield despwawnCutscene()
 	},
 	*signTavern() {
 		while (true) {

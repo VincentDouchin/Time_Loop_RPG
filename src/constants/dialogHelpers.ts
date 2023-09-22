@@ -1,5 +1,5 @@
-import { Player } from '@/battle/spawnBattlers'
 import { LockedMovement } from '@/dungeon/playerMovement'
+import { Player } from '@/genericComponents/components'
 import { ecs } from '@/globals/init'
 import { Entity } from '@/lib/ECS'
 

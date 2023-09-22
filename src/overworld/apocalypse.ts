@@ -1,7 +1,6 @@
 import { easing } from 'ts-easing'
 import { stepsQuery } from './overworldUi'
 import { Navigating } from './navigation'
-import { Player } from '@/battle/spawnBattlers'
 import { assets, ecs } from '@/globals/init'
 import { Component, Entity } from '@/lib/ECS'
 import { mainCameraQuery } from '@/lib/camera'
@@ -9,6 +8,7 @@ import { FullScreenShader, Sprite, TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { Tween } from '@/lib/tween'
 import { ApocalypseShader } from '@/shaders/ApocalypseShader'
+import { Player } from '@/genericComponents/components'
 
 @Component(ecs)
 export class Apocalypse {}

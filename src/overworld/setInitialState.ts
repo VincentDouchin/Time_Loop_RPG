@@ -9,6 +9,7 @@ export const setInitialState = () => {
 	if (save.lastState === 'overworld') {
 		overworldState.enable()
 	}
+
 	if (save.players.length === 0) {
 		save.players.push(players.paladin)
 	}

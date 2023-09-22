@@ -1,19 +1,20 @@
 import { OrthographicCamera } from 'three'
 import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer'
+import { banditCutscene, battleDialog } from './battle/battleCutscene'
 import { displayHealth, savePlayerHealth, updateHealthDisplay } from './battle/health'
 import { despawnBattle, spawnBattleBackground as spawnBattle } from './battle/spawnBattleBackground'
-import { battleTurn, outlineSelectedEnemy, removeDeadBattlers, winOrLose } from './battle/spawnBattlers'
+import { battleTurn, despawnBattleMenu, outlineSelectedEnemy, removeDeadBattlers, winOrLose } from './battle/spawnBattlers'
 import type { BattleData } from './constants/battles'
-import { spawnDialogArea, startDialog } from './dungeon/NPC'
+import { spawnDialogMenu, startDialogDungeon } from './dungeon/NPC'
 import { PlayerInputMap } from './dungeon/playerInputs'
 import { movePlayer } from './dungeon/playerMovement'
-import type { DungeonRessources, direction } from './dungeon/spawnDungeon'
+import type { DungeonRessources } from './dungeon/spawnDungeon'
 import { Dungeon, allowPlayerToExit, exitDungeon, isPlayerInside, setDungeonState, spawnDungeon } from './dungeon/spawnDungeon'
-import { ecs } from './globals/init'
+import { despawnEntities, ecs } from './globals/init'
 import { State } from './lib/ECS'
 import { animateSprites } from './lib/animation'
 import { adjustScreenSize, cameraFollow, initializeCameraBounds, render, spawnCamera, updateCameraZoom } from './lib/camera'
-import { despawnEntities, disableTouchJoystick, registerInput } from './lib/inputs'
+import { disableTouchJoystick, registerInput } from './lib/inputs'
 import { detectInteractions, updateMousePosition } from './lib/interactions'
 import { initThree } from './lib/rendering'
 import { Sprite } from './lib/sprite'
@@ -52,17 +53,17 @@ ecs.addPlugin(addToScene(OrthographicCamera, Sprite, CSS2DObject))
 export const overworldState = ecs.state()
 	.onEnter(spawnOverworld, spawnStepsUi, setOverwolrdState)
 	.onUpdate(moveOverworldCharacter, triggerApocalypse)
-	.onExit(despawnOverworld, ...despawnEntities(StepsUi))
+	.onExit(despawnOverworld, despawnEntities(StepsUi))
 
 export const battleState = ecs.state<[BattleData]>()
 	.onEnter(spawnBattle)
-	.onUpdate(displayHealth, updateHealthDisplay, battleTurn, outlineSelectedEnemy, removeDeadBattlers, winOrLose, savePlayerHealth)
-	.onExit(despawnBattle, saveToLocalStorage)
+	.onUpdate(displayHealth, updateHealthDisplay, battleTurn, outlineSelectedEnemy, removeDeadBattlers, winOrLose, savePlayerHealth, battleDialog, banditCutscene, spawnDialogMenu)
+	.onExit(despawnBattle, saveToLocalStorage, despawnBattleMenu)
 
 export const dungeonState = ecs.state<DungeonRessources>()
 	.onEnter(spawnDungeon, setDungeonState)
-	.onUpdate(movePlayer, isPlayerInside, updateCameraZoom(7), startDialog, spawnDialogArea, exitDungeon, allowPlayerToExit)
-	.onExit(disableTouchJoystick, ...despawnEntities(Dungeon))
+	.onUpdate(movePlayer, isPlayerInside, updateCameraZoom(7), startDialogDungeon, spawnDialogMenu, exitDungeon, allowPlayerToExit)
+	.onExit(disableTouchJoystick, despawnEntities(Dungeon))
 
 State.exclusive(overworldState, battleState, dungeonState)
 setInitialState()

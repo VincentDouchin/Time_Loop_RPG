@@ -1,5 +1,5 @@
-import { Player } from '@/battle/spawnBattlers'
 import type { direction } from '@/dungeon/spawnDungeon'
+import { Player } from '@/genericComponents/components'
 import { assets } from '@/globals/init'
 import type { Entity } from '@/lib/ECS'
 import { CameraTarget } from '@/lib/camera'
@@ -21,9 +21,13 @@ export const getOtherDirection = (dir: direction): direction => {
 export const spawnOverworldCharacter = (node: Entity, nodePosition: Position) => {
 	const [sprite, animator, textureAtlas] = TextureAtlas.bundle(assets.characters.paladin, 'idle', 'left', 'down')
 	sprite.setRenderOrder(10)
-	const direction = save.lastState === 'dungeon' && save.lastDirection
-		? getOtherDirection(save.lastDirection)
-		: null
+	let direction: null | direction = null
+	if (save.lastState === 'dungeon' && save.lastDirection) {
+		direction = getOtherDirection(save.lastDirection)
+	}
+	if (save.lastState === 'overworld' && save.lastDirection) {
+		direction = save.lastDirection
+	}
 	return [sprite,
 		animator,
 		textureAtlas,

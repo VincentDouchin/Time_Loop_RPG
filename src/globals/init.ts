@@ -4,7 +4,8 @@ import { CSS2DObject, CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRe
 import { loadAssets } from './assets'
 import { createWorld } from '@/lib/world'
 import { PixelTexture } from '@/lib/pixelTexture'
-import { ECS } from '@/lib/ECS'
+import type { Class } from '@/lib/ECS'
+import { ECS, Entity, SystemSet } from '@/lib/ECS'
 
 export const world = await createWorld()
 export const assets = await loadAssets()
@@ -27,3 +28,14 @@ ecs.registerComponent(ImpulseJoint)
 
 export const renderer = new WebGLRenderer({ antialias: true, alpha: true })
 export const cssRenderer = new CSS2DRenderer()
+
+export const despawnEntities = (...components: Class[]) => {
+	return SystemSet(...components.map((component) => {
+		const query = ecs.query.pick(Entity).with(component)
+		return () => {
+			for (const [entity] of query.getAll()) {
+				entity.despawn()
+			}
+		}
+	}))
+}
