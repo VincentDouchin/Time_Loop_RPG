@@ -1,4 +1,6 @@
 import { Health } from './health'
+import { ActionSelector, TargetSelector, TargetType } from '@/constants/actions'
+import type { BattleAction, BattlerType } from '@/constants/actions'
 import { ecs } from '@/globals/init'
 import { Component, Entity } from '@/lib/ECS'
 import { Interactable } from '@/lib/interactions'
@@ -11,70 +13,6 @@ import { Menu, Selected } from '@/ui/menu'
 export class BattlerMenu {}
 @Component(ecs)
 export class EnemySelectMenu {}
-
-export enum BattlerType {
-	Player,
-	Enemy,
-}
-export enum TargetType {
-	Self,
-	Others,
-	Same,
-	AllOthers,
-	AllSame,
-	All,
-	Any,
-}
-export enum ActionType {
-	Damage,
-	Heal,
-	Flee,
-}
-export interface BattleAction {
-	label: string
-	target: TargetType
-	targetAmount: number
-	power: number
-	type: ActionType
-	animation: string
-}
-export enum ActionSelector {
-	PlayerMenu,
-	EnemyAuto,
-}
-export enum TargetSelector {
-	PlayerTargetMenu,
-	EnemyAuto,
-}
-export const PlayerActions: Record<string, BattleAction> = {
-	attack: {
-		label: 'Attack',
-		target: TargetType.Others,
-		power: 1,
-		targetAmount: 1,
-		type: ActionType.Damage,
-		animation: 'attack',
-	},
-	flee: {
-		label: 'Flee',
-		target: TargetType.Self,
-		power: 0,
-		targetAmount: 0,
-		type: ActionType.Flee,
-		animation: 'walk',
-	},
-}
-
-export const EnemyActions: Record<string, BattleAction> = {
-	attack: {
-		label: 'Attack',
-		target: TargetType.Others,
-		power: 1,
-		targetAmount: 1,
-		type: ActionType.Damage,
-		animation: 'attack',
-	},
-}
 
 @Component(ecs)
 export class PlayerActionItem {
@@ -90,7 +28,7 @@ export class Battler {
 	currentAction: BattleAction | null = null
 	constructor(
 		public type: BattlerType,
-		public actions: BattleAction[],
+		public actions: readonly BattleAction[],
 		public actionSelector: ActionSelector,
 		public targetSelector: TargetSelector,
 	) {}

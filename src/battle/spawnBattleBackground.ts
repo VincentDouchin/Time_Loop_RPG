@@ -1,22 +1,20 @@
 import { spawnBattlers, winOrLoseUiQuery } from './spawnBattlers'
 import type { BattleData } from '@/constants/battles'
-import { battles } from '@/constants/battles'
 
 import { assets, ecs } from '@/globals/init'
 import { campfireBundle } from '@/items/campfire'
 import { drawLayer } from '@/level/spawnLevel'
-import { Component, Entity, Ressource } from '@/lib/ECS'
+import type { System } from '@/lib/ECS'
+import { Component, Entity } from '@/lib/ECS'
 import { CameraBounds } from '@/lib/camera'
 import { Sprite } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { getBuffer } from '@/utils/buffer'
 
-export const BattleRessource = new Ressource<BattleData>(battles.Bandits)
-
 @Component(ecs)
 export class Battle {}
-export const spawnBattleBackground = () => {
-	const level = assets.levels.minibattle.levels[BattleRessource.data.background]
+export const spawnBattleBackground: System<[BattleData]> = ({ enemies, background }) => {
+	const level = assets.levels.minibattle.levels[background]
 	const buffer = getBuffer(level.pxWid, level.pxHei)
 	const battle = ecs.spawn()
 	if (level.layerInstances) {
@@ -31,7 +29,7 @@ export const spawnBattleBackground = () => {
 			}
 		}
 		battle.addComponent(Sprite.fromBuffer(buffer), new Position(), new Battle(), CameraBounds.fromLevel(level))
-		spawnBattlers(battle)
+		spawnBattlers(battle, background, enemies)
 	}
 }
 

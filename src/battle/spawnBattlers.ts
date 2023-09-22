@@ -1,6 +1,5 @@
-import { ActionSelector, Battler, BattlerMenu, BattlerType, EnemyActions, PlayerActions, TargetSelector, selectAction, selectNextBattler, selectTargets, takeAction } from './battleActions'
 import { Health } from './health'
-import { BattleRessource } from './spawnBattleBackground'
+import { Battler, BattlerMenu, selectAction, selectNextBattler, selectTargets, takeAction } from './battleActions'
 import { assets, ecs } from '@/globals/init'
 import { Component, Entity } from '@/lib/ECS'
 import { Interactable } from '@/lib/interactions'
@@ -13,6 +12,9 @@ import { NineSlice } from '@/ui/NineSlice'
 import { TextElement, UIElement } from '@/ui/UiElement'
 import { Selected } from '@/ui/menu'
 import { sleep } from '@/utils/timing'
+import { ActionSelector, BattlerType, PlayerActions, TargetSelector } from '@/constants/actions'
+import { save, saveToLocalStorage } from '@/save/saveData'
+import type { Enemy } from '@/constants/enemies'
 
 @Component(ecs)
 export class Player {}
@@ -24,7 +26,7 @@ const spawnBattleUi = () => {
 		new BattlerMenu(),
 	)
 }
-const battlerSpriteBundle = (side: 'left' | 'right', textureAtlas: TextureAltasStates<'walk' | 'idle'>, index: number = 0, length: number = 1) => {
+const battlerSpriteBundle = (side: 'left' | 'right', textureAtlas: TextureAltasStates<'walk' | 'idle'>, background: number, index: number = 0, length: number = 1) => {
 	const bundle = TextureAtlas.bundle<'walk' | 'idle'>(textureAtlas, 'walk', side, 'down')
 	const [sprite, _, atlas] = bundle
 	sprite.setRenderOrder(10)
@@ -32,7 +34,7 @@ const battlerSpriteBundle = (side: 'left' | 'right', textureAtlas: TextureAltasS
 	const direction = side === 'right' ? -1 : 1
 	const width = sprite.scaledDimensions.x / 2
 	const height = sprite.scaledDimensions.y / 2
-	const edge = (assets.levels.minibattle.levels[BattleRessource.data.background].pxWid / 2 - (width / 2)) * direction
+	const edge = (assets.levels.minibattle.levels[background].pxWid / 2 - (width / 2)) * direction
 	const position = new Position(edge, index * height - height * length / 2)
 	new Tween(1500)
 		.onUpdate(x => position.x = x, edge, edge - width * direction)
@@ -40,20 +42,23 @@ const battlerSpriteBundle = (side: 'left' | 'right', textureAtlas: TextureAltasS
 	return [...bundle, position, new Interactable()]
 }
 
-export const spawnBattlers = (battle: Entity) => {
+export const spawnBattlers = (battle: Entity, background: number, enemies: readonly Enemy[]) => {
 	// ! PLAYER
-	const bundle = battlerSpriteBundle('right', assets.characters.paladin)
-	const player = battle.spawn(...bundle, new Health(20), new Player())
-	new Tween(2000)
-		.onComplete(() => player.addComponent(new Battler(BattlerType.Player, [PlayerActions.attack, PlayerActions.flee], ActionSelector.PlayerMenu, TargetSelector.PlayerTargetMenu)))
+	for (const playerData of save.players) {
+		const bundle = battlerSpriteBundle('right', assets.characters[playerData.animations], background)
+		const player = battle.spawn(...bundle, Health.fromPlayerData(playerData), new Player())
+		new Tween(2000)
+			.onComplete(() => player.addComponent(new Battler(BattlerType.Player, [PlayerActions.attack, PlayerActions.flee], ActionSelector.PlayerMenu, TargetSelector.PlayerTargetMenu)))
+	}
 
 	// !ENEMIES
-	const enemies = BattleRessource.data.enemies.map(enemy => assets.characters[enemy.atlas])
 	for (let i = 0; i < enemies.length; i++) {
-		const bundle = battlerSpriteBundle('left', enemies[i], i, enemies.length)
+		const enemyData = enemies[i]
+		const bundle = battlerSpriteBundle('left', assets.characters[enemyData.atlas], background, i, enemies.length)
 		const enemy = battle.spawn(...bundle, new Health(2))
-		new Tween(2000)
-			.onComplete(() => enemy.addComponent(new Battler(BattlerType.Enemy, [EnemyActions.attack], ActionSelector.EnemyAuto, TargetSelector.EnemyAuto)))
+		new Tween(2000).onComplete(() => {
+			enemy.addComponent(new Battler(BattlerType.Enemy, enemyData.actions, ActionSelector.EnemyAuto, TargetSelector.EnemyAuto))
+		})
 	}
 	spawnBattleUi()
 }
@@ -126,16 +131,32 @@ const despawnBattleMenu = () => {
 		entity.despawn()
 	}
 }
+
+const gameOver = () => {
+	for (const player of save.players) {
+		player.currentHealth = player.health
+	}
+	save.lastNodeUUID = null
+	saveToLocalStorage()
+}
+
 export const winOrLose = () => {
 	if (winOrLoseUiQuery.size === 0) {
 		if (playerQuery.size === 0 && notPlayerQuery.size > 0) {
 			ecs.spawn(...winOrLoseBundle()).spawn(new TextElement('Game Over'))
 			despawnBattleMenu()
+			sleep(3000).then(() => {
+				gameOver()
+				overworldState.enable()
+			})
 		}
 		if (notPlayerQuery.size === 0 && playerQuery.size > 0) {
 			ecs.spawn(...winOrLoseBundle()).spawn(new TextElement('You won!'))
 			despawnBattleMenu()
-			sleep(3000).then(() => overworldState.enable())
+			sleep(3000).then(() => {
+				overworldState.enable()
+				saveToLocalStorage()
+			})
 		}
 	}
 }

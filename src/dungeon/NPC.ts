@@ -76,7 +76,8 @@ export const startDialog = () => {
 							.spawn(
 								...new UIElement({ color: 'black', display: 'grid', gap: '0.2rem', padding: '0.2rem' }).withWorldPosition(0, 8),
 								new NineSlice(assets.ui.textbox.path, 4, 3),
-							).label('bubble')
+							)
+							.label('bubble')
 					}
 					dialog.bubble.despawnChildren()
 					const line = dialog.step(menu.selectedEntity?.getComponent(DialogOption)?.index ?? 0)
@@ -95,6 +96,7 @@ export const startDialog = () => {
 						}
 					} else {
 						dialog.bubble.despawn()
+						dialog.bubble = null
 					}
 				}
 			} else if (dialog.bubble) {

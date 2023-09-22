@@ -1,16 +1,10 @@
-import type { IntGridValueDefinition, LDTKMap, LayerInstance, Level } from './LDTK'
-import { LDTKEntityInstance } from './LDTKEntity'
-import { NavNode } from './NavNode'
+import type { IntGridValueDefinition, LDTKMap, LayerInstance } from './LDTK'
 import { assets, ecs } from '@/globals/init'
-import type { Class, Entity } from '@/lib/ECS'
+import type { Entity } from '@/lib/ECS'
 import { Component } from '@/lib/ECS'
 
-import { PixelTexture } from '@/lib/pixelTexture'
-import { Sprite } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { getFileName } from '@/utils/assetLoader'
-import { getBuffer } from '@/utils/buffer'
-import { createDebugtexture } from '@/utils/debugTexture'
 
 @Component(ecs)
 export class Map {}
@@ -36,7 +30,7 @@ export const drawLayer = (layerInstance: LayerInstance, buffer: CanvasRenderingC
 }
 
 interface Plate { t: number; l: number; b: number; r: number }
-export const spawnIntGridEntities = (map: LDTKMap, layer: LayerInstance, target: (index?: IntGridValueDefinition) => boolean, fn: (entity: Entity, w: number, h: number) => void = x => x) => {
+export const spawnIntGridEntities = (parent: Entity, map: LDTKMap, layer: LayerInstance, target: (index?: IntGridValueDefinition) => boolean, fn: (entity: Entity, w: number, h: number) => void = x => x) => {
 	const rows: Plate[] = []
 	for (let y = 0; y < layer.__cHei; y++) {
 		let lastBlock: Plate | null = null
@@ -72,34 +66,7 @@ export const spawnIntGridEntities = (map: LDTKMap, layer: LayerInstance, target:
 			-(plate.t * layer.__gridSize + h / 2 - layer.__cHei * layer.__gridSize / 2),
 		)
 
-		const tileEntity = ecs.spawn(position)
+		const tileEntity = parent.spawn(position)
 		fn(tileEntity, w, h)
-	}
-}
-
-const createNavNodes = (parent: Entity, layerInstance: LayerInstance) => {
-	for (const entityInstance of layerInstance.entityInstances) {
-		const navNode = new NavNode(entityInstance)
-		const entity = parent.spawn(navNode, navNode.position(layerInstance))
-
-		LDTKEntityInstance.register(entity, entityInstance)
-	}
-}
-
-export const spawnLevel = (level: Level, ...components: InstanceType<Class>[]) => {
-	const buffer = getBuffer(level.pxWid, level.pxHei)
-	const map = ecs.spawn(...components)
-	if (level.layerInstances) {
-		for (const layerInstance of [...level.layerInstances].reverse()) {
-			switch (layerInstance.__type) {
-			case 'IntGrid':
-			case 'Tiles': drawLayer(layerInstance, buffer)
-				break
-			case 'Entities' : {
-				layerInstance.__identifier === 'Nodes' && createNavNodes(map, layerInstance)
-			}
-			}
-		}
-		map.addComponent(new Sprite(new PixelTexture(buffer.canvas)), new Position())
 	}
 }

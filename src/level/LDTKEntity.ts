@@ -20,10 +20,10 @@ export class LDTKEntityInstance<EntityInstanceDef extends Record<string, any> > 
 	}
 
 	getValue(field: FieldInstance) {
-		if (!field.__value) {
-			return null
-		} else if (field.__type === 'EntityRef') {
+		if (field.__type === 'EntityRef') {
 			return () => LDTKEntityInstance.refs[field.__value.entityIid]
+		} else if (field.__type === 'Array<EntityRef>') {
+			return field.__value.map((val: { entityIid: string }) => () => LDTKEntityInstance.refs[val.entityIid])
 		} else {
 			return field.__value
 		}
@@ -33,7 +33,7 @@ export class LDTKEntityInstance<EntityInstanceDef extends Record<string, any> > 
 		const w = layer.__cWid * layer.__gridSize
 		const h = layer.__cHei * layer.__gridSize
 		return new Position(
-			this.entityInstance.px[0] - w / 2 + this.entityInstance.__pivot[0] * this.entityInstance.width / 2,
+			this.entityInstance.px[0] - w / 2,
 			-this.entityInstance.px[1] + h / 2,
 		)
 	}

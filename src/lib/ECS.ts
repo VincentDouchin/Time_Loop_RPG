@@ -6,16 +6,14 @@ export function Component(ecs: ECS) {
 	}
 }
 
-export class Ressource<T> {
-	constructor(private _data: T) {}
-	get data() {
-		return this._data
-	}
+export interface Class { new(...args: any[]): any }
+export type Constructor<T> = new (...args: any[]) => T
 
-	set data(newData: T) {
-		this._data = newData
-	}
+type QueryPicked<T extends Class[]> = {
+	[K in keyof T]: T[K] extends infer R extends Class ? InstanceType<R> : never;
 }
+
+export type System<R extends any[] = []> = (...ressources: R) => void
 
 interface systemSet extends System {
 	conditions: (() => boolean)[]
@@ -26,10 +24,10 @@ interface systemSet extends System {
 
 export function SystemSet(...systems: System[]): systemSet {
 	let time = Date.now()
-	const set: systemSet = function (ecs: ECS) {
+	const set: systemSet = function () {
 		if (set.timeout > 0 && (time + set.timeout - Date.now()) < 0) {
 			if (set.conditions.every(condition => condition())) {
-				systems.forEach(system => system(ecs))
+				systems.forEach(system => system())
 				time = Date.now()
 			}
 		}
@@ -178,15 +176,6 @@ class Query<T extends InstanceType<Class>[] = []> extends Map<Entity, T> {
 	}
 }
 
-export interface Class { new(...args: any[]): any }
-export type Constructor<T> = new (...args: any[]) => T
-
-type QueryPicked<T extends Class[]> = {
-	[K in keyof T]: T[K] extends infer R extends Class ? InstanceType<R> : never;
-}
-
-export type System = (ecs: ECS) => void
-
 export class Entity {
 	name?: string
 	children = new Set<Entity>()
@@ -250,14 +239,14 @@ export class Entity {
 	}
 }
 
-export class State {
+export class State<R extends any[] = []> {
 	#update: System[] = []
 	#preUpdate: System[] = []
 	#postUpdate: System[] = []
-	#enter: System[] = []
+	#enter: System<R>[] = []
 	#exit: System[] = []
 	constructor(private ecs: ECS) { }
-	static exclusive(...states: State[]) {
+	static exclusive(...states: State<any>[]) {
 		for (const state of states) {
 			state.onEnter(...states.filter(s => s !== state).map(s => () => s.disable()))
 		}
@@ -282,7 +271,7 @@ export class State {
 		return this
 	}
 
-	onEnter(...systems: System[]) {
+	onEnter(...systems: System<R>[]) {
 		this.#enter.push(...systems)
 		return this
 	}
@@ -293,39 +282,41 @@ export class State {
 	}
 
 	update() {
-		this.#update.forEach(update => update(this.ecs))
+		this.#update.forEach(update => update())
 	}
 
 	preUpdate() {
-		this.#preUpdate.forEach(update => update(this.ecs))
+		this.#preUpdate.forEach(update => update())
 	}
 
 	postUpdate() {
-		this.#postUpdate.forEach(update => update(this.ecs))
+		this.#postUpdate.forEach(update => update())
 	}
 
-	enter() {
-		this.#enter.forEach(enter => enter(this.ecs))
+	enter(...ressources: R) {
+		this.#enter.forEach(enter => enter(...ressources))
 	}
 
 	exit() {
-		this.#exit.forEach(exit => exit(this.ecs))
+		this.#exit.forEach(exit => exit())
 	}
 
-	enable() {
+	enable(...ressources: R) {
 		if (!this.ecs.states.has(this)) {
-			this.ecs.setState(this)
+			this.enter(...ressources)
+			this.ecs.states.add(this)
 		}
 		return this
 	}
 
 	disable() {
-		this.ecs.unsetState(this)
+		this.exit()
+		this.ecs.states.delete(this)
 		return this
 	}
 
-	toggle() {
-		this.isActive ? this.disable() : this.enable()
+	toggle(...ressources: R) {
+		this.isActive ? this.disable() : this.enable(...ressources)
 		return this
 	}
 }
@@ -402,18 +393,8 @@ export class ECS {
 		return this.states.has(state)
 	}
 
-	get state() {
-		return new State(this)
-	}
-
-	setState(state: State) {
-		state.enter()
-		this.states.add(state)
-	}
-
-	unsetState(state: State) {
-		state.exit()
-		this.states.delete(state)
+	state<R extends any[] = []>() {
+		return new State<R>(this)
 	}
 
 	update() {

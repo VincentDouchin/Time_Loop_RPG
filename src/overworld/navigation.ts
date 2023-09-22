@@ -1,54 +1,59 @@
 import { updateSteps } from './overworldUi'
-import { BattleRessource } from '@/battle/spawnBattleBackground'
-import { assets, ecs } from '@/globals/init'
+import { ecs } from '@/globals/init'
 import { NavNode, getLevelName } from '@/level/NavNode'
 import { Component, Entity } from '@/lib/ECS'
 
+import { battles } from '@/constants/battles'
+import type { direction } from '@/dungeon/spawnDungeon'
 import { Sprite, TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { Tween } from '@/lib/tween'
 import { battleState, dungeonState } from '@/main'
 import { menuInputQuery } from '@/menus/menuInputs'
-import { getSave } from '@/save/saveData'
-import { battles } from '@/constants/battles'
-import { DungeonRessource } from '@/dungeon/spawnDungeon'
+import { save, saveToLocalStorage } from '@/save/saveData'
 
 @Component(ecs)
 export class Navigator {
-	constructor(public currentNode: NavNode) {}
+	constructor(public currentNode: Entity, public direction: direction | null = null) {}
 }
 
 @Component(ecs)
 export class Navigating {}
-const save = getSave()
-const nodeQuery = ecs.query.pick(Entity, NavNode)
 const navigatorQuery = ecs.query.pick(Entity, Navigator, Position, TextureAtlas, Sprite).without(Navigating)
 export const moveOverworldCharacter = () => {
 	for (const [entity, navigator, position, atlas] of navigatorQuery.getAll()) {
 		const inputs = menuInputQuery.extract()
 		if (inputs) {
 			let target: Entity | null = null
+			let selectedDirection: direction | null = null
 			for (const [input, direction] of [['Up', 'up'], ['Down', 'down'], ['Left', 'left'], ['Right', 'right']] as const) {
-				const node = navigator.currentNode.data[direction]
-				const otherDirection = {
-					up: 'down',
-					down: 'up',
-					left: 'right',
-					right: 'left',
-				} as const
-				if (inputs.get(input).justPressed) {
-					const back = nodeQuery.toArray().reduce((acc: null | Entity, [entity, n]) => {
-						if (n.data?.[otherDirection[direction]]?.().getComponent(NavNode)?.id === navigator.currentNode.id) {
-							acc = entity
-						}
-						return acc
-					}, null)
-					target = node ? node() : back
-					if (direction === 'down' || direction === 'up') {
-						atlas.directionY = direction
+				if (inputs.get(input).justPressed || navigator.direction === direction) {
+					if (navigator.direction === direction) {
+						navigator.direction = null
 					}
-					if (direction === 'left' || direction === 'right') {
-						atlas.directionX = direction
+					const nodeEntity = navigator.currentNode
+					const initialNodePos = nodeEntity.getComponent(Position)
+					const node = nodeEntity.getComponent(NavNode)?.data.directions.find((ref) => {
+						const pos = ref().getComponent(Position)
+						if (pos && initialNodePos) {
+							switch (direction) {
+							case 'up' : return pos.x === initialNodePos.x && pos.y > initialNodePos.y
+							case 'down' :return pos.x === initialNodePos.x && pos.y < initialNodePos.y
+							case 'left' :return pos.x < initialNodePos.x && pos.y === initialNodePos.y
+							case 'right' :return pos.x > initialNodePos.x && pos.y === initialNodePos.y
+							}
+						}
+						return false
+					})
+					if (node) {
+						target = node()
+						if (direction === 'down' || direction === 'up') {
+							atlas.directionY = direction
+						}
+						if (direction === 'left' || direction === 'right') {
+							atlas.directionX = direction
+						}
+						selectedDirection = direction
 					}
 				}
 			}
@@ -62,20 +67,19 @@ export const moveOverworldCharacter = () => {
 						.onUpdate(y => position.y = y, position.y, targetPosition.y)
 						.onUpdate(x => position.x = x, position.x, targetPosition.x)
 						.onComplete(() => {
-							if (targetNode) {
+							if (target && targetNode && selectedDirection) {
 								atlas.state = 'idle'
-								navigator.currentNode = targetNode
+								navigator.currentNode = target
 								entity.removeComponent(Navigating)
 
 								updateSteps(-1)
+								save.lastNodeUUID = targetNode.id
 								if (targetNode.data.Battle) {
-									BattleRessource.data = battles[targetNode.data.Battle]
-									battleState.enable()
+									battleState.enable(battles[targetNode.data.Battle])
 								} else {
-									save.lastNodeUUID = targetNode.id
+									saveToLocalStorage()
 									if (targetNode.data.Dungeon) {
-										DungeonRessource.data = assets.levels[getLevelName(targetNode.data.Dungeon)]
-										dungeonState.enable()
+										dungeonState.enable(getLevelName(targetNode.data.Dungeon), targetNode.data.Level, selectedDirection)
 									}
 								}
 							}

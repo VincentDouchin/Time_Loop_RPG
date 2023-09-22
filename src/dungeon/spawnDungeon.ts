@@ -8,17 +8,19 @@ import { assets, ecs, world } from '@/globals/init'
 import type { EntityInstance, LayerInstance } from '@/level/LDTK'
 import { LDTKEntityInstance } from '@/level/LDTKEntity'
 import { drawLayer, spawnIntGridEntities } from '@/level/spawnLevel'
-import type { Class } from '@/lib/ECS'
-import { Component, Entity, Ressource } from '@/lib/ECS'
+import type { Class, System } from '@/lib/ECS'
+import { Component, Entity } from '@/lib/ECS'
 import { CameraBounds, CameraTarget } from '@/lib/camera'
+import { PixelTexture } from '@/lib/pixelTexture'
 import { Sprite, TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { overworldState } from '@/main'
 import { ColorShader } from '@/shaders/ColorShader'
 import { getBuffer } from '@/utils/buffer'
+import { save, saveToLocalStorage } from '@/save/saveData'
+import { getOtherDirection } from '@/overworld/spawnOverworldCharacter'
 
-export const DungeonRessource = new Ressource(assets.levels.tavern)
-
+export type direction = 'left' | 'right' | 'up' | 'down'
 @Component(ecs)
 export class Dungeon {}
 @Component(ecs)
@@ -30,7 +32,9 @@ export class Wall {}
 @Component(ecs)
 export class Outside {}
 @Component(ecs)
-export class Exit {}
+export class JustEntered {}
+@Component(ecs)
+export class Entrance extends LDTKEntityInstance<{ direction: direction }> {}
 
 const spawnLayer = (layer: LayerInstance) => {
 	const buffer = getBuffer(layer.__cWid * layer.__gridSize, layer.__cHei * layer.__gridSize)
@@ -57,22 +61,22 @@ export const SignBundle = (sign: EntityInstance, layerInstance: LayerInstance) =
 	return components
 }
 
-export const PlayerBundle = (entityInstance: EntityInstance, layerInstance: LayerInstance) => {
-	const pos = new LDTKEntityInstance(entityInstance).position(layerInstance)
+export const PlayerBundle = (pos: Position) => {
 	return [
 		...TextureAtlas.bundle(assets.characters.paladin, 'idle', 'left', 'down'),
-		pos,
+		new Position(pos.x, pos.y),
 		getPlayerInputMap(),
 		new CameraTarget(),
 		new Player(),
+		new JustEntered(),
 		RigidBodyDesc.dynamic().lockRotations(),
 		ColliderDesc.cuboid(3, 3),
 	]
 }
-
-export const spawnDungeon = () => {
-	const mapFile = DungeonRessource.data
-	const level = mapFile.levels[0]
+export type DungeonRessources = [levels, number, direction]
+export const spawnDungeon: System<DungeonRessources> = (mapName, levelIndex, direction) => {
+	const mapFile = assets.levels[mapName]
+	const level = mapFile.levels[levelIndex]
 	const map = ecs.spawn(
 		new CameraBounds().setFromCenterAndSize(new Vector2(), new Vector2(level.pxWid, level.pxHei)),
 		new Dungeon(),
@@ -88,15 +92,15 @@ export const spawnDungeon = () => {
 				map.spawn(spawnLayer(layerInstance), new Position())
 			}
 			if (layerInstance.__identifier === 'Collisions') {
-				spawnIntGridEntities(mapFile, layerInstance, t => t?.identifier === 'Wall',
+				spawnIntGridEntities(map, mapFile, layerInstance, t => t?.identifier === 'Wall',
 					(wall, w, h) => {
 						wall.addComponent(RigidBodyDesc.fixed().lockRotations(), ColliderDesc.cuboid(w / 2, h / 2), new Wall())
 					})
-				spawnIntGridEntities(mapFile, layerInstance, t => t?.identifier === 'Inside',
+				spawnIntGridEntities(map, mapFile, layerInstance, t => t?.identifier === 'Inside',
 					(wall, w, h) => {
 						wall.addComponent(new InsideTrigger(), RigidBodyDesc.fixed().lockRotations(), ColliderDesc.cuboid(w / 2, h / 2).setSensor(true))
 					})
-				spawnIntGridEntities(mapFile, layerInstance, t => t?.identifier === 'Shadow',
+				spawnIntGridEntities(map, mapFile, layerInstance, t => t?.identifier === 'Shadow',
 					(wall, w, h) => {
 						const buffer = getBuffer(w + 16, h + 8)
 						buffer.fillStyle = 'black'
@@ -106,18 +110,23 @@ export const spawnDungeon = () => {
 			}
 			if (layerInstance.__type === 'Entities') {
 				for (const entityInstance of layerInstance.entityInstances) {
-					if (entityInstance.__identifier === 'NPC') {
-						map.spawn(...NPCBundle(entityInstance, layerInstance))
+					switch (entityInstance.__identifier) {
+					case 'NPC': map.spawn(...NPCBundle(entityInstance, layerInstance))
+						break
+					case 'Sign': map.spawn(...SignBundle(entityInstance, layerInstance))
+						break
+					case 'Entrance' : {
+						const entrance = new Entrance(entityInstance)
+						const position = entrance.position(layerInstance)
+						map.spawn(entrance, position, ...entrance.body(true))
+						if (entrance.data.direction === direction) {
+							map.spawn(...PlayerBundle(position))
+						}
+					};break
+					case 'Log':{
+						const log = new LDTKEntityInstance(entityInstance)
+						map.spawn(new Sprite(new PixelTexture(assets.staticItems.log)), log.position(layerInstance), ...log.body())
 					}
-					if (entityInstance.__identifier === 'Sign') {
-						map.spawn(...SignBundle(entityInstance, layerInstance))
-					}
-					if (entityInstance.__identifier === 'Entrance') {
-						map.spawn(...PlayerBundle(entityInstance, layerInstance))
-					}
-					if (entityInstance.__identifier === 'Exit') {
-						const exit = new LDTKEntityInstance(entityInstance)
-						map.spawn(exit, exit.position(layerInstance), ...exit.body(true), new Exit())
 					}
 				}
 			}
@@ -125,7 +134,7 @@ export const spawnDungeon = () => {
 	}
 }
 
-const playerColliderQuery = ecs.query.pick(Collider, Position).with(Player)
+const playerColliderQuery = ecs.query.pick(Collider, Position, Entity).with(Player)
 const insideTriggersQuery = ecs.query.pick(Collider).with(InsideTrigger)
 const insideQuery = ecs.query.pick(Sprite).with(Inside)
 const outsideQuery = ecs.query.pick(Sprite, Entity).with(Outside)
@@ -149,17 +158,35 @@ export const isPlayerInside = () => {
 	}
 }
 
-const exitQuery = ecs.query.pick(Collider).with(Exit)
-const dungeonQuery = ecs.query.pick(Entity).with(Dungeon)
+const playerExitQuery = ecs.query.pick(Collider).with(Player).without(JustEntered)
+const exitQuery = ecs.query.pick(Collider, Entrance)
 export const exitDungeon = () => {
-	for (const [playerCollider] of playerColliderQuery.getAll()) {
-		for (const [exitCollider] of exitQuery.getAll()) {
+	for (const [playerCollider] of playerExitQuery.getAll()) {
+		for (const [exitCollider, entrance] of exitQuery.getAll()) {
 			if (world.intersectionPair(playerCollider, exitCollider)) {
-				for (const [entity] of dungeonQuery.getAll()) {
-					entity.despawn()
-				}
+				save.lastDirection = entrance.data.direction
+				saveToLocalStorage()
 				overworldState.enable()
 			}
 		}
 	}
+}
+const justEnteredQuery = ecs.query.pick(Entity, Collider).with(JustEntered)
+export const allowPlayerToExit = () => {
+	for (const [entity, collider] of justEnteredQuery.getAll()) {
+		const isInEntrance = exitQuery.toArray().some(([entranceCollider]) => {
+			return world.intersectionPair(entranceCollider, collider)
+		})
+		if (!isInEntrance) {
+			entity.removeComponent(JustEntered)
+		}
+	}
+}
+
+export const setDungeonState: System<DungeonRessources> = (mapName, level, direction) => {
+	save.lastDungeon = mapName
+	save.lastLevelIndex = level
+	save.lastDirection = direction
+	save.lastState = 'dungeon'
+	saveToLocalStorage()
 }

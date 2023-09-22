@@ -3,7 +3,7 @@ import type { LDTKMap } from '@/level/LDTK'
 import { getBuffer } from '@/utils/buffer'
 import { asyncMapValues, entries, groupByObject, mapKeys, mapValues, reduce } from '@/utils/mapFunctions'
 
-const tileSetLoader = new AssetLoader()
+const imagesLoader = new AssetLoader()
 	.pipe(async (glob) => {
 		return asyncMapValues(mapKeys(glob, getFileName), m => loadImage(m.default))
 	})
@@ -65,11 +65,12 @@ const animationsLoader = new AssetLoader()
 	})
 export const loadAssets = async () => {
 	const levels = await levelLoader.loadAsync<levels>(import.meta.glob('./../../assets/levels/*.json', { eager: true }))
-	const tilesets = await tileSetLoader.loadAsync<tilesets>(import.meta.glob('./../../assets/tilesets/*.png', { eager: true }))
+	const tilesets = await imagesLoader.loadAsync<tilesets>(import.meta.glob('./../../assets/tilesets/*.png', { eager: true }))
 	const characters = await characterLoader.loadAsync<characters>(import.meta.glob('./../../assets/characters/**/*[!Shadows].png', { eager: true }))
 	const ui = await uiLoader.loadAsync<ui>(import.meta.glob('./../../assets/ui/*.png', { eager: true }))
 	const fonts = await fontLoader.loadAsync<fonts>(import.meta.glob('./../../assets/fonts/*.*', { eager: true }))
 	const animatedTextures = await animateSpritesLoader.loadAsync<items>(import.meta.glob('./../../assets/items/**/*.png', { eager: true }))
 	const animations = await animationsLoader.loadAsync<animations>(import.meta.glob('./../../assets/animations/*.png', { eager: true }))
-	return { levels, tilesets, characters, ui, fonts, animatedTextures, animations } as const
+	const staticItems = await imagesLoader.loadAsync<staticItems>(import.meta.glob('./../../assets/staticItems/*.png', { eager: true }))
+	return { levels, tilesets, characters, ui, fonts, animatedTextures, animations, staticItems } as const
 }

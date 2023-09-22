@@ -1,34 +1,34 @@
-import { mapQuery } from './spawnOverworld'
 import { Player } from '@/battle/spawnBattlers'
-import { assets, ecs } from '@/globals/init'
-import { NavNode } from '@/level/NavNode'
+import type { direction } from '@/dungeon/spawnDungeon'
+import { assets } from '@/globals/init'
+import type { Entity } from '@/lib/ECS'
 import { CameraTarget } from '@/lib/camera'
 import { TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { Navigator } from '@/overworld/navigation'
 import { save } from '@/save/saveData'
 
-const navigatorQuery = ecs.query.with(Navigator)
-const startNodeQuery = ecs.query.pick(NavNode, Position)
-export const spawnOverworldCharacter = () => {
-	if (!navigatorQuery.size) {
-		for (const [mapEntity] of mapQuery.getAll()) {
-			const lastNode = startNodeQuery.toArray().find(([node]) => node.id === save?.lastNodeUUID)
-			const startNode = startNodeQuery.toArray().find(([node]) => node.data.Start)
-			const nodeEntity = lastNode ?? startNode
-			if (nodeEntity) {
-				const [node, position] = nodeEntity
-				const [sprite, animator, textureAtlas] = TextureAtlas.bundle(assets.characters.paladin, 'idle', 'left', 'down')
-				mapEntity.spawn(
-					sprite,
-					animator,
-					textureAtlas,
-					new CameraTarget(),
-					new Position(position.x, position.y),
-					new Navigator(node),
-					new Player(),
-				)
-			}
-		}
+export const getOtherDirection = (dir: direction): direction => {
+	const otherDirections: Record<direction, direction> = {
+		up: 'down',
+		down: 'up',
+		left: 'right',
+		right: 'left',
 	}
+	return otherDirections[dir]
+}
+
+export const spawnOverworldCharacter = (node: Entity, nodePosition: Position) => {
+	const [sprite, animator, textureAtlas] = TextureAtlas.bundle(assets.characters.paladin, 'idle', 'left', 'down')
+	sprite.setRenderOrder(10)
+	const direction = save.lastState === 'dungeon' && save.lastDirection
+		? getOtherDirection(save.lastDirection)
+		: null
+	return [sprite,
+		animator,
+		textureAtlas,
+		new CameraTarget(),
+		new Position(nodePosition.x, nodePosition.y),
+		new Navigator(node, direction),
+		new Player()]
 }

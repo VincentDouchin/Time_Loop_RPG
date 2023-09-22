@@ -1,64 +1,36 @@
 import type { keys } from '@/constants/dialog'
+import type { PlayerData } from '@/constants/players'
+import type { direction } from '@/dungeon/spawnDungeon'
 
-interface PlayerData {
-	name: characters
-}
 interface saveData {
 	players: PlayerData[]
-	lastNodeUUID?: string
+	lastDungeon: levels | null
+	lastState: 'dungeon' | 'overworld'
+	lastLevelIndex: number | null
+	lastNodeUUID: string | null
 	keys: Array<typeof keys[number]>
+	lastDirection: direction | null
 }
 
-let saveObject: saveData = {
+export const save: saveData = {
 	players: [],
 	keys: [],
-	lastNodeUUID: '',
+	lastNodeUUID: null,
+	lastDungeon: null,
+	lastLevelIndex: null,
+	lastState: 'overworld',
+	lastDirection: null,
 
 }
-function saveToLocalStorage() {
-	localStorage.setItem('saveData', JSON.stringify(saveObject))
-}
-function createRecursiveProxy(target: any, path: string[] = []): any {
-	return new Proxy(target, {
-		get(subTarget, key) {
-			if (typeof subTarget[key] === 'object' && subTarget[key] !== null) {
-				// If the property is an object, create a Proxy for it recursively
-				return createRecursiveProxy(subTarget[key], [...path, String(key)])
-			}
-			return subTarget[key]
-		},
-		set(subTarget, key, value) {
-			subTarget[key] = value
-			saveToLocalStorage()
-			return true // Indicates success
-		},
-		deleteProperty(subTarget, key) {
-			if (key in subTarget) {
-				delete subTarget[key]
-				saveToLocalStorage()
-				return true // Indicates success
-			}
-			return false // Property not found
-		},
-	})
+export const saveToLocalStorage = () => {
+	localStorage.setItem('saveData', JSON.stringify(save))
 }
 
 export const getSave = () => {
 	const saveDataString = localStorage.getItem('saveData')
 	if (saveDataString) {
-		saveObject = JSON.parse(saveDataString) as saveData
-		// for (const key of objectKeys(saveObject)) {
-		// 	if (!(key in localSaveObject)) {
-		// 		Object.assign(localSaveObject, { [key]: saveObject[key] })
-		// 	}
-		// }
-		// console.log(localSaveObject)
-		// saveObject = { ...localSaveObject }
+		const saveData = JSON.parse(saveDataString) as saveData
+		Object.assign(save, saveData)
 	}
-
-	// Create a recursive Proxy for the save object to automatically save changes to localStorage
-	const saveProxy = createRecursiveProxy(saveObject)
-
-	return saveProxy as saveData
 }
-export const save = getSave()
+getSave()

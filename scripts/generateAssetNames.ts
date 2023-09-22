@@ -4,6 +4,7 @@ import process from 'node:process'
 import { exec } from 'node:child_process'
 import { glob } from 'glob'
 
+// asesprite files
 const asespriteFiles = await glob('./assets/**/*.{ase,aseprite}')
 for (const path of asespriteFiles) {
 	const parts = path.split('\\')

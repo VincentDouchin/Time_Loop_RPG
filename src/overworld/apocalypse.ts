@@ -69,7 +69,7 @@ const teleportPlayer = () => new Promise<void>((resolve) => {
 		})
 	}
 })
-const apocalypseState = ecs.state
+const apocalypseState = ecs.state()
 	.onEnter(() => {
 		teleportPlayer().then(meteor)
 	})

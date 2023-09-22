@@ -9,13 +9,11 @@ export type levelPath = string & { __type: 'levelPath' }
 export const getLevelName = (levelPath: levelPath) => getFileName(levelPath) as levels
 
 interface NavNodeLDTK {
-	up: LDTKEntityRef | null
-	down: LDTKEntityRef | null
-	left: LDTKEntityRef | null
-	right: LDTKEntityRef | null
+	directions: LDTKEntityRef[]
 	Battle: keyof typeof battles | null
 	Start: boolean
 	Dungeon: levelPath
+	Level: number
 }
 
 @Component(ecs)

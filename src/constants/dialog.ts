@@ -1,9 +1,11 @@
 import { lockPlayer, unlockPlayer } from './dialogHelpers'
-import { getSave } from '@/save/saveData'
+import { save, saveToLocalStorage } from '@/save/saveData'
 
-const save = getSave()
 export const keys = ['oldManBandit'] as const
-const addKey = (key: typeof keys[number]) => save.keys = [...save.keys, key]
+const addKey = (key: typeof keys[number]) => {
+	save.keys = [...save.keys, key]
+	saveToLocalStorage()
+}
 const hasKey = (key: typeof keys[number]) => save.keys.includes(key)
 export const dialog: Partial<Record<characters | `sign${string}`, () => Generator>> = {
 	*howard() {
