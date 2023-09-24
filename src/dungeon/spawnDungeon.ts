@@ -55,7 +55,7 @@ export const SignBundle = (sign: EntityInstance, layerInstance: LayerInstance) =
 	]
 	const signDialog = dialog[`sign${signPost.data.dialog}`]
 	if (signDialog) {
-		components.push(new Dialog(signDialog))
+		components.push(...new Dialog(signDialog).withMenu())
 	}
 	return components
 }

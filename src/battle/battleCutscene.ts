@@ -27,8 +27,7 @@ export const banditCutscene = () => {
 		ecs.spawn(new Cutscene())
 		for (const [leader] of banditLeaderQuery.getAll()) {
 			if (dialog.banditLeader) {
-				leader.addComponent(new Dialog(dialog.banditLeader))
-				ecs.onNextTick(stepBattleDialog)
+				leader.addComponent(...new Dialog(dialog.banditLeader).withMenu())
 			}
 		}
 	}

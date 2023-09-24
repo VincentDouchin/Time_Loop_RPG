@@ -111,16 +111,28 @@ const uiInteractablesQuery = ecs.query.pick(Interactable, UIElement)
 export const detectInteractions = () => {
 	const camera = mainCameraQuery.extract()
 	if (camera) {
-		for (const [interactable, group] of interactablesQuery.getAll()) {
-			const touchingPointer = PointerInput.all.find(pointer => pointer.getRay(camera).intersectObject(group, true).length)
-			if (touchingPointer) {
-				interactable.hover = true
-				interactable.pressed = touchingPointer.pressed
-				interactable.lastTouchedBy = touchingPointer
-				break
-			} else {
-				interactable.pressed = false
-				interactable.hover = false
+		for (const pointer of PointerInput.all) {
+			let distance = null
+			let closestInteractable: Interactable | null = null
+			for (const [interactable, group] of interactablesQuery.getAll()) {
+				const intersections = pointer.getRay(camera).intersectObject(group, true)
+				for (const intersection of intersections) {
+					if (distance === null || intersection.distance < distance) {
+						closestInteractable = interactable
+						distance = intersection.distance
+					}
+				}
+			}
+			for (const [interactable] of interactablesQuery.getAll()) {
+				if (interactable === closestInteractable) {
+					interactable.hover = true
+					interactable.pressed = pointer.pressed
+					interactable.lastTouchedBy = pointer
+					break
+				} else {
+					interactable.pressed = false
+					interactable.hover = false
+				}
 			}
 		}
 	}

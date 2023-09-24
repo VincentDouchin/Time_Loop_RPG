@@ -31,6 +31,10 @@ export class Dialog {
 		this.current = this.#dialog.next(index).value
 		return this.current
 	}
+
+	withMenu() {
+		return [this, new Menu()]
+	}
 }
 export const NPCBundle = (entityInstance: EntityInstance, layerInstance: LayerInstance) => {
 	const npc = new NPC(entityInstance)
@@ -41,16 +45,9 @@ export const NPCBundle = (entityInstance: EntityInstance, layerInstance: LayerIn
 	]
 	const npcDialog = dialog[npc.data.name]
 	if (npcDialog) {
-		components.push(new Dialog(npcDialog))
+		components.push(...new Dialog(npcDialog).withMenu())
 	}
 	return components
-}
-
-const addedDialogQuery = ecs.query.pick(Entity, Dialog).added(Dialog)
-export const spawnDialogMenu = () => {
-	for (const [entity] of addedDialogQuery.getAll()) {
-		entity.addComponent(new Menu())
-	}
 }
 
 @Component(ecs)

@@ -75,10 +75,10 @@ export const moveOverworldCharacter = () => {
 								updateSteps(-1)
 								save.lastDirection = selectedDirection
 								saveToLocalStorage()
+								save.lastNodeUUID = targetNode.id
 								if (targetNode.data.Battle) {
 									battleState.enable(battles[targetNode.data.Battle])
 								} else {
-									save.lastNodeUUID = targetNode.id
 									saveToLocalStorage()
 									if (targetNode.data.Dungeon) {
 										dungeonState.enable(getLevelName(targetNode.data.Dungeon), targetNode.data.Level, selectedDirection)

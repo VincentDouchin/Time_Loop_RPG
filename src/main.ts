@@ -5,7 +5,7 @@ import { displayHealth, savePlayerHealth, updateHealthDisplay } from './battle/h
 import { despawnBattle, spawnBattleBackground as spawnBattle } from './battle/spawnBattleBackground'
 import { battleTurn, despawnBattleMenu, outlineSelectedEnemy, removeDeadBattlers, winOrLose } from './battle/spawnBattlers'
 import type { BattleData } from './constants/battles'
-import { spawnDialogMenu, startDialogDungeon } from './dungeon/NPC'
+import { startDialogDungeon } from './dungeon/NPC'
 import { PlayerInputMap } from './dungeon/playerInputs'
 import { movePlayer } from './dungeon/playerMovement'
 import type { DungeonRessources } from './dungeon/spawnDungeon'
@@ -57,12 +57,12 @@ export const overworldState = ecs.state()
 
 export const battleState = ecs.state<[BattleData]>()
 	.onEnter(spawnBattle)
-	.onUpdate(displayHealth, updateHealthDisplay, battleTurn, outlineSelectedEnemy, removeDeadBattlers, winOrLose, savePlayerHealth, battleDialog, banditCutscene, spawnDialogMenu)
+	.onUpdate(displayHealth, updateHealthDisplay, battleTurn, outlineSelectedEnemy, removeDeadBattlers, winOrLose, savePlayerHealth, battleDialog, banditCutscene)
 	.onExit(despawnBattle, saveToLocalStorage, despawnBattleMenu)
 
 export const dungeonState = ecs.state<DungeonRessources>()
 	.onEnter(spawnDungeon, setDungeonState)
-	.onUpdate(movePlayer, isPlayerInside, updateCameraZoom(7), startDialogDungeon, spawnDialogMenu, exitDungeon, allowPlayerToExit)
+	.onUpdate(movePlayer, isPlayerInside, updateCameraZoom(7), startDialogDungeon, exitDungeon, allowPlayerToExit)
 	.onExit(disableTouchJoystick, despawnEntities(Dungeon))
 
 State.exclusive(overworldState, battleState, dungeonState)

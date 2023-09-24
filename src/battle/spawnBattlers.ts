@@ -57,11 +57,11 @@ export const spawnBattlers = (battle: Entity, background: number, enemies: reado
 		const enemyData = enemies[i]
 		const bundle = battlerSpriteBundle('left', assets.characters[enemyData.atlas], background, i, enemies.length)
 		const enemy = battle.spawn(...bundle, new Health(2))
+		if (enemyData.additionalComponents) {
+			enemy.addComponent(...enemyData.additionalComponents?.map(getComponent => getComponent()))
+		}
 		new Tween(2000).onComplete(() => {
 			enemy.addComponent(new Battler(BattlerType.Enemy, enemyData.actions, ActionSelector.EnemyAuto, TargetSelector.EnemyAuto))
-			if (enemyData.additionalComponents) {
-				enemy.addComponent(...enemyData.additionalComponents?.map(getComponent => getComponent()))
-			}
 		})
 	}
 	spawnBattleUi()
@@ -136,6 +136,7 @@ const gameOver = () => {
 	for (const player of save.players) {
 		player.currentHealth = player.health
 	}
+	save.lastDirection = null
 	save.lastNodeUUID = null
 	saveToLocalStorage()
 }

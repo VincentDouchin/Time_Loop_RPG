@@ -6,6 +6,7 @@ import { CameraTarget } from '@/lib/camera'
 import { TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { Navigator } from '@/overworld/navigation'
+import { context } from '@/save/context'
 import { save } from '@/save/saveData'
 
 export const getOtherDirection = (dir: direction): direction => {
@@ -22,12 +23,15 @@ export const spawnOverworldCharacter = (node: Entity, nodePosition: Position) =>
 	const [sprite, animator, textureAtlas] = TextureAtlas.bundle(assets.characters.paladin, 'idle', 'left', 'down')
 	sprite.setRenderOrder(10)
 	let direction: null | direction = null
+	if (context.startup) {
+		context.startup = false
+	} else if (save.lastState === 'overworld' && save.lastDirection) {
+		direction = save.lastDirection
+	}
 	if (save.lastState === 'dungeon' && save.lastDirection) {
 		direction = getOtherDirection(save.lastDirection)
 	}
-	if (save.lastState === 'overworld' && save.lastDirection) {
-		direction = save.lastDirection
-	}
+
 	return [sprite,
 		animator,
 		textureAtlas,
