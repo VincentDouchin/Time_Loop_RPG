@@ -3,14 +3,15 @@ import { ecs } from '@/globals/init'
 import { Component, Entity } from '@/lib/ECS'
 
 import { Interactable } from '@/lib/interactions'
+import { Sprite, TextureAtlas } from '@/lib/sprite'
 import { menuInputQuery } from '@/menus/menuInputs'
 
 @Component(ecs)
 export class Menu {
 	selectedEntity: Entity | null = null
-	entities: Entity[][] = []
+	entities: (Entity | null)[][] = []
 	#active = true
-	constructor(entities: Entity[][] = []) {
+	constructor(entities: (Entity | null)[][] = []) {
 		this.entities = entities
 		this.selectEntity(this.entities?.[0]?.[0])
 	}
@@ -47,7 +48,7 @@ export class Menu {
 	clear() {
 		for (const row of this.entities) {
 			for (const entity of row) {
-				entity.removeComponent(Selected)
+				entity?.removeComponent(Selected)
 			}
 		}
 	}
@@ -56,7 +57,7 @@ export class Menu {
 		return this.#active
 	}
 
-	selectEntity(newSelectedEntity?: Entity) {
+	selectEntity(newSelectedEntity?: Entity | null) {
 		if (newSelectedEntity && this.selectedEntity !== newSelectedEntity) {
 			this.selectedEntity?.removeComponent(Selected)
 			this.selectedEntity = newSelectedEntity
@@ -65,7 +66,7 @@ export class Menu {
 	}
 
 	selectEntityFromCoords(x = 0, y = 0) {
-		const currentRow = this.entities.find(row => this.selectedEntity && row.includes(this.selectedEntity))!
+		const currentRow = this.entities.find(row => this.selectedEntity && row.includes(this.selectedEntity)) ?? this.entities[0]
 		const currentRowIndex = this.entities.indexOf(currentRow)
 		const currentColumn = this.selectedEntity ? currentRow.indexOf(this.selectedEntity) : 0
 		const newSelectedEntity = this.entities.at((currentRowIndex + y) % this.entities.length)?.at((currentColumn + x) % currentRow.length)
@@ -132,5 +133,22 @@ export const selectUiElement = () => {
 	}
 	for (const [uiElement] of unselectedUiElement.getAll()) {
 		uiElement.setStyles({ textDecoration: 'none' })
+	}
+}
+
+@Component(ecs)
+export class IncrementOnSelected {}
+
+const selectedAtlasQuery = ecs.query.pick(TextureAtlas, Sprite).with(IncrementOnSelected).added(Selected)
+const deselectedAtlasQuery = ecs.query.pick(TextureAtlas, Sprite).with(IncrementOnSelected).removed(Selected)
+
+export const changeTextureOnSelected = () => {
+	for (const [atlas, sprite] of selectedAtlasQuery.getAll()) {
+		atlas.increment()
+		sprite.composer.setInitialTexture(atlas.currentTexture)
+	}
+	for (const [atlas, sprite] of deselectedAtlasQuery.getAll()) {
+		atlas.increment()
+		sprite.composer.setInitialTexture(atlas.currentTexture)
 	}
 }

@@ -1,5 +1,6 @@
 import { AssetLoader, addAnimationsData, createAtlas, getCharacterName, getFileName, getFolderName, joinAtlas, loadImage } from '../utils/assetLoader'
 import type { LDTKMap } from '@/level/LDTK'
+import { PixelTexture } from '@/lib/pixelTexture'
 import { getBuffer } from '@/utils/buffer'
 import { asyncMapValues, entries, groupByObject, mapKeys, mapValues, reduce } from '@/utils/mapFunctions'
 
@@ -23,6 +24,7 @@ const uiLoader = new AssetLoader()
 		const ui = await asyncMapValues(glob, async (m) => {
 			const img = await loadImage(m.default)
 			return {
+				texture: new PixelTexture(img),
 				path: m.default,
 				width: img.width,
 				height: img.height,

@@ -1,5 +1,6 @@
+import { Group } from 'three'
 import { updateSteps } from './overworldUi'
-import { ecs } from '@/globals/init'
+import { assets, ecs } from '@/globals/init'
 import { NavNode, getLevelName } from '@/level/NavNode'
 import { Component, Entity } from '@/lib/ECS'
 
@@ -9,8 +10,10 @@ import { Sprite, TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { Tween } from '@/lib/tween'
 import { battleState, dungeonState } from '@/main'
-import { menuInputQuery } from '@/menus/menuInputs'
+import { MenuInputInteractable, menuInputQuery } from '@/menus/menuInputs'
 import { save, saveToLocalStorage } from '@/save/saveData'
+import { IncrementOnSelected, Menu } from '@/ui/menu'
+import { Interactable } from '@/lib/interactions'
 
 @Component(ecs)
 export class Navigator {
@@ -18,8 +21,8 @@ export class Navigator {
 }
 
 @Component(ecs)
-export class Navigating {}
-const navigatorQuery = ecs.query.pick(Entity, Navigator, Position, TextureAtlas, Sprite).without(Navigating)
+export class DecidingDirection {}
+const navigatorQuery = ecs.query.pick(Entity, Navigator, Position, TextureAtlas, Sprite).with(DecidingDirection)
 export const moveOverworldCharacter = () => {
 	for (const [entity, navigator, position, atlas] of navigatorQuery.getAll()) {
 		const inputs = menuInputQuery.extract()
@@ -45,14 +48,14 @@ export const moveOverworldCharacter = () => {
 						}
 						return false
 					})
+					if (direction === 'down' || direction === 'up') {
+						atlas.directionY = direction
+					}
+					if (direction === 'left' || direction === 'right') {
+						atlas.directionX = direction
+					}
 					if (node) {
 						target = node()
-						if (direction === 'down' || direction === 'up') {
-							atlas.directionY = direction
-						}
-						if (direction === 'left' || direction === 'right') {
-							atlas.directionX = direction
-						}
 						selectedDirection = direction
 					}
 				}
@@ -61,8 +64,8 @@ export const moveOverworldCharacter = () => {
 				const targetPosition = target.getComponent(Position)
 				const targetNode = target.getComponent(NavNode)
 				if (targetPosition) {
-					entity.addComponent(new Navigating())
 					atlas.state = 'walk'
+					entity.removeComponent(DecidingDirection)
 					new Tween(position.distanceTo(targetPosition) * 20)
 						.onUpdate(y => position.y = y, position.y, targetPosition.y)
 						.onUpdate(x => position.x = x, position.x, targetPosition.x)
@@ -70,8 +73,7 @@ export const moveOverworldCharacter = () => {
 							if (target && targetNode && selectedDirection) {
 								atlas.state = 'idle'
 								navigator.currentNode = target
-								entity.removeComponent(Navigating)
-
+								entity.addComponent(new DecidingDirection())
 								updateSteps(-1)
 								save.lastDirection = selectedDirection
 								saveToLocalStorage()
@@ -86,6 +88,46 @@ export const moveOverworldCharacter = () => {
 								}
 							}
 						})
+				}
+			}
+		}
+	}
+}
+
+@Component(ecs)
+export class NavigationMenu {}
+
+const navigationMenuToRemoveQuery = ecs.query.pick(Entity).with(NavigationMenu)
+const decidedDirectionQuery = ecs.query.removed(DecidingDirection)
+export const removeNavigationMenu = () => {
+	if (decidedDirectionQuery.size) {
+		for (const [entity] of navigationMenuToRemoveQuery.getAll()) {
+			entity.despawn()
+		}
+	}
+}
+
+const needToAddArrowQuery = ecs.query.pick(Entity, Navigator).added(DecidingDirection)
+export const addNavigationArrows = () => {
+	for (const [entity, navigator] of needToAddArrowQuery.getAll()) {
+		const menu = new Menu([[null, null, null], [null, null, null], [null, null, null]])
+		const navigationMenu = entity.spawn(new NavigationMenu(), new Position(), new Group(), menu)
+		const pos = navigator.currentNode.getComponent(Position)
+		const directions = navigator.currentNode.getComponent(NavNode)?.data.directions
+		if (directions && pos) {
+			for (const direction of directions) {
+				const nodeDirection = direction()
+				const directionPos = nodeDirection.getComponent(Position)
+				if (directionPos) {
+					const arrowX = Math.sign(directionPos.x - pos.x)
+					const arrowY = Math.sign(directionPos.y - pos.y)
+					let arrow: Capitalize<direction> = 'Down'
+					if (arrowX > 0) arrow = 'Right'
+					if (arrowX < 0) arrow = 'Left'
+					if (arrowY > 0) arrow = 'Up'
+					const [sprite, _animator, atlas] = TextureAtlas.single([assets.ui[`arrow${arrow}`].texture, assets.ui[`arrow${arrow}Selected`].texture])
+					const arrowEntity = navigationMenu.spawn(new Position(arrowX * 16, arrowY * 16), sprite, atlas, new IncrementOnSelected(), new MenuInputInteractable(arrow), new Interactable())
+					menu.entities[arrowX + 1][arrowY + 1] = arrowEntity
 				}
 			}
 		}

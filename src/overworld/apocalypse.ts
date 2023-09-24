@@ -1,6 +1,6 @@
 import { easing } from 'ts-easing'
 import { stepsQuery } from './overworldUi'
-import { Navigating } from './navigation'
+import { DecidingDirection } from './navigation'
 import { assets, ecs } from '@/globals/init'
 import { Component, Entity } from '@/lib/ECS'
 import { mainCameraQuery } from '@/lib/camera'
@@ -43,7 +43,7 @@ const meteor = () => new Promise<void>((resolve) => {
 })
 const teleportPlayer = () => new Promise<void>((resolve) => {
 	for (const [player, pos, atlas] of playerPositionQuery.getAll()) {
-		player.addComponent(new Navigating())
+		player.addComponent(new DecidingDirection())
 		const bundle = TextureAtlas.bundle<'start' | 'middle' | 'end'>({
 			states: {
 				start: assets.animations.portalStart,

@@ -21,9 +21,9 @@ import { Sprite } from './lib/sprite'
 import { time } from './lib/time'
 import { stepWorld, updatePosition, updateSpritePosition } from './lib/transforms'
 import { Tween } from './lib/tween'
-import { MenuInputMap, spawnMenuInputs } from './menus/menuInputs'
+import { MenuInputMap, clickOnMenuInput, spawnMenuInputs } from './menus/menuInputs'
 import { triggerApocalypse } from './overworld/apocalypse'
-import { moveOverworldCharacter } from './overworld/navigation'
+import { addNavigationArrows, moveOverworldCharacter, removeNavigationMenu } from './overworld/navigation'
 import { StepsUi, spawnStepsUi } from './overworld/overworldUi'
 import { setInitialState } from './overworld/setInitialState'
 import { despawnOverworld, setOverwolrdState, spawnOverworld } from './overworld/spawnOverworld'
@@ -34,14 +34,14 @@ import { OutlineShader, addOutlineShader } from './shaders/OutlineShader'
 import { addNineSlicetoUI } from './ui/NineSlice'
 import { addUIElementsToDOM, spawnUIRoot } from './ui/UI'
 import { setDefaultFontSize } from './ui/UiElement'
-import { selectUiElement, unSelectDespawnMenus, updateMenus } from './ui/menu'
+import { changeTextureOnSelected, selectUiElement, unSelectDespawnMenus, updateMenus } from './ui/menu'
 import { addToScene, addToWorld, registerShader } from './utils/registerComponents'
 
 // !Lib
 ecs
 	.core.onEnter(initThree, updateMousePosition, spawnCamera, spawnMenuInputs, spawnUIRoot, setDefaultFontSize)
 	.onPreUpdate(updatePosition)
-	.onUpdate(detectInteractions, updateMenus, addOutlineShader, animateSprites, addNineSlicetoUI, addUIElementsToDOM, selectUiElement, unSelectDespawnMenus, () => Tween.update(time.delta), adjustScreenSize(), initializeCameraBounds, ...registerShader(ColorShader, OutlineShader, ApocalypseShader), addToWorld, updateApocalypseShader)
+	.onUpdate(detectInteractions, updateMenus, addOutlineShader, animateSprites, addNineSlicetoUI, addUIElementsToDOM, selectUiElement, unSelectDespawnMenus, () => Tween.update(time.delta), adjustScreenSize(), initializeCameraBounds, ...registerShader(ColorShader, OutlineShader, ApocalypseShader), addToWorld, updateApocalypseShader, changeTextureOnSelected, clickOnMenuInput)
 	.onPostUpdate(updateSpritePosition, cameraFollow, render, stepWorld)
 	.enable()
 
@@ -52,7 +52,7 @@ ecs.addPlugin(addToScene(OrthographicCamera, Sprite, CSS2DObject))
 // ! States
 export const overworldState = ecs.state()
 	.onEnter(spawnOverworld, spawnStepsUi, setOverwolrdState)
-	.onUpdate(moveOverworldCharacter, triggerApocalypse)
+	.onUpdate(moveOverworldCharacter, triggerApocalypse, addNavigationArrows, removeNavigationMenu)
 	.onExit(despawnOverworld, despawnEntities(StepsUi))
 
 export const battleState = ecs.state<[BattleData]>()

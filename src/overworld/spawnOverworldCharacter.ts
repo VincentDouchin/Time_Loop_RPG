@@ -5,7 +5,7 @@ import type { Entity } from '@/lib/ECS'
 import { CameraTarget } from '@/lib/camera'
 import { TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
-import { Navigator } from '@/overworld/navigation'
+import { DecidingDirection, Navigator } from '@/overworld/navigation'
 import { context } from '@/save/context'
 import { save } from '@/save/saveData'
 
@@ -32,11 +32,14 @@ export const spawnOverworldCharacter = (node: Entity, nodePosition: Position) =>
 		direction = getOtherDirection(save.lastDirection)
 	}
 
-	return [sprite,
+	return [
+		sprite,
 		animator,
 		textureAtlas,
 		new CameraTarget(),
 		new Position(nodePosition.x, nodePosition.y),
 		new Navigator(node, direction),
-		new Player()]
+		new Player(),
+		new DecidingDirection(),
+	]
 }

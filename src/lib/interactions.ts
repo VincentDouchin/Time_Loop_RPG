@@ -6,7 +6,6 @@ import { UIElement } from '@/ui/UiElement'
 import { ecs, renderer } from '@/globals/init'
 
 export enum InteractableType {
-	StartMultiplayer,
 	PlayerAttack,
 	PlayerFlee,
 	Battler,
