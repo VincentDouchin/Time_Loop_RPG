@@ -14,7 +14,7 @@ import { despawnEntities, ecs } from './globals/init'
 import { State } from './lib/ECS'
 import { animateSprites } from './lib/animation'
 import { adjustScreenSize, cameraFollow, initializeCameraBounds, render, spawnCamera, updateCameraZoom } from './lib/camera'
-import { disableTouchJoystick, registerInput } from './lib/inputs'
+import { disableTouchJoystick, enableTouchJoystick, registerInput } from './lib/inputs'
 import { detectInteractions, updateMousePosition } from './lib/interactions'
 import { initThree } from './lib/rendering'
 import { Sprite } from './lib/sprite'
@@ -61,7 +61,7 @@ export const battleState = ecs.state<[BattleData]>()
 	.onExit(despawnBattle, saveToLocalStorage, despawnBattleMenu)
 
 export const dungeonState = ecs.state<DungeonRessources>()
-	.onEnter(spawnDungeon, setDungeonState)
+	.onEnter(spawnDungeon, setDungeonState, enableTouchJoystick)
 	.onUpdate(movePlayer, isPlayerInside, updateCameraZoom(7), startDialogDungeon, exitDungeon, allowPlayerToExit)
 	.onExit(disableTouchJoystick, despawnEntities(Dungeon))
 

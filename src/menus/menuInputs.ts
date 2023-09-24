@@ -18,7 +18,7 @@ export const spawnMenuInputs = () => {
 	inputs.get('Down').setKey('ArrowDown').setButton(GAMEPAD_BUTTON.DOWN)
 	inputs.get('Right').setKey('ArrowRight').setButton(GAMEPAD_BUTTON.RIGHT)
 	inputs.get('Left').setKey('ArrowLeft').setButton(GAMEPAD_BUTTON.LEFT)
-	inputs.get('Enter').setKey('Enter').setButton(GAMEPAD_BUTTON.START)
+	inputs.get('Enter').setKey('Enter').setButton(GAMEPAD_BUTTON.A)
 	ecs.spawn(inputs)
 }
 
