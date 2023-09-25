@@ -1,7 +1,7 @@
 import { easing } from 'ts-easing'
 import { stepsQuery } from './overworldUi'
 import { DecidingDirection } from './navigation'
-import { assets, ecs } from '@/globals/init'
+import { assets, despawnEntities, ecs } from '@/globals/init'
 import { Component, Entity } from '@/lib/ECS'
 import { mainCameraQuery } from '@/lib/camera'
 import { FullScreenShader, Sprite, TextureAtlas } from '@/lib/sprite'
@@ -9,6 +9,8 @@ import { Position } from '@/lib/transforms'
 import { Tween } from '@/lib/tween'
 import { ApocalypseShader } from '@/shaders/ApocalypseShader'
 import { Player } from '@/genericComponents/components'
+import { gameOver, save } from '@/save/saveData'
+import { sleep } from '@/utils/timing'
 
 @Component(ecs)
 export class Apocalypse {}
@@ -43,7 +45,7 @@ const meteor = () => new Promise<void>((resolve) => {
 })
 const teleportPlayer = () => new Promise<void>((resolve) => {
 	for (const [player, pos, atlas] of playerPositionQuery.getAll()) {
-		player.addComponent(new DecidingDirection())
+		player.removeComponent(DecidingDirection)
 		const bundle = TextureAtlas.bundle<'start' | 'middle' | 'end'>({
 			states: {
 				start: assets.animations.portalStart,
@@ -71,7 +73,7 @@ const teleportPlayer = () => new Promise<void>((resolve) => {
 })
 const apocalypseState = ecs.state()
 	.onEnter(() => {
-		teleportPlayer().then(meteor)
+		teleportPlayer().then(() => meteor().then(() => sleep(4000).then(() => apocalypseState.disable())))
 	})
 	.onUpdate(() => {
 		if (explosionQuery.size < 5 && portalQuery.size === 0 && apocalypseQuery.size === 1) {
@@ -89,11 +91,10 @@ const apocalypseState = ecs.state()
 			}
 		}
 	})
+	.onExit(gameOver, despawnEntities(ApocalypseShader, Apocalypse, Explosion))
 
 export const triggerApocalypse = () => {
-	for (const [steps] of stepsQuery.getAll()) {
-		if (steps.amount === 0) {
-			apocalypseState.enable()
-		}
+	if (save.steps <= 0 && !apocalypseState.isActive && playerPositionQuery.size) {
+		apocalypseState.enable()
 	}
 }

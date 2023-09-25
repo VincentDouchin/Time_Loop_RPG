@@ -1,6 +1,7 @@
 import type { keys } from '@/constants/dialog'
 import type { PlayerData } from '@/constants/players'
 import type { direction } from '@/dungeon/spawnDungeon'
+import { overworldState } from '@/main'
 
 interface saveData {
 	players: PlayerData[]
@@ -10,6 +11,7 @@ interface saveData {
 	lastNodeUUID: string | null
 	keys: Array<typeof keys[number]>
 	lastDirection: direction | null
+	steps: number
 }
 
 export const save: saveData = {
@@ -20,6 +22,7 @@ export const save: saveData = {
 	lastLevelIndex: null,
 	lastState: 'overworld',
 	lastDirection: null,
+	steps: 2,
 
 }
 export const saveToLocalStorage = () => {
@@ -32,5 +35,16 @@ export const getSave = () => {
 		const saveData = JSON.parse(saveDataString) as saveData
 		Object.assign(save, saveData)
 	}
+}
+export const gameOver = () => {
+	for (const player of save.players) {
+		player.currentHealth = player.health
+	}
+	save.lastDirection = null
+	save.lastNodeUUID = null
+	save.steps = 2
+	saveToLocalStorage()
+	overworldState.disable()
+	overworldState.enable()
 }
 getSave()

@@ -253,7 +253,7 @@ export class State<R extends any[] = []> {
 	}
 
 	get isActive() {
-		return this.ecs.isStateActive(this)
+		return this.ecs.states.has(this)
 	}
 
 	onPreUpdate(...systems: System[]) {
@@ -387,10 +387,6 @@ export class ECS {
 		for (const children of entity.children) {
 			this.despawn(children)
 		}
-	}
-
-	isStateActive(state: State) {
-		return this.states.has(state)
 	}
 
 	state<R extends any[] = []>() {

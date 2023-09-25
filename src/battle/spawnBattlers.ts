@@ -14,7 +14,7 @@ import { TextElement, UIElement } from '@/ui/UiElement'
 import { Selected } from '@/ui/menu'
 import { sleep } from '@/utils/timing'
 import { ActionSelector, BattlerType, PlayerActions, TargetSelector } from '@/constants/actions'
-import { save, saveToLocalStorage } from '@/save/saveData'
+import { gameOver, save, saveToLocalStorage } from '@/save/saveData'
 import type { Enemy } from '@/constants/enemies'
 import { DialogContainer } from '@/dungeon/NPC'
 import { Player } from '@/genericComponents/components'
@@ -132,14 +132,6 @@ const playerQuery = ecs.query.with(Player, Battler)
 const notPlayerQuery = ecs.query.with(Battler).without(Player)
 const winOrLoseBundle = () => [new UIElement({ position: 'absolute', placeSelf: 'center', width: 'fit-content', padding: '5%', color: 'black', placeContent: 'center', display: 'grid', fontSize: '3em' }), new NineSlice(assets.ui.framedisplay.path, 8, 3), new WinOrLose()]
 export const despawnBattleMenu = despawnEntities(BattlerMenu)
-const gameOver = () => {
-	for (const player of save.players) {
-		player.currentHealth = player.health
-	}
-	save.lastDirection = null
-	save.lastNodeUUID = null
-	saveToLocalStorage()
-}
 
 export const winOrLose = () => {
 	if (winOrLoseUiQuery.size === 0) {

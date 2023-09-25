@@ -72,6 +72,7 @@ export const registerShader = (...shaderPasses: Constructor<ShaderPass>[]) => {
 		const fullScreenShaderRemovedQuery = ecs.query.pick(shaderPass).with(FullScreenShader).removed(shaderPass)
 		systems.push(() => {
 			for (const [pass] of fullScreenShaderRemovedQuery.getAll()) {
+				console.log('removed', shaderPass.constructor.name)
 				const index = composer.passes.indexOf(pass)
 				composer.passes.splice(index, 2)
 			}
