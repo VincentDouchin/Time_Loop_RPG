@@ -1,4 +1,5 @@
 import { easing } from 'ts-easing'
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
 import { stepsQuery } from './overworldUi'
 import { DecidingDirection } from './navigation'
 import { assets, despawnEntities, ecs } from '@/globals/init'
@@ -23,15 +24,15 @@ const portalQuery = ecs.query.pick(Portal)
 const explosionQuery = ecs.query.pick(Explosion)
 const apocalypseQuery = ecs.query.pick(Apocalypse)
 const playerPositionQuery = ecs.query.pick(Entity, Position, TextureAtlas).with(Player)
-
+const composerQuery = ecs.query.pick(Entity).with(EffectComposer)
 const meteor = () => new Promise<void>((resolve) => {
 	const bundle = TextureAtlas.single(assets.animations['explosion-4'], 300)
 	const [sprite, animator, atlas] = bundle
 	sprite.setScale(1)
 	animator.stop()
+	composerQuery.extract()?.addComponent(new ApocalypseShader())
 	const pos = new Position(0, 100)
 	ecs.spawn(...bundle, pos, new Apocalypse())
-	ecs.spawn(new FullScreenShader(), new ApocalypseShader())
 	new Tween(1000)
 		.easing(easing.inQuad)
 		.onUpdate(y => pos.y = Math.floor(y / 20) * 20, 100, 0)
@@ -73,7 +74,7 @@ const teleportPlayer = () => new Promise<void>((resolve) => {
 })
 const apocalypseState = ecs.state()
 	.onEnter(() => {
-		teleportPlayer().then(() => meteor().then(() => sleep(4000).then(() => apocalypseState.disable())))
+		teleportPlayer().then(() => meteor().then(() => sleep(1000).then(() => apocalypseState.disable())))
 	})
 	.onUpdate(() => {
 		if (explosionQuery.size < 5 && portalQuery.size === 0 && apocalypseQuery.size === 1) {
@@ -91,7 +92,9 @@ const apocalypseState = ecs.state()
 			}
 		}
 	})
-	.onExit(gameOver, despawnEntities(ApocalypseShader, Apocalypse, Explosion))
+	.onExit(gameOver, despawnEntities(Apocalypse, Explosion), () => {
+		composerQuery.extract()?.removeComponent(ApocalypseShader)
+	})
 
 export const triggerApocalypse = () => {
 	if (save.steps <= 0 && !apocalypseState.isActive && playerPositionQuery.size) {

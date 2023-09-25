@@ -22,7 +22,7 @@ export const save: saveData = {
 	lastLevelIndex: null,
 	lastState: 'overworld',
 	lastDirection: null,
-	steps: 2,
+	steps: 10,
 
 }
 export const saveToLocalStorage = () => {
@@ -42,7 +42,7 @@ export const gameOver = () => {
 	}
 	save.lastDirection = null
 	save.lastNodeUUID = null
-	save.steps = 2
+	save.steps = 10
 	saveToLocalStorage()
 	overworldState.disable()
 	overworldState.enable()

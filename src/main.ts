@@ -35,13 +35,13 @@ import { addNineSlicetoUI } from './ui/NineSlice'
 import { addUIElementsToDOM, spawnUIRoot } from './ui/UI'
 import { setDefaultFontSize } from './ui/UiElement'
 import { changeTextureOnSelected, selectUiElement, unSelectDespawnMenus, updateMenus } from './ui/menu'
-import { addToScene, addToWorld, registerShader } from './utils/registerComponents'
+import { addToScene, addToWorld, registerFullScreenShader, registerShader } from './utils/registerComponents'
 
 // !Lib
 ecs
 	.core.onEnter(initThree, updateMousePosition, spawnCamera, spawnMenuInputs, spawnUIRoot, setDefaultFontSize)
 	.onPreUpdate(updatePosition)
-	.onUpdate(detectInteractions, updateMenus, addOutlineShader, animateSprites, addNineSlicetoUI, addUIElementsToDOM, selectUiElement, unSelectDespawnMenus, () => Tween.update(time.delta), adjustScreenSize(), initializeCameraBounds, ...registerShader(ColorShader, OutlineShader, ApocalypseShader), addToWorld, updateApocalypseShader, changeTextureOnSelected, clickOnMenuInput)
+	.onUpdate(detectInteractions, updateMenus, addOutlineShader, animateSprites, addNineSlicetoUI, addUIElementsToDOM, selectUiElement, unSelectDespawnMenus, () => Tween.update(time.delta), adjustScreenSize(), initializeCameraBounds, registerShader(ColorShader, OutlineShader), registerFullScreenShader(ApocalypseShader), addToWorld, updateApocalypseShader, changeTextureOnSelected, clickOnMenuInput)
 	.onPostUpdate(updateSpritePosition, cameraFollow, render, stepWorld)
 	.enable()
 

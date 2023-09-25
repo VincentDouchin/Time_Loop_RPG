@@ -14,6 +14,7 @@ export const scene = new Scene()
 export const composer = new EffectComposer(renderer)
 export const initThree = () => {
 	ecs.spawn(scene)
+	ecs.spawn(composer)
 	initRenderer(renderer)
 	initRenderer(cssRenderer)
 	cssRenderer.domElement.style.position = 'fixed'

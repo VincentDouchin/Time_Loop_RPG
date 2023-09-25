@@ -1,14 +1,14 @@
 import { Collider, ColliderDesc, RigidBody, RigidBodyDesc } from '@dimforge/rapier2d-compat'
 import { Group } from 'three'
 import type { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
 import { ecs, world } from '@/globals/init'
 import type { Class, Constructor, ECS, System } from '@/lib/ECS'
-import { Entity } from '@/lib/ECS'
+import { Entity, SystemSet } from '@/lib/ECS'
 
 import { sceneQuery } from '@/lib/camera'
-import { composer } from '@/lib/rendering'
-import { FullScreenShader, Sprite } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
+import { Sprite } from '@/lib/sprite'
 
 export const addToScene = (...components: Class[]) => (ecs: ECS) => {
 	// ! SCENE
@@ -62,25 +62,30 @@ export const registerShader = (...shaderPasses: Constructor<ShaderPass>[]) => {
 				sprite.composer.removePass(shaderPass)
 			}
 		})
-		const fullScreenShaderAddedQuery = ecs.query.pick(shaderPass).with(FullScreenShader).added(shaderPass)
+	}
+	return SystemSet(...systems)
+}
+
+export const registerFullScreenShader = (...shaderPasses: Constructor<ShaderPass>[]) => {
+	const systems: System[] = []
+	for (const shaderPass of shaderPasses) {
+		const added = ecs.query.pick(EffectComposer, shaderPass).added(shaderPass)
 		systems.push(() => {
-			for (const [pass] of fullScreenShaderAddedQuery.getAll()) {
+			for (const [composer, shader] of added.getAll()) {
 				composer.addPass(composer.copyPass)
-				composer.addPass(pass)
+				composer.addPass(shader)
 			}
 		})
-		const fullScreenShaderRemovedQuery = ecs.query.pick(shaderPass).with(FullScreenShader).removed(shaderPass)
+		const removed = ecs.query.pick(EffectComposer, shaderPass).removed(shaderPass)
 		systems.push(() => {
-			for (const [pass] of fullScreenShaderRemovedQuery.getAll()) {
-				console.log('removed', shaderPass.constructor.name)
-				const index = composer.passes.indexOf(pass)
-				composer.passes.splice(index, 2)
+			for (const [composer, shader] of removed.getAll()) {
+				const index = composer.passes.indexOf(shader)
+				composer.passes.splice(index - 1, 2)
 			}
 		})
 	}
-	return systems
+	return SystemSet(...systems)
 }
-
 const bodyQuery = ecs.query.pick(RigidBodyDesc, Entity).without(RigidBody)
 const colliderQuery = ecs.query.pick(ColliderDesc, RigidBody, Entity).without(Collider)
 const removedQuery = ecs.query.pick(RigidBody).removed(RigidBody)

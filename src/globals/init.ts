@@ -1,6 +1,7 @@
 import { Collider, ColliderDesc, ImpulseJoint, RigidBody, RigidBodyDesc, World } from '@dimforge/rapier2d-compat'
 import { Group, OrthographicCamera, Scene, WebGLRenderer } from 'three'
 import { CSS2DObject, CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer'
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
 import { loadAssets } from './assets'
 import { createWorld } from '@/lib/world'
 import { PixelTexture } from '@/lib/pixelTexture'
@@ -18,6 +19,7 @@ ecs.registerComponent(Scene)
 ecs.registerComponent(OrthographicCamera)
 ecs.registerComponent(CSS2DObject)
 ecs.registerComponent(PixelTexture)
+ecs.registerComponent(EffectComposer)
 // ! RAPIER
 ecs.registerComponent(RigidBodyDesc)
 ecs.registerComponent(RigidBody)
