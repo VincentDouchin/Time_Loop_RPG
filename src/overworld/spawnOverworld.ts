@@ -34,6 +34,9 @@ export const spawnOverworld = () => {
 						if (save.lastNodeUUID === entityInstance.iid || (!save.lastNodeUUID && navNode.data.Start)) {
 							map.spawn(...spawnOverworldCharacter(entity, nodePosition))
 						}
+						if (navNode.data.Treasure) {
+							entity.addComponent(new Sprite(assets.chests.woodChestClosed2).setRenderOrder(1).anchor(0, 0.5))
+						}
 					}
 				}
 			}

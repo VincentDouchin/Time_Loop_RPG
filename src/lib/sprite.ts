@@ -67,7 +67,7 @@ export class Sprite extends Mesh<PlaneGeometry, MeshBasicMaterial> {
 		return this
 	}
 
-	static fromBuffer(buffer: CanvasRenderingContext2D) {
+	static fromBuffer(buffer: OffscreenCanvasRenderingContext2D) {
 		return new Sprite(new PixelTexture(buffer.canvas))
 	}
 }

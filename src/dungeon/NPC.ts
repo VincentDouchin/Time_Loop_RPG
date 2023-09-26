@@ -1,3 +1,4 @@
+import { ColliderDesc, RigidBodyDesc } from '@dimforge/rapier2d-compat'
 import { LDTKEntityInstance } from '../level/LDTKEntity'
 import { PlayerInputMap } from './playerInputs'
 import { dialog } from '@/constants/dialog'
@@ -42,6 +43,8 @@ export const NPCBundle = (entityInstance: EntityInstance, layerInstance: LayerIn
 		...TextureAtlas.bundle(assets.characters[npc.data.name], 'idle', 'left', 'down'),
 		npc,
 		npc.position(layerInstance),
+		RigidBodyDesc.fixed().lockRotations(),
+		ColliderDesc.cuboid(4, 4),
 	]
 	const npcDialog = dialog[npc.data.name]
 	if (npcDialog) {

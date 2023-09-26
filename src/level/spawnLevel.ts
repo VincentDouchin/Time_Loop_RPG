@@ -9,7 +9,7 @@ import { getFileName } from '@/utils/assetLoader'
 @Component(ecs)
 export class Map {}
 
-export const drawLayer = (layerInstance: LayerInstance, buffer: CanvasRenderingContext2D) => {
+export const drawLayer = (layerInstance: LayerInstance, buffer: OffscreenCanvasRenderingContext2D) => {
 	if (layerInstance.__tilesetRelPath) {
 		const tiles = layerInstance.__type === 'IntGrid' ? 'autoLayerTiles' : 'gridTiles'
 		const tilesets = [assets.tilesets[getFileName(layerInstance.__tilesetRelPath) as tilesets]]

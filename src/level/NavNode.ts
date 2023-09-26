@@ -14,6 +14,7 @@ interface NavNodeLDTK {
 	Start: boolean
 	Dungeon: levelPath
 	Level: number
+	Treasure: string
 }
 
 @Component(ecs)

@@ -3,7 +3,7 @@ import { despwawnCutscene } from '@/battle/cutscenes'
 import { overworldState } from '@/main'
 import { save, saveToLocalStorage } from '@/save/saveData'
 
-export const keys = ['oldManBandit'] as const
+export const keys = ['oldManBandit', 'lumberjack'] as const
 const addKey = (key: typeof keys[number]) => {
 	save.keys = [...save.keys, key]
 	saveToLocalStorage()
@@ -59,6 +59,20 @@ export const dialog: Partial<Record<characters | `sign${string}`, () => Generato
 			yield 'Give us all your stuff!'
 		}
 		yield despwawnCutscene()
+	},
+	*lumberjack() {
+		if (!hasKey('lumberjack')) {
+			yield 'Did you see this tree?'
+			yield 'I was taking a nap and all of a sudden it fell in the middle of the road'
+			yield 'And I can\'t do anything about it until I find my axe.'
+			yield 'I think I lost it deeper in the woods, after the tavern'
+			addKey('lumberjack')
+			yield
+		}
+		while (true) {
+			yield 'I really wonder how such a huge trunk ended up here.'
+			yield 'Especially in the perfect middle of the road.'
+		}
 	},
 	*signTavern() {
 		while (true) {

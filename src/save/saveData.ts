@@ -1,4 +1,5 @@
 import type { keys } from '@/constants/dialog'
+import type { items } from '@/constants/items'
 import type { PlayerData } from '@/constants/players'
 import type { direction } from '@/dungeon/spawnDungeon'
 import { overworldState } from '@/main'
@@ -12,6 +13,7 @@ interface saveData {
 	keys: Array<typeof keys[number]>
 	lastDirection: direction | null
 	steps: number
+	treasureFound: (keyof typeof items)[]
 }
 
 export const save: saveData = {
@@ -22,7 +24,8 @@ export const save: saveData = {
 	lastLevelIndex: null,
 	lastState: 'overworld',
 	lastDirection: null,
-	steps: 10,
+	steps: 17,
+	treasureFound: [],
 
 }
 export const saveToLocalStorage = () => {
@@ -42,7 +45,7 @@ export const gameOver = () => {
 	}
 	save.lastDirection = null
 	save.lastNodeUUID = null
-	save.steps = 10
+	save.steps = 17
 	saveToLocalStorage()
 	overworldState.disable()
 	overworldState.enable()

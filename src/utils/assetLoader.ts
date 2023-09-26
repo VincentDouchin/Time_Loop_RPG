@@ -43,7 +43,7 @@ export const getAnimationName = (path: string) => {
 export const getCharacterName = (path: string) => getFolderName(path).replace('_', '') as characters
 
 export const splitTexture = (tiles: number) => (img: HTMLImageElement) => {
-	const result: HTMLCanvasElement[] = []
+	const result: OffscreenCanvas[] = []
 	const width = img.width / tiles
 	const height = img.height
 	for (let i = 0; i < tiles; i++) {
@@ -54,7 +54,7 @@ export const splitTexture = (tiles: number) => (img: HTMLImageElement) => {
 	return result
 }
 
-export const createAtlas = (img: HTMLImageElement | HTMLCanvasElement, dim?: number) => {
+export const createAtlas = (img: HTMLImageElement | HTMLCanvasElement | OffscreenCanvas, dim?: number) => {
 	const dimension = dim ?? img.height
 	const result: Array<Array<PixelTexture>> = []
 	const spriteNb = img.width / dimension

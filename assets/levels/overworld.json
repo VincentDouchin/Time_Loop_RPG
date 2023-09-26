@@ -5,13 +5,13 @@
 		"doc": "https://ldtk.io/json",
 		"schema": "https://ldtk.io/files/JSON_SCHEMA.json",
 		"appAuthor": "Sebastien 'deepnight' Benard",
-		"appVersion": "1.3.4",
+		"appVersion": "1.3.3",
 		"url": "https://ldtk.io"
 	},
 	"iid": "334e2dc0-3b70-11ee-9490-d57adfa79ba6",
-	"jsonVersion": "1.3.4",
-	"appBuildId": 470178,
-	"nextUid": 179,
+	"jsonVersion": "1.3.3",
+	"appBuildId": 467698,
+	"nextUid": 180,
 	"identifierStyle": "Capitalize",
 	"toc": [],
 	"worldLayout": "Free",
@@ -22,8 +22,6 @@
 	"defaultPivotX": 0,
 	"defaultPivotY": 0,
 	"defaultGridSize": 16,
-	"defaultEntityWidth": 16,
-	"defaultEntityHeight": 16,
 	"bgColor": "#40465B",
 	"defaultLevelBgColor": "#696A79",
 	"minifyJson": false,
@@ -3315,6 +3313,40 @@
 			"pivotY": 0.5,
 			"fieldDefs": [
 				{
+					"identifier": "directions",
+					"doc": null,
+					"__type": "Array<EntityRef>",
+					"uid": 175,
+					"type": "F_EntityRef",
+					"isArray": true,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "RefLinkBetweenCenters",
+					"editorDisplayScale": 1,
+					"editorDisplayPos": "Above",
+					"editorLinkStyle": "StraightArrow",
+					"editorAlwaysShow": false,
+					"editorShowInWorld": true,
+					"editorCutLongValues": true,
+					"editorTextSuffix": null,
+					"editorTextPrefix": null,
+					"useForSmartColor": false,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null,
+					"symmetricalRef": true,
+					"autoChainRef": true,
+					"allowOutOfLevelRef": true,
+					"allowedRefs": "OnlySame",
+					"allowedRefsEntityUid": null,
+					"allowedRefTags": [],
+					"tilesetUid": null
+				},
+				{
 					"identifier": "Battle",
 					"doc": null,
 					"__type": "ExternEnum.Battles",
@@ -3328,7 +3360,6 @@
 					"editorDisplayScale": 1,
 					"editorDisplayPos": "Above",
 					"editorLinkStyle": "StraightArrow",
-					"editorDisplayColor": null,
 					"editorAlwaysShow": false,
 					"editorShowInWorld": true,
 					"editorCutLongValues": true,
@@ -3363,7 +3394,6 @@
 					"editorDisplayScale": 1,
 					"editorDisplayPos": "Above",
 					"editorLinkStyle": "StraightArrow",
-					"editorDisplayColor": null,
 					"editorAlwaysShow": false,
 					"editorShowInWorld": true,
 					"editorCutLongValues": true,
@@ -3385,41 +3415,6 @@
 					"tilesetUid": null
 				},
 				{
-					"identifier": "directions",
-					"doc": null,
-					"__type": "Array<EntityRef>",
-					"uid": 175,
-					"type": "F_EntityRef",
-					"isArray": true,
-					"canBeNull": false,
-					"arrayMinLength": null,
-					"arrayMaxLength": null,
-					"editorDisplayMode": "RefLinkBetweenCenters",
-					"editorDisplayScale": 1,
-					"editorDisplayPos": "Above",
-					"editorLinkStyle": "StraightArrow",
-					"editorDisplayColor": null,
-					"editorAlwaysShow": false,
-					"editorShowInWorld": true,
-					"editorCutLongValues": true,
-					"editorTextSuffix": null,
-					"editorTextPrefix": null,
-					"useForSmartColor": false,
-					"min": null,
-					"max": null,
-					"regex": null,
-					"acceptFileTypes": null,
-					"defaultOverride": null,
-					"textLanguageMode": null,
-					"symmetricalRef": true,
-					"autoChainRef": true,
-					"allowOutOfLevelRef": true,
-					"allowedRefs": "OnlySame",
-					"allowedRefsEntityUid": null,
-					"allowedRefTags": [],
-					"tilesetUid": null
-				},
-				{
 					"identifier": "Dungeon",
 					"doc": null,
 					"__type": "FilePath",
@@ -3433,7 +3428,6 @@
 					"editorDisplayScale": 1,
 					"editorDisplayPos": "Above",
 					"editorLinkStyle": "StraightArrow",
-					"editorDisplayColor": null,
 					"editorAlwaysShow": false,
 					"editorShowInWorld": true,
 					"editorCutLongValues": true,
@@ -3468,7 +3462,40 @@
 					"editorDisplayScale": 1,
 					"editorDisplayPos": "Above",
 					"editorLinkStyle": "StraightArrow",
-					"editorDisplayColor": null,
+					"editorAlwaysShow": false,
+					"editorShowInWorld": true,
+					"editorCutLongValues": true,
+					"editorTextSuffix": null,
+					"editorTextPrefix": null,
+					"useForSmartColor": false,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null,
+					"symmetricalRef": false,
+					"autoChainRef": true,
+					"allowOutOfLevelRef": true,
+					"allowedRefs": "OnlySame",
+					"allowedRefsEntityUid": null,
+					"allowedRefTags": [],
+					"tilesetUid": null
+				},
+				{
+					"identifier": "Treasure",
+					"doc": null,
+					"__type": "String",
+					"uid": 179,
+					"type": "F_String",
+					"isArray": false,
+					"canBeNull": true,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayScale": 0,
+					"editorDisplayPos": "Above",
+					"editorLinkStyle": "StraightArrow",
 					"editorAlwaysShow": false,
 					"editorShowInWorld": true,
 					"editorCutLongValues": true,
@@ -3695,19 +3722,18 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
-							"__worldX": 328,
-							"__worldY": 240,
 							"iid": "c0dd9f10-3b70-11ee-9490-a9e8ef14b947",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [352,240],
 							"fieldInstances": [
+								{ "__identifier": "directions", "__type": "Array<EntityRef>", "__value": [], "__tile": null, "defUid": 175, "realEditorValues": [] },
 								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
 								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
-								{ "__identifier": "directions", "__type": "Array<EntityRef>", "__value": [], "__tile": null, "defUid": 175, "realEditorValues": [] },
 								{ "__identifier": "Dungeon", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 177, "realEditorValues": [] },
-								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] }
+								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] },
+								{ "__identifier": "Treasure", "__type": "String", "__value": null, "__tile": null, "defUid": 179, "realEditorValues": [] }
 							]
 						},
 						{
@@ -3717,19 +3743,18 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
-							"__worldX": 360,
-							"__worldY": 240,
 							"iid": "c22e3af0-3b70-11ee-9490-d760d2215b01",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [384,240],
 							"fieldInstances": [
+								{ "__identifier": "directions", "__type": "Array<EntityRef>", "__value": [], "__tile": null, "defUid": 175, "realEditorValues": [] },
 								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
 								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
-								{ "__identifier": "directions", "__type": "Array<EntityRef>", "__value": [], "__tile": null, "defUid": 175, "realEditorValues": [] },
 								{ "__identifier": "Dungeon", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 177, "realEditorValues": [] },
-								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] }
+								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] },
+								{ "__identifier": "Treasure", "__type": "String", "__value": null, "__tile": null, "defUid": 179, "realEditorValues": [] }
 							]
 						}
 					]
@@ -4525,7 +4550,7 @@
 					"entityInstances": []
 				}
 			],
-			"__neighbours": []
+			"__neighbours": [{ "levelIid": "a9edd630-3b70-11ee-b26d-018cd8bf7cee", "dir": "e" }]
 		},
 		{
 			"identifier": "Level_1",
@@ -4646,19 +4671,12 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
-							"__worldX": 392,
-							"__worldY": 248,
 							"iid": "6270c690-3b70-11ee-b53e-e5c48648893a",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [136,536],
 							"fieldInstances": [
-								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
-								{ "__identifier": "Start", "__type": "Bool", "__value": true, "__tile": null, "defUid": 172, "realEditorValues": [{
-									"id": "V_Bool",
-									"params": [ true ]
-								}] },
 								{ "__identifier": "directions", "__type": "Array<EntityRef>", "__value": [{
 									"entityIid": "b1be7120-3b70-11ee-b53e-3573bff44379",
 									"layerIid": "a9edd631-3b70-11ee-b26d-8b4c3cb78cec",
@@ -4668,8 +4686,14 @@
 									"id": "V_String",
 									"params": ["b1be7120-3b70-11ee-b53e-3573bff44379"]
 								}] },
+								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
+								{ "__identifier": "Start", "__type": "Bool", "__value": true, "__tile": null, "defUid": 172, "realEditorValues": [{
+									"id": "V_Bool",
+									"params": [ true ]
+								}] },
 								{ "__identifier": "Dungeon", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 177, "realEditorValues": [] },
-								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] }
+								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] },
+								{ "__identifier": "Treasure", "__type": "String", "__value": null, "__tile": null, "defUid": 179, "realEditorValues": [] }
 							]
 						},
 						{
@@ -4679,16 +4703,12 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
-							"__worldX": 392,
-							"__worldY": 200,
 							"iid": "b1be7120-3b70-11ee-b53e-3573bff44379",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [136,488],
 							"fieldInstances": [
-								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
-								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "directions", "__type": "Array<EntityRef>", "__value": [ {
 									"entityIid": "6270c690-3b70-11ee-b53e-e5c48648893a",
 									"layerIid": "a9edd631-3b70-11ee-b26d-8b4c3cb78cec",
@@ -4706,8 +4726,11 @@
 									"id": "V_String",
 									"params": ["b343b190-3b70-11ee-b53e-5fc3dc3758d0"]
 								} ] },
+								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
+								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "Dungeon", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 177, "realEditorValues": [] },
-								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] }
+								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] },
+								{ "__identifier": "Treasure", "__type": "String", "__value": null, "__tile": null, "defUid": 179, "realEditorValues": [] }
 							]
 						},
 						{
@@ -4717,16 +4740,12 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
-							"__worldX": 488,
-							"__worldY": 200,
 							"iid": "b343b190-3b70-11ee-b53e-5fc3dc3758d0",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [232,488],
 							"fieldInstances": [
-								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
-								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "directions", "__type": "Array<EntityRef>", "__value": [ {
 									"entityIid": "b1be7120-3b70-11ee-b53e-3573bff44379",
 									"layerIid": "a9edd631-3b70-11ee-b26d-8b4c3cb78cec",
@@ -4744,8 +4763,11 @@
 									"id": "V_String",
 									"params": ["c4d40040-3b70-11ee-b53e-031d7172adec"]
 								} ] },
+								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
+								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "Dungeon", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 177, "realEditorValues": [] },
-								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] }
+								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] },
+								{ "__identifier": "Treasure", "__type": "String", "__value": null, "__tile": null, "defUid": 179, "realEditorValues": [] }
 							]
 						},
 						{
@@ -4755,16 +4777,12 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
-							"__worldX": 488,
-							"__worldY": 120,
 							"iid": "b3f59c70-3b70-11ee-b53e-731b1e2c3a5e",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [232,408],
 							"fieldInstances": [
-								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
-								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "directions", "__type": "Array<EntityRef>", "__value": [ {
 									"entityIid": "c4d40040-3b70-11ee-b53e-031d7172adec",
 									"layerIid": "a9edd631-3b70-11ee-b26d-8b4c3cb78cec",
@@ -4782,8 +4800,11 @@
 									"id": "V_String",
 									"params": ["c6652790-3b70-11ee-b53e-f58c8fe01adb"]
 								} ] },
+								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
+								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "Dungeon", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 177, "realEditorValues": [] },
-								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] }
+								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] },
+								{ "__identifier": "Treasure", "__type": "String", "__value": null, "__tile": null, "defUid": 179, "realEditorValues": [] }
 							]
 						},
 						{
@@ -4793,16 +4814,12 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
-							"__worldX": 296,
-							"__worldY": 120,
 							"iid": "b4a45300-3b70-11ee-b53e-fb3c5f2e60fa",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [40,408],
 							"fieldInstances": [
-								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
-								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "directions", "__type": "Array<EntityRef>", "__value": [ {
 									"entityIid": "c6652790-3b70-11ee-b53e-f58c8fe01adb",
 									"layerIid": "a9edd631-3b70-11ee-b26d-8b4c3cb78cec",
@@ -4820,8 +4837,11 @@
 									"id": "V_String",
 									"params": ["b5285010-3b70-11ee-b53e-a3cc75bfbfc6"]
 								} ] },
+								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
+								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "Dungeon", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 177, "realEditorValues": [] },
-								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] }
+								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] },
+								{ "__identifier": "Treasure", "__type": "String", "__value": null, "__tile": null, "defUid": 179, "realEditorValues": [] }
 							]
 						},
 						{
@@ -4831,16 +4851,12 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
-							"__worldX": 296,
-							"__worldY": 56,
 							"iid": "b5285010-3b70-11ee-b53e-a3cc75bfbfc6",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [40,344],
 							"fieldInstances": [
-								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
-								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "directions", "__type": "Array<EntityRef>", "__value": [ {
 									"entityIid": "b4a45300-3b70-11ee-b53e-fb3c5f2e60fa",
 									"layerIid": "a9edd631-3b70-11ee-b26d-8b4c3cb78cec",
@@ -4858,8 +4874,11 @@
 									"id": "V_String",
 									"params": ["b5d558f0-3b70-11ee-b53e-637a0efc609e"]
 								} ] },
+								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
+								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "Dungeon", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 177, "realEditorValues": [] },
-								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] }
+								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] },
+								{ "__identifier": "Treasure", "__type": "String", "__value": null, "__tile": null, "defUid": 179, "realEditorValues": [] }
 							]
 						},
 						{
@@ -4869,16 +4888,12 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
-							"__worldX": 312,
-							"__worldY": 56,
 							"iid": "b5d558f0-3b70-11ee-b53e-637a0efc609e",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [56,344],
 							"fieldInstances": [
-								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
-								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "directions", "__type": "Array<EntityRef>", "__value": [
 									{
 										"entityIid": "b5285010-3b70-11ee-b53e-a3cc75bfbfc6",
@@ -4908,8 +4923,11 @@
 									"id": "V_String",
 									"params": ["7513ef60-3b70-11ee-b53e-413e7a0ab009"]
 								} ] },
+								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
+								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "Dungeon", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 177, "realEditorValues": [] },
-								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] }
+								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] },
+								{ "__identifier": "Treasure", "__type": "String", "__value": null, "__tile": null, "defUid": 179, "realEditorValues": [] }
 							]
 						},
 						{
@@ -4919,16 +4937,12 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
-							"__worldX": 408,
-							"__worldY": 56,
 							"iid": "b6dfc410-3b70-11ee-b53e-43d2b4705b5e",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [152,344],
 							"fieldInstances": [
-								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
-								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "directions", "__type": "Array<EntityRef>", "__value": [ {
 									"entityIid": "b5d558f0-3b70-11ee-b53e-637a0efc609e",
 									"layerIid": "a9edd631-3b70-11ee-b26d-8b4c3cb78cec",
@@ -4946,11 +4960,14 @@
 									"id": "V_String",
 									"params": ["b780bf00-3b70-11ee-b53e-f7b68f381c8e"]
 								} ] },
+								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
+								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "Dungeon", "__type": "FilePath", "__value": "tavern.json", "__tile": null, "defUid": 177, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["tavern.json"]
 								}] },
-								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [{ "id": "V_Int", "params": [0] }] }
+								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [{ "id": "V_Int", "params": [0] }] },
+								{ "__identifier": "Treasure", "__type": "String", "__value": null, "__tile": null, "defUid": 179, "realEditorValues": [] }
 							]
 						},
 						{
@@ -4960,16 +4977,12 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
-							"__worldX": 488,
-							"__worldY": 56,
 							"iid": "b780bf00-3b70-11ee-b53e-f7b68f381c8e",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [232,344],
 							"fieldInstances": [
-								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
-								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "directions", "__type": "Array<EntityRef>", "__value": [ {
 									"entityIid": "b6dfc410-3b70-11ee-b53e-43d2b4705b5e",
 									"layerIid": "a9edd631-3b70-11ee-b26d-8b4c3cb78cec",
@@ -4987,8 +5000,11 @@
 									"id": "V_String",
 									"params": ["2dfec6c0-3b70-11ee-b53e-23793ae949d5"]
 								} ] },
+								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
+								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "Dungeon", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 177, "realEditorValues": [] },
-								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] }
+								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] },
+								{ "__identifier": "Treasure", "__type": "String", "__value": null, "__tile": null, "defUid": 179, "realEditorValues": [] }
 							]
 						},
 						{
@@ -4998,16 +5014,12 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
-							"__worldX": 392,
-							"__worldY": -72,
 							"iid": "b9d22910-3b70-11ee-b53e-05e18b068768",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [136,216],
 							"fieldInstances": [
-								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
-								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "directions", "__type": "Array<EntityRef>", "__value": [ {
 									"entityIid": "51c1bab0-3b70-11ee-b53e-bd7c8e357dc3",
 									"layerIid": "a9edd631-3b70-11ee-b26d-8b4c3cb78cec",
@@ -5025,8 +5037,11 @@
 									"id": "V_String",
 									"params": ["ba658f70-3b70-11ee-b53e-5314291a23d8"]
 								} ] },
+								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
+								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "Dungeon", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 177, "realEditorValues": [] },
-								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] }
+								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] },
+								{ "__identifier": "Treasure", "__type": "String", "__value": null, "__tile": null, "defUid": 179, "realEditorValues": [] }
 							]
 						},
 						{
@@ -5036,16 +5051,12 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
-							"__worldX": 488,
-							"__worldY": -72,
 							"iid": "ba658f70-3b70-11ee-b53e-5314291a23d8",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [232,216],
 							"fieldInstances": [
-								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
-								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "directions", "__type": "Array<EntityRef>", "__value": [ {
 									"entityIid": "b9d22910-3b70-11ee-b53e-05e18b068768",
 									"layerIid": "a9edd631-3b70-11ee-b26d-8b4c3cb78cec",
@@ -5063,8 +5074,11 @@
 									"id": "V_String",
 									"params": ["bb6217e0-3b70-11ee-b53e-192ea1ad2248"]
 								} ] },
+								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
+								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "Dungeon", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 177, "realEditorValues": [] },
-								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] }
+								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] },
+								{ "__identifier": "Treasure", "__type": "String", "__value": null, "__tile": null, "defUid": 179, "realEditorValues": [] }
 							]
 						},
 						{
@@ -5074,16 +5088,12 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
-							"__worldX": 488,
-							"__worldY": -120,
 							"iid": "bb6217e0-3b70-11ee-b53e-192ea1ad2248",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [232,168],
 							"fieldInstances": [
-								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
-								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "directions", "__type": "Array<EntityRef>", "__value": [ {
 									"entityIid": "ba658f70-3b70-11ee-b53e-5314291a23d8",
 									"layerIid": "a9edd631-3b70-11ee-b26d-8b4c3cb78cec",
@@ -5101,8 +5111,11 @@
 									"id": "V_String",
 									"params": ["bbeb9330-3b70-11ee-b53e-ff839fea14d3"]
 								} ] },
+								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
+								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "Dungeon", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 177, "realEditorValues": [] },
-								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] }
+								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] },
+								{ "__identifier": "Treasure", "__type": "String", "__value": null, "__tile": null, "defUid": 179, "realEditorValues": [] }
 							]
 						},
 						{
@@ -5112,16 +5125,12 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
-							"__worldX": 392,
-							"__worldY": -120,
 							"iid": "bbeb9330-3b70-11ee-b53e-ff839fea14d3",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [136,168],
 							"fieldInstances": [
-								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
-								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "directions", "__type": "Array<EntityRef>", "__value": [
 									{
 										"entityIid": "bb6217e0-3b70-11ee-b53e-192ea1ad2248",
@@ -5151,8 +5160,11 @@
 									"id": "V_String",
 									"params": ["bf39acc0-3b70-11ee-b53e-1d324d8c3bf5"]
 								} ] },
+								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
+								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "Dungeon", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 177, "realEditorValues": [] },
-								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] }
+								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] },
+								{ "__identifier": "Treasure", "__type": "String", "__value": null, "__tile": null, "defUid": 179, "realEditorValues": [] }
 							]
 						},
 						{
@@ -5162,16 +5174,12 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
-							"__worldX": 312,
-							"__worldY": -120,
 							"iid": "be12b8f0-3b70-11ee-b53e-39c85677b7d7",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [56,168],
 							"fieldInstances": [
-								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
-								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "directions", "__type": "Array<EntityRef>", "__value": [ {
 									"entityIid": "bbeb9330-3b70-11ee-b53e-ff839fea14d3",
 									"layerIid": "a9edd631-3b70-11ee-b26d-8b4c3cb78cec",
@@ -5189,8 +5197,11 @@
 									"id": "V_String",
 									"params": ["7513ef60-3b70-11ee-b53e-413e7a0ab009"]
 								} ] },
+								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
+								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "Dungeon", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 177, "realEditorValues": [] },
-								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] }
+								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] },
+								{ "__identifier": "Treasure", "__type": "String", "__value": null, "__tile": null, "defUid": 179, "realEditorValues": [] }
 							]
 						},
 						{
@@ -5200,19 +5211,12 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#D77643",
-							"__worldX": 392,
-							"__worldY": -232,
 							"iid": "bf39acc0-3b70-11ee-b53e-1d324d8c3bf5",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [136,56],
 							"fieldInstances": [
-								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": "BossBattleIntro", "__tile": null, "defUid": 102, "realEditorValues": [{
-									"id": "V_String",
-									"params": ["BossBattleIntro"]
-								}] },
-								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "directions", "__type": "Array<EntityRef>", "__value": [{
 									"entityIid": "bbeb9330-3b70-11ee-b53e-ff839fea14d3",
 									"layerIid": "a9edd631-3b70-11ee-b26d-8b4c3cb78cec",
@@ -5222,8 +5226,14 @@
 									"id": "V_String",
 									"params": ["bbeb9330-3b70-11ee-b53e-ff839fea14d3"]
 								}] },
+								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": "BossBattleIntro", "__tile": null, "defUid": 102, "realEditorValues": [{
+									"id": "V_String",
+									"params": ["BossBattleIntro"]
+								}] },
+								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "Dungeon", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 177, "realEditorValues": [] },
-								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] }
+								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] },
+								{ "__identifier": "Treasure", "__type": "String", "__value": null, "__tile": null, "defUid": 179, "realEditorValues": [] }
 							]
 						},
 						{
@@ -5233,19 +5243,12 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#EAD4AA",
-							"__worldX": 488,
-							"__worldY": 156,
 							"iid": "c4d40040-3b70-11ee-b53e-031d7172adec",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [232,444],
 							"fieldInstances": [
-								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": "ForestAnimals", "__tile": null, "defUid": 102, "realEditorValues": [{
-									"id": "V_String",
-									"params": ["ForestAnimals"]
-								}] },
-								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "directions", "__type": "Array<EntityRef>", "__value": [ {
 									"entityIid": "b343b190-3b70-11ee-b53e-5fc3dc3758d0",
 									"layerIid": "a9edd631-3b70-11ee-b26d-8b4c3cb78cec",
@@ -5263,8 +5266,14 @@
 									"id": "V_String",
 									"params": ["b3f59c70-3b70-11ee-b53e-731b1e2c3a5e"]
 								} ] },
+								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": "ForestAnimals", "__tile": null, "defUid": 102, "realEditorValues": [{
+									"id": "V_String",
+									"params": ["ForestAnimals"]
+								}] },
+								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "Dungeon", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 177, "realEditorValues": [] },
-								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] }
+								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] },
+								{ "__identifier": "Treasure", "__type": "String", "__value": null, "__tile": null, "defUid": 179, "realEditorValues": [] }
 							]
 						},
 						{
@@ -5274,19 +5283,12 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
-							"__worldX": 392,
-							"__worldY": 120,
 							"iid": "c6652790-3b70-11ee-b53e-f58c8fe01adb",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [136,408],
 							"fieldInstances": [
-								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": "Bandits", "__tile": null, "defUid": 102, "realEditorValues": [{
-									"id": "V_String",
-									"params": ["Bandits"]
-								}] },
-								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "directions", "__type": "Array<EntityRef>", "__value": [ {
 									"entityIid": "b3f59c70-3b70-11ee-b53e-731b1e2c3a5e",
 									"layerIid": "a9edd631-3b70-11ee-b26d-8b4c3cb78cec",
@@ -5304,8 +5306,14 @@
 									"id": "V_String",
 									"params": ["b4a45300-3b70-11ee-b53e-fb3c5f2e60fa"]
 								} ] },
+								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": "Bandits", "__tile": null, "defUid": 102, "realEditorValues": [{
+									"id": "V_String",
+									"params": ["Bandits"]
+								}] },
+								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "Dungeon", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 177, "realEditorValues": [] },
-								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] }
+								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] },
+								{ "__identifier": "Treasure", "__type": "String", "__value": null, "__tile": null, "defUid": 179, "realEditorValues": [] }
 							]
 						},
 						{
@@ -5315,16 +5323,12 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
-							"__worldX": 392,
-							"__worldY": -48,
 							"iid": "51c1bab0-3b70-11ee-b53e-bd7c8e357dc3",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [136,240],
 							"fieldInstances": [
-								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
-								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "directions", "__type": "Array<EntityRef>", "__value": [ {
 									"entityIid": "5c63e5b0-3b70-11ee-b53e-51e3496bc9e8",
 									"layerIid": "a9edd631-3b70-11ee-b26d-8b4c3cb78cec",
@@ -5342,8 +5346,14 @@
 									"id": "V_String",
 									"params": ["b9d22910-3b70-11ee-b53e-05e18b068768"]
 								} ] },
+								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
+								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "Dungeon", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 177, "realEditorValues": [] },
-								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] }
+								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] },
+								{ "__identifier": "Treasure", "__type": "String", "__value": "lumberjackAxe", "__tile": null, "defUid": 179, "realEditorValues": [{
+									"id": "V_String",
+									"params": ["lumberjackAxe"]
+								}] }
 							]
 						},
 						{
@@ -5353,16 +5363,12 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
-							"__worldX": 392,
-							"__worldY": -24,
 							"iid": "5c63e5b0-3b70-11ee-b53e-51e3496bc9e8",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [136,264],
 							"fieldInstances": [
-								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
-								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "directions", "__type": "Array<EntityRef>", "__value": [ {
 									"entityIid": "5f2835d0-3b70-11ee-b53e-63d5053bf266",
 									"layerIid": "a9edd631-3b70-11ee-b26d-8b4c3cb78cec",
@@ -5380,8 +5386,11 @@
 									"id": "V_String",
 									"params": ["51c1bab0-3b70-11ee-b53e-bd7c8e357dc3"]
 								} ] },
+								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
+								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "Dungeon", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 177, "realEditorValues": [] },
-								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] }
+								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] },
+								{ "__identifier": "Treasure", "__type": "String", "__value": null, "__tile": null, "defUid": 179, "realEditorValues": [] }
 							]
 						},
 						{
@@ -5391,16 +5400,12 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
-							"__worldX": 488,
-							"__worldY": -24,
 							"iid": "5f2835d0-3b70-11ee-b53e-63d5053bf266",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [232,264],
 							"fieldInstances": [
-								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
-								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "directions", "__type": "Array<EntityRef>", "__value": [ {
 									"entityIid": "2dfec6c0-3b70-11ee-b53e-23793ae949d5",
 									"layerIid": "a9edd631-3b70-11ee-b26d-8b4c3cb78cec",
@@ -5418,8 +5423,11 @@
 									"id": "V_String",
 									"params": ["5c63e5b0-3b70-11ee-b53e-51e3496bc9e8"]
 								} ] },
+								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
+								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "Dungeon", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 177, "realEditorValues": [] },
-								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] }
+								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] },
+								{ "__identifier": "Treasure", "__type": "String", "__value": null, "__tile": null, "defUid": 179, "realEditorValues": [] }
 							]
 						},
 						{
@@ -5429,16 +5437,12 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#BE4A2F",
-							"__worldX": 312,
-							"__worldY": 32,
 							"iid": "7513ef60-3b70-11ee-b53e-413e7a0ab009",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [56,320],
 							"fieldInstances": [
-								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
-								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "directions", "__type": "Array<EntityRef>", "__value": [ {
 									"entityIid": "b5d558f0-3b70-11ee-b53e-637a0efc609e",
 									"layerIid": "a9edd631-3b70-11ee-b26d-8b4c3cb78cec",
@@ -5456,11 +5460,14 @@
 									"id": "V_String",
 									"params": ["be12b8f0-3b70-11ee-b53e-39c85677b7d7"]
 								} ] },
+								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": null, "__tile": null, "defUid": 102, "realEditorValues": [] },
+								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "Dungeon", "__type": "FilePath", "__value": "tavern.json", "__tile": null, "defUid": 177, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["tavern.json"]
 								}] },
-								{ "__identifier": "Level", "__type": "Int", "__value": 1, "__tile": null, "defUid": 178, "realEditorValues": [{ "id": "V_Int", "params": [1] }] }
+								{ "__identifier": "Level", "__type": "Int", "__value": 1, "__tile": null, "defUid": 178, "realEditorValues": [{ "id": "V_Int", "params": [1] }] },
+								{ "__identifier": "Treasure", "__type": "String", "__value": null, "__tile": null, "defUid": 179, "realEditorValues": [] }
 							]
 						},
 						{
@@ -5470,19 +5477,12 @@
 							"__tags": [],
 							"__tile": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
 							"__smartColor": "#EAD4AA",
-							"__worldX": 488,
-							"__worldY": 12,
 							"iid": "2dfec6c0-3b70-11ee-b53e-23793ae949d5",
 							"width": 16,
 							"height": 16,
 							"defUid": 28,
 							"px": [232,300],
 							"fieldInstances": [
-								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": "ForestAnimals", "__tile": null, "defUid": 102, "realEditorValues": [{
-									"id": "V_String",
-									"params": ["ForestAnimals"]
-								}] },
-								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "directions", "__type": "Array<EntityRef>", "__value": [ {
 									"entityIid": "b780bf00-3b70-11ee-b53e-f7b68f381c8e",
 									"layerIid": "a9edd631-3b70-11ee-b26d-8b4c3cb78cec",
@@ -5500,8 +5500,14 @@
 									"id": "V_String",
 									"params": ["5f2835d0-3b70-11ee-b53e-63d5053bf266"]
 								} ] },
+								{ "__identifier": "Battle", "__type": "ExternEnum.Battles", "__value": "ForestAnimals", "__tile": null, "defUid": 102, "realEditorValues": [{
+									"id": "V_String",
+									"params": ["ForestAnimals"]
+								}] },
+								{ "__identifier": "Start", "__type": "Bool", "__value": false, "__tile": null, "defUid": 172, "realEditorValues": [] },
 								{ "__identifier": "Dungeon", "__type": "FilePath", "__value": null, "__tile": null, "defUid": 177, "realEditorValues": [] },
-								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] }
+								{ "__identifier": "Level", "__type": "Int", "__value": 0, "__tile": null, "defUid": 178, "realEditorValues": [] },
+								{ "__identifier": "Treasure", "__type": "String", "__value": null, "__tile": null, "defUid": 179, "realEditorValues": [] }
 							]
 						}
 					]

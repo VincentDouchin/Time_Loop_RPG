@@ -32,7 +32,63 @@ const uiLoader = new AssetLoader()
 		})
 		return mapKeys(ui, getFileName)
 	})
+type chestColor = 'wood' | 'red' | 'azure' | 'green' | 'purple' | 'white' | 'grey' | 'cyan'
+type chestsStates = 'ChestClosed' | 'ChestOpen' | 'Key'
+export type chests = `${chestColor}${chestsStates}${1 | 2 | 4 | 5 | 6}`
+const chestLoader = new AssetLoader()
+	.pipe(async (glob) => {
+		const image = await loadImage(Object.values(glob)[0].default)
+		const result: Record<string, PixelTexture> = {}
+		const chests = [['wood', 'red', 'azure', 'green'], ['purple', 'white', 'grey', 'cyan']]
+		const names = ['ChestClosed', 'ChestOpen', 'Key']
+		for (let rowIndex = 0; rowIndex < chests.length; rowIndex++) {
+			const row = chests[rowIndex]
+			for (let columnIndex = 0; columnIndex < row.length; columnIndex++) {
+				const color = row[columnIndex]
+				const yOffset = rowIndex * 8 * 16
+				const xOffset = columnIndex * 3 * 24
+				for (let x = 0; x < 3; x++) {
+					for (let y = 0; y < 7; y++) {
+						const h = y === 6 ? 32 : 16
+						const buffer = getBuffer(24, h)
+						buffer.drawImage(image, xOffset + x * 24, yOffset + y * 16 + (rowIndex === 1 ? 16 : 0) + (y === 6 ? 16 : 0), 24, h, 0, 0, 24, h)
+						result[color + names[x] + y] = new PixelTexture(buffer.canvas)
+					}
+				}
+			}
+		}
+		return result
+	})
 
+const weaponNames = ['dagger', 'sword', 'axe', 'flail', 'longsword', 'crossbow', 'hammer', 'pickaxe', 'bow'] as const
+const staves = ['pine', 'yellow', 'rose', 'oak', 'birch'] as const
+const metals = ['iron', 'steel', 'bronze', 'silver', 'gold'] as const
+const gems = ['', null, 'purple', 'white', 'green', 'red', 'orange'] as const
+type weapons = `${typeof weaponNames[number]}${typeof staves[number]}${typeof metals[number]}${NonNullable<typeof gems[number]>}`
+export const weaponsLoader = new AssetLoader()
+	.pipe(async (glob) => {
+		const image = await loadImage(Object.values(glob)[0].default)
+		const result = {} as Record<weapons, PixelTexture>
+		const initialXOffset = 16
+		const initialYOffset = 16
+		weaponNames.forEach((weapon, wi) => {
+			staves.forEach((staff, si) => {
+				metals.forEach((metal, mi) => {
+					gems.forEach((gem, gi) => {
+						if (gem !== null) {
+							const buffer = getBuffer(8, 8)
+							const xOffset = initialXOffset + 32 + wi * 11 * 8 + gi * 8
+							const yOffset = initialYOffset + 8 + si * 6 * 8 + mi * 8
+							buffer.drawImage(image, xOffset, yOffset, 8, 8, 0, 0, 8, 8)
+							const name: weapons = `${weapon}${staff}${metal}${gem}`
+							result[name] = new PixelTexture(buffer.canvas)
+						}
+					})
+				})
+			})
+		})
+		return result
+	})
 const fontLoader = new AssetLoader()
 	.pipe(async (glob) => {
 		const fonts = mapKeys(glob, getFileName)
@@ -74,5 +130,7 @@ export const loadAssets = async () => {
 	const animatedTextures = await animateSpritesLoader.loadAsync<items>(import.meta.glob('./../../assets/items/**/*.png', { eager: true }))
 	const animations = await animationsLoader.loadAsync<animations>(import.meta.glob('./../../assets/animations/*.png', { eager: true }))
 	const staticItems = await imagesLoader.loadAsync<staticItems>(import.meta.glob('./../../assets/staticItems/*.png', { eager: true }))
-	return { levels, tilesets, characters, ui, fonts, animatedTextures, animations, staticItems } as const
+	const chests = await chestLoader.loadAsync<chests>(import.meta.glob('./../../assets/_singles/Chests.png', { eager: true }))
+	const weapons = await weaponsLoader.loadAsync<weapons>(import.meta.glob('./../../assets/_singles/Minifantasy_CraftingAndProfessionsWeaponIcons.png', { eager: true }))
+	return { levels, tilesets, characters, ui, fonts, animatedTextures, animations, staticItems, chests, weapons } as const
 }

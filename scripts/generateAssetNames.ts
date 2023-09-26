@@ -18,10 +18,12 @@ for (const path of asespriteFiles) {
 const folders: Record<string, string[]> = {}
 const assetsDir = await readdir('./assets', { recursive: true, withFileTypes: true })
 for (const dir of assetsDir) {
-	if (dir.isDirectory()) {
-		folders[dir.name] = (await readdir(`./assets/${dir.name}`))
+	if (dir.isDirectory() && dir.name[0] !== '_') {
+		const files = (await readdir(`./assets/${dir.name}`))
 			.filter(x => !x.includes('.ase'))
 			.map(x => x.split('.')[0])
+
+		folders[dir.name] = files
 	}
 }
 
