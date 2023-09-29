@@ -1,6 +1,5 @@
 import type { keys } from '@/constants/dialog'
 import type LDTKEnums from '@/constants/exports/LDTKEnums'
-import type { items } from '@/constants/items'
 import type { PlayerData } from '@/constants/players'
 import type { direction } from '@/dungeon/spawnDungeon'
 import { overworldState } from '@/main'

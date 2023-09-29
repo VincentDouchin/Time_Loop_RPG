@@ -6,10 +6,9 @@ import { MenuInputInteractable, menuInputQuery } from '@/menus/menuInputs'
 import { save } from '@/save/saveData'
 import { NineSlice } from '@/ui/NineSlice'
 import { UIElement } from '@/ui/UiElement'
-import { toCanvas } from '@/utils/buffer'
 
 @Component(ecs)
-export class Inventory {}
+export class Inventory { }
 
 export const spawnInventoryToggle = () => {
 	ecs

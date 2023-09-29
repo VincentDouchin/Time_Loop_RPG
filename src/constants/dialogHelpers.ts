@@ -1,4 +1,3 @@
-import { Collider } from '@dimforge/rapier2d-compat'
 import { NPC } from '@/dungeon/NPC'
 import { LockedMovement } from '@/dungeon/playerMovement'
 import { Player } from '@/genericComponents/components'
@@ -10,7 +9,7 @@ import { Tween } from '@/lib/tween'
 import { sleep } from '@/utils/timing'
 
 @Component(ecs)
-export class Log {}
+export class Log { }
 
 const playerQuery = ecs.query.pick(Entity).with(Player)
 export const lockPlayer = () => {
@@ -24,10 +23,10 @@ export const unlockPlayer = () => {
 	}
 }
 
-const npcQuery = ecs.query.pick(TextureAtlas, NPC, Position)
-const logQuery = ecs.query.pick(Entity).with(Log)
+const npcQuery = ecs.query.pick(TextureAtlas, Position).with(NPC)
+// const _logQuery = ecs.query.pick(Entity).with(Log)
 export const chopLog = () => {
-	for (const [atlas, npc, pos] of npcQuery.getAll()) {
+	for (const [atlas, pos] of npcQuery.getAll()) {
 		atlas.directionY = 'up'
 		atlas.state = 'walk'
 		new Tween(2000)

@@ -1,7 +1,6 @@
 import type { direction } from '@/dungeon/spawnDungeon'
 import { Player } from '@/genericComponents/components'
 import { assets } from '@/globals/init'
-import type { Entity } from '@/lib/ECS'
 import { CameraTarget } from '@/lib/camera'
 import { TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
@@ -19,7 +18,7 @@ export const getOtherDirection = (dir: direction): direction => {
 	return otherDirections[dir]
 }
 
-export const spawnOverworldCharacter = (node: Entity, nodePosition: Position) => {
+export const spawnOverworldCharacter = (nodePosition: Position) => {
 	const [sprite, animator, textureAtlas] = TextureAtlas.bundle(assets.characters.paladin, 'idle', 'left', 'down')
 	sprite.setRenderOrder(10)
 	let direction: null | direction = null
@@ -38,7 +37,7 @@ export const spawnOverworldCharacter = (node: Entity, nodePosition: Position) =>
 		textureAtlas,
 		new CameraTarget(),
 		new Position(nodePosition.x, nodePosition.y),
-		new Navigator(node, direction),
+		new Navigator(direction),
 		new Player(),
 		new DecidingDirection(),
 	]

@@ -1,7 +1,8 @@
 import { Collider, ColliderDesc, RigidBodyDesc } from '@dimforge/rapier2d-compat'
-import { Group, Vector2 } from 'three'
+import { Group } from 'three'
 import { getPlayerInputMap } from './playerInputs'
 import { dialog } from '@/constants/dialog'
+import { Log } from '@/constants/dialogHelpers'
 import { Dialog, NPCBundle } from '@/dungeon/NPC'
 import { Player } from '@/genericComponents/components'
 import { assets, ecs, world } from '@/globals/init'
@@ -18,23 +19,22 @@ import { overworldState } from '@/main'
 import { save, saveToLocalStorage } from '@/save/saveData'
 import { ColorShader } from '@/shaders/ColorShader'
 import { getBuffer } from '@/utils/buffer'
-import { Log } from '@/constants/dialogHelpers'
 
 export type direction = 'left' | 'right' | 'up' | 'down'
 @Component(ecs)
-export class Dungeon {}
+export class Dungeon { }
 @Component(ecs)
-export class Inside {}
+export class Inside { }
 @Component(ecs)
-export class InsideTrigger {}
+export class InsideTrigger { }
 @Component(ecs)
-export class Wall {}
+export class Wall { }
 @Component(ecs)
-export class Outside {}
+export class Outside { }
 @Component(ecs)
-export class JustEntered {}
+export class JustEntered { }
 @Component(ecs)
-export class Entrance extends LDTKEntityInstance<{ direction: direction }> {}
+export class Entrance extends LDTKEntityInstance<{ direction: direction }> { }
 
 const spawnLayer = (layer: LayerInstance) => {
 	const buffer = getBuffer(layer.__cWid * layer.__gridSize, layer.__cHei * layer.__gridSize)
@@ -43,7 +43,7 @@ const spawnLayer = (layer: LayerInstance) => {
 }
 
 @Component(ecs)
-export class SignPost extends LDTKEntityInstance<{ dialog: string }> {}
+export class SignPost extends LDTKEntityInstance<{ dialog: string }> { }
 
 export const SignBundle = (sign: EntityInstance, layerInstance: LayerInstance) => {
 	const signPost = new SignPost(sign)
@@ -115,15 +115,15 @@ export const spawnDungeon: System<DungeonRessources> = (mapName, levelIndex, dir
 						break
 					case 'Sign': map.spawn(...SignBundle(entityInstance, layerInstance))
 						break
-					case 'Entrance' : {
+					case 'Entrance': {
 						const entrance = new Entrance(entityInstance)
 						const position = entrance.position(layerInstance)
 						map.spawn(entrance, position, ...entrance.body(true))
 						if (entrance.data.direction === direction) {
 							map.spawn(...PlayerBundle(position))
 						}
-					};break
-					case 'Log':{
+					}; break
+					case 'Log': {
 						const log = new LDTKEntityInstance(entityInstance)
 						map.spawn(new Sprite(new PixelTexture(assets.staticItems.log)), log.position(layerInstance), ...log.body(), new Log())
 					}

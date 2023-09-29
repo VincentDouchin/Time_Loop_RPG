@@ -33,7 +33,7 @@ export const spawnOverworld = () => {
 						const entity = map.spawn(navNode, nodePosition)
 						LDTKEntityInstance.register(entity, entityInstance)
 						if (save.lastNodeUUID === navNode.id || (!save.lastNodeUUID && navNode.data.Start)) {
-							map.spawn(...spawnOverworldCharacter(entity, nodePosition))
+							map.spawn(...spawnOverworldCharacter(nodePosition))
 							entity.addComponent(new CurrentNode())
 						}
 						if (navNode.data.Treasure) {
