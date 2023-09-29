@@ -3,6 +3,7 @@ import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer'
 import { ecs } from '@/globals/init'
 import { Component } from '@/lib/ECS'
 import { Position } from '@/lib/transforms'
+import { toCanvas } from '@/utils/buffer'
 
 @Component(ecs)
 export class UIElement extends HTMLDivElement {
@@ -31,6 +32,13 @@ export class UIElement extends HTMLDivElement {
 			imageRendering: 'pixelated',
 			backgroundSize: 'cover',
 		})
+	}
+
+	static fromCanvas(input: OffscreenCanvas | HTMLCanvasElement, scale = 1) {
+		const canvas = input instanceof HTMLCanvasElement ? input : toCanvas(input)
+		const url = canvas.toDataURL()!
+
+		return UIElement.fromImage({ path: url, width: canvas.width, height: canvas.height }, scale)
 	}
 
 	withWorldPosition(x = 0, y = 0) {

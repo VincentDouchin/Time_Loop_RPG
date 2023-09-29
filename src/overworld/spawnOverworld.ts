@@ -1,4 +1,5 @@
 import { spawnOverworldCharacter } from './spawnOverworldCharacter'
+import { CurrentNode } from './navigation'
 import { assets, ecs } from '@/globals/init'
 import { LDTKEntityInstance } from '@/level/LDTKEntity'
 import { NavNode } from '@/level/NavNode'
@@ -31,8 +32,9 @@ export const spawnOverworld = () => {
 						const nodePosition = navNode.position(layerInstance)
 						const entity = map.spawn(navNode, nodePosition)
 						LDTKEntityInstance.register(entity, entityInstance)
-						if (save.lastNodeUUID === entityInstance.iid || (!save.lastNodeUUID && navNode.data.Start)) {
+						if (save.lastNodeUUID === navNode.id || (!save.lastNodeUUID && navNode.data.Start)) {
 							map.spawn(...spawnOverworldCharacter(entity, nodePosition))
+							entity.addComponent(new CurrentNode())
 						}
 						if (navNode.data.Treasure) {
 							entity.addComponent(new Sprite(assets.chests.woodChestClosed2).setRenderOrder(1).anchor(0, 0.5))

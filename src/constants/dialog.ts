@@ -1,4 +1,4 @@
-import { lockPlayer, unlockPlayer } from './dialogHelpers'
+import { chopLog, lockPlayer, unlockPlayer } from './dialogHelpers'
 import { despwawnCutscene } from '@/battle/cutscenes'
 import { overworldState } from '@/main'
 import { save, saveToLocalStorage } from '@/save/saveData'
@@ -69,9 +69,16 @@ export const dialog: Partial<Record<characters | `sign${string}`, () => Generato
 			addKey('lumberjack')
 			yield
 		}
+		if (save.treasureFound.includes('LumberjackAxe')) {
+			lockPlayer()
+			yield 'Oh great you found my axe!'
+			yield 'I\'ll take care of this log right away'
+			yield chopLog()
+		}
 		while (true) {
 			yield 'I really wonder how such a huge trunk ended up here.'
 			yield 'Especially in the perfect middle of the road.'
+			yield
 		}
 	},
 	*signTavern() {

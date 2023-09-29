@@ -3,7 +3,7 @@ import { Component } from '@/lib/ECS'
 import { GAMEPAD_BUTTON, InputMap } from '@/lib/inputs'
 import { Interactable } from '@/lib/interactions'
 
-const MenuInputs = ['Pause', 'Up', 'Down', 'Right', 'Left', 'Enter'] as const
+const MenuInputs = ['Pause', 'Up', 'Down', 'Right', 'Left', 'Enter', 'Inventory'] as const
 
 @Component(ecs)
 export class MenuInputMap extends InputMap<typeof MenuInputs> {
@@ -19,6 +19,7 @@ export const spawnMenuInputs = () => {
 	inputs.get('Right').setKey('ArrowRight').setButton(GAMEPAD_BUTTON.RIGHT)
 	inputs.get('Left').setKey('ArrowLeft').setButton(GAMEPAD_BUTTON.LEFT)
 	inputs.get('Enter').setKey('Enter').setButton(GAMEPAD_BUTTON.A)
+	inputs.get('Inventory').setKey('KeyE').setButton(GAMEPAD_BUTTON.START)
 	ecs.spawn(inputs)
 }
 

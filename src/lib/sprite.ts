@@ -5,6 +5,7 @@ import { PixelTexture } from './pixelTexture'
 import { ShaderComposer } from './shader'
 import { Timer } from './time'
 import { ecs, renderer } from '@/globals/init'
+import { getBuffer } from '@/utils/buffer'
 
 @Component(ecs)
 export class Sprite extends Mesh<PlaneGeometry, MeshBasicMaterial> {
@@ -69,6 +70,10 @@ export class Sprite extends Mesh<PlaneGeometry, MeshBasicMaterial> {
 
 	static fromBuffer(buffer: OffscreenCanvasRenderingContext2D) {
 		return new Sprite(new PixelTexture(buffer.canvas))
+	}
+
+	static blank(width: number, height: number) {
+		return Sprite.fromBuffer(getBuffer(width, height))
 	}
 }
 export type directionX = 'left' | 'right'

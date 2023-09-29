@@ -68,7 +68,7 @@ type weapons = `${typeof weaponNames[number]}${typeof staves[number]}${typeof me
 export const weaponsLoader = new AssetLoader()
 	.pipe(async (glob) => {
 		const image = await loadImage(Object.values(glob)[0].default)
-		const result = {} as Record<weapons, PixelTexture>
+		const result = {} as Record<weapons, OffscreenCanvas>
 		const initialXOffset = 16
 		const initialYOffset = 16
 		weaponNames.forEach((weapon, wi) => {
@@ -81,7 +81,7 @@ export const weaponsLoader = new AssetLoader()
 							const yOffset = initialYOffset + 8 + si * 6 * 8 + mi * 8
 							buffer.drawImage(image, xOffset, yOffset, 8, 8, 0, 0, 8, 8)
 							const name: weapons = `${weapon}${staff}${metal}${gem}`
-							result[name] = new PixelTexture(buffer.canvas)
+							result[name] = buffer.canvas
 						}
 					})
 				})
@@ -132,5 +132,6 @@ export const loadAssets = async () => {
 	const staticItems = await imagesLoader.loadAsync<staticItems>(import.meta.glob('./../../assets/staticItems/*.png', { eager: true }))
 	const chests = await chestLoader.loadAsync<chests>(import.meta.glob('./../../assets/_singles/Chests.png', { eager: true }))
 	const weapons = await weaponsLoader.loadAsync<weapons>(import.meta.glob('./../../assets/_singles/Minifantasy_CraftingAndProfessionsWeaponIcons.png', { eager: true }))
+
 	return { levels, tilesets, characters, ui, fonts, animatedTextures, animations, staticItems, chests, weapons } as const
 }

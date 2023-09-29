@@ -18,6 +18,7 @@ import { overworldState } from '@/main'
 import { save, saveToLocalStorage } from '@/save/saveData'
 import { ColorShader } from '@/shaders/ColorShader'
 import { getBuffer } from '@/utils/buffer'
+import { Log } from '@/constants/dialogHelpers'
 
 export type direction = 'left' | 'right' | 'up' | 'down'
 @Component(ecs)
@@ -77,7 +78,7 @@ export const spawnDungeon: System<DungeonRessources> = (mapName, levelIndex, dir
 	const mapFile = assets.levels[mapName]
 	const level = mapFile.levels[levelIndex]
 	const map = ecs.spawn(
-		new CameraBounds().setFromCenterAndSize(new Vector2(), new Vector2(level.pxWid, level.pxHei)),
+		CameraBounds.fromLevel(level),
 		new Dungeon(),
 	)
 
@@ -124,7 +125,7 @@ export const spawnDungeon: System<DungeonRessources> = (mapName, levelIndex, dir
 					};break
 					case 'Log':{
 						const log = new LDTKEntityInstance(entityInstance)
-						map.spawn(new Sprite(new PixelTexture(assets.staticItems.log)), log.position(layerInstance), ...log.body())
+						map.spawn(new Sprite(new PixelTexture(assets.staticItems.log)), log.position(layerInstance), ...log.body(), new Log())
 					}
 					}
 				}

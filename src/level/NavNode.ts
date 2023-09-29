@@ -3,6 +3,7 @@ import type { battles } from '@/constants/battles'
 import { ecs } from '@/globals/init'
 import { Component } from '@/lib/ECS'
 import { getFileName } from '@/utils/assetLoader'
+import type LDTKEnums from '@/constants/exports/LDTKEnums'
 
 export type levelPath = string & { __type: 'levelPath' }
 
@@ -11,10 +12,10 @@ export const getLevelName = (levelPath: levelPath) => getFileName(levelPath) as 
 interface NavNodeLDTK {
 	directions: LDTKEntityRef[]
 	Battle: keyof typeof battles | null
-	Start: boolean
-	Dungeon: levelPath
+	Start: boolean | null
+	Dungeon: levelPath | null
 	Level: number
-	Treasure: string
+	Treasure: typeof LDTKEnums['treasure'][number] | null
 }
 
 @Component(ecs)

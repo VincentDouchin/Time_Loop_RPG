@@ -9,6 +9,7 @@ export enum InteractableType {
 	PlayerAttack,
 	PlayerFlee,
 	Battler,
+	InventoryToggle,
 }
 
 @Component(ecs)
@@ -137,6 +138,7 @@ export const detectInteractions = () => {
 	}
 	for (const [interactable, uiElement] of uiInteractablesQuery.getAll()) {
 		const touchingPointer = PointerInput.all.find(pointer => pointer.target === uiElement)
+
 		if (touchingPointer) {
 			interactable.hover = true
 			interactable.pressed = touchingPointer.pressed

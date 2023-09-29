@@ -1,14 +1,13 @@
 import { assets } from '@/globals/init'
-import type { PixelTexture } from '@/lib/pixelTexture'
 
 interface item {
 	key: boolean
 	treasure?: boolean
-	sprite: PixelTexture
+	sprite: OffscreenCanvas
 }
 
 export const items = {
-	lumberjackAxe: {
+	LumberjackAxe: {
 		key: true,
 		treasure: true,
 		sprite: assets.weapons.axeoakiron,

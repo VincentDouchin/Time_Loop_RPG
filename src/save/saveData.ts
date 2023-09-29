@@ -1,4 +1,5 @@
 import type { keys } from '@/constants/dialog'
+import type LDTKEnums from '@/constants/exports/LDTKEnums'
 import type { items } from '@/constants/items'
 import type { PlayerData } from '@/constants/players'
 import type { direction } from '@/dungeon/spawnDungeon'
@@ -13,7 +14,7 @@ interface saveData {
 	keys: Array<typeof keys[number]>
 	lastDirection: direction | null
 	steps: number
-	treasureFound: (keyof typeof items)[]
+	treasureFound: (typeof LDTKEnums['treasure'][number])[]
 }
 
 export const save: saveData = {

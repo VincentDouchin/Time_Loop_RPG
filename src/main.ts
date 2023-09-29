@@ -23,7 +23,7 @@ import { stepWorld, updatePosition, updateSpritePosition } from './lib/transform
 import { Tween } from './lib/tween'
 import { MenuInputMap, clickOnMenuInput, spawnMenuInputs } from './menus/menuInputs'
 import { triggerApocalypse } from './overworld/apocalypse'
-import { addNavigationArrows, moveOverworldCharacter, removeNavigationMenu } from './overworld/navigation'
+import { addNavigationArrows, moveOverworldCharacter, pickupOverworldTreasure, removeNavigationMenu } from './overworld/navigation'
 import { StepsUi, spawnStepsUi } from './overworld/overworldUi'
 import { setInitialState } from './overworld/setInitialState'
 import { despawnOverworld, setOverwolrdState, spawnOverworld } from './overworld/spawnOverworld'
@@ -36,12 +36,14 @@ import { addUIElementsToDOM, spawnUIRoot } from './ui/UI'
 import { setDefaultFontSize } from './ui/UiElement'
 import { changeTextureOnSelected, selectUiElement, unSelectDespawnMenus, updateMenus } from './ui/menu'
 import { addToScene, addToWorld, registerFullScreenShader, registerShader } from './utils/registerComponents'
+import { openInventory, spawnInventoryToggle } from './overworld/InventoryUi'
+import { ItemPickupShader } from './shaders/ItemPickupShader'
 
 // !Lib
 ecs
 	.core.onEnter(initThree, updateMousePosition, spawnCamera, spawnMenuInputs, spawnUIRoot, setDefaultFontSize)
 	.onPreUpdate(updatePosition)
-	.onUpdate(detectInteractions, updateMenus, addOutlineShader, animateSprites, addNineSlicetoUI, addUIElementsToDOM, selectUiElement, unSelectDespawnMenus, () => Tween.update(time.delta), adjustScreenSize(), initializeCameraBounds, registerShader(ColorShader, OutlineShader), registerFullScreenShader(ApocalypseShader), addToWorld, updateApocalypseShader, changeTextureOnSelected, clickOnMenuInput)
+	.onUpdate(detectInteractions, updateMenus, addOutlineShader, animateSprites, addNineSlicetoUI, addUIElementsToDOM, selectUiElement, unSelectDespawnMenus, () => Tween.update(time.delta), adjustScreenSize(), initializeCameraBounds, registerShader(ColorShader, OutlineShader, ItemPickupShader), registerFullScreenShader(ApocalypseShader), addToWorld, updateApocalypseShader, changeTextureOnSelected, clickOnMenuInput)
 	.onPostUpdate(updateSpritePosition, cameraFollow, render, stepWorld)
 	.enable()
 
@@ -51,8 +53,8 @@ ecs.addPlugin(addToScene(OrthographicCamera, Sprite, CSS2DObject))
 
 // ! States
 export const overworldState = ecs.state()
-	.onEnter(spawnOverworld, spawnStepsUi, setOverwolrdState)
-	.onUpdate(moveOverworldCharacter, triggerApocalypse, addNavigationArrows, removeNavigationMenu)
+	.onEnter(spawnOverworld, spawnStepsUi, setOverwolrdState, spawnInventoryToggle)
+	.onUpdate(moveOverworldCharacter, triggerApocalypse, addNavigationArrows, removeNavigationMenu, pickupOverworldTreasure, openInventory)
 	.onExit(despawnOverworld, despawnEntities(StepsUi))
 
 export const battleState = ecs.state<[BattleData]>()
@@ -66,7 +68,9 @@ export const dungeonState = ecs.state<DungeonRessources>()
 	.onExit(disableTouchJoystick, despawnEntities(Dungeon))
 
 State.exclusive(overworldState, battleState, dungeonState)
+
 setInitialState()
+
 // ! Game loop
 const animate = async (delta: number) => {
 	time.tick(delta)
