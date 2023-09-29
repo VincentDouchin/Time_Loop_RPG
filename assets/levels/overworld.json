@@ -3489,7 +3489,7 @@
 					"uid": 181,
 					"type": "F_Enum(180)",
 					"isArray": false,
-					"canBeNull": false,
+					"canBeNull": true,
 					"arrayMinLength": null,
 					"arrayMaxLength": null,
 					"editorDisplayMode": "Hidden",
@@ -3634,8 +3634,8 @@
 			{ "id": "Bandits", "tileRect": null, "tileId": -1, "color": 12470831, "__tileSrcRect": null },
 			{ "id": "BossBattleIntro", "tileRect": null, "tileId": -1, "color": 14120515, "__tileSrcRect": null },
 			{ "id": "ForestAnimals", "tileRect": null, "tileId": -1, "color": 15389866, "__tileSrcRect": null }
-		], "iconTilesetUid": null, "externalRelPath": "../../src/constants/exports/LDTKEnums.json", "externalFileChecksum": "999d28c4cc8f6914739e334a7921af72", "tags": [] },
-		{ "identifier": "Treasure", "uid": 180, "values": [{ "id": "LumberjackAxe", "tileRect": null, "tileId": -1, "color": 12470831, "__tileSrcRect": null }], "iconTilesetUid": null, "externalRelPath": "../../src/constants/exports/LDTKEnums.json", "externalFileChecksum": "999d28c4cc8f6914739e334a7921af72", "tags": [] }
+		], "iconTilesetUid": null, "externalRelPath": "../../src/constants/exports/LDTKEnums.json", "externalFileChecksum": "866ef22501e11f7011d33f53c5d60470", "tags": [] },
+		{ "identifier": "Treasure", "uid": 180, "values": [{ "id": "LumberjackAxe", "tileRect": null, "tileId": -1, "color": 12470831, "__tileSrcRect": null }], "iconTilesetUid": null, "externalRelPath": "../../src/constants/exports/LDTKEnums.json", "externalFileChecksum": "866ef22501e11f7011d33f53c5d60470", "tags": [] }
 	], "levelFields": [] },
 	"levels": [
 		{
