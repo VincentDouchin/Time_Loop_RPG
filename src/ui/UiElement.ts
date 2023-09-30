@@ -24,21 +24,15 @@ export class UIElement extends HTMLDivElement {
 		return this
 	}
 
-	static fromImage({ path, width, height }: { path: string; width: number; height: number }, scale = 1) {
+	static fromImage(source: HTMLCanvasElement | OffscreenCanvas, scale = 1) {
+		const canvas = source instanceof OffscreenCanvas ? toCanvas(source) : source
 		return new UIElement({
-			backgroundImage: `url(${path})`,
-			width: `${width * scale}px`,
-			height: `${height * scale}px`,
+			backgroundImage: `url(${canvas.toDataURL()})`,
+			width: `${canvas.width * scale}px`,
+			height: `${canvas.height * scale}px`,
 			imageRendering: 'pixelated',
 			backgroundSize: 'cover',
 		})
-	}
-
-	static fromCanvas(input: OffscreenCanvas | HTMLCanvasElement, scale = 1) {
-		const canvas = input instanceof HTMLCanvasElement ? input : toCanvas(input)
-		const url = canvas.toDataURL()!
-
-		return UIElement.fromImage({ path: url, width: canvas.width, height: canvas.height }, scale)
 	}
 
 	withWorldPosition(x = 0, y = 0) {

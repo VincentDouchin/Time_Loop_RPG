@@ -5,7 +5,7 @@ import { PixelTexture } from './pixelTexture'
 import { ShaderComposer } from './shader'
 import { Timer } from './time'
 import { ecs, renderer } from '@/globals/init'
-import { getBuffer } from '@/utils/buffer'
+import { getOffscreenBuffer } from '@/utils/buffer'
 
 @Component(ecs)
 export class Sprite extends Mesh<PlaneGeometry, MeshBasicMaterial> {
@@ -73,7 +73,7 @@ export class Sprite extends Mesh<PlaneGeometry, MeshBasicMaterial> {
 	}
 
 	static blank(width: number, height: number) {
-		return Sprite.fromBuffer(getBuffer(width, height))
+		return Sprite.fromBuffer(getOffscreenBuffer(width, height))
 	}
 }
 export type directionX = 'left' | 'right'
