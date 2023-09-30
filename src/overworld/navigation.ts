@@ -1,13 +1,14 @@
 import { Group } from 'three'
 import { easing } from 'ts-easing'
 import { updateSteps } from './overworldUi'
-import { assets, ecs } from '@/globals/init'
-import { NavNode, getLevelName } from '@/level/NavNode'
-import { Component, Entity } from '@/lib/ECS'
 import { battles } from '@/constants/battles'
 import { items } from '@/constants/items'
 import type { direction } from '@/dungeon/spawnDungeon'
+import { assets, ecs } from '@/globals/init'
+import { NavNode, getLevelName } from '@/level/NavNode'
+import { Component, Entity } from '@/lib/ECS'
 import { Interactable } from '@/lib/interactions'
+import { PixelTexture } from '@/lib/pixelTexture'
 import { Sprite, TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { Tween } from '@/lib/tween'
@@ -15,7 +16,7 @@ import { battleState, dungeonState } from '@/main'
 import { MenuInputInteractable, menuInputQuery } from '@/menus/menuInputs'
 import { save, saveToLocalStorage } from '@/save/saveData'
 import { UIElement } from '@/ui/UiElement'
-import { IncrementOnSelected, Menu } from '@/ui/menu'
+import { IncrementOnSelected } from '@/ui/menu'
 import { sleep } from '@/utils/timing'
 
 @Component(ecs)
@@ -82,9 +83,11 @@ export const moveOverworldCharacter = () => {
 							if (target && targetNode && selectedDirection) {
 								atlas.state = 'idle'
 								currentNodeQuery.extract()?.removeComponent(CurrentNode)
-								target.addComponent(new CurrentNode())
-								ecs.onNextTick(() => entity.addComponent(new DecidingDirection()))
 								updateSteps(-1)
+								if (save.steps > 0) {
+									target.addComponent(new CurrentNode())
+									ecs.onNextTick(() => entity.addComponent(new DecidingDirection()))
+								}
 								save.lastDirection = selectedDirection
 								saveToLocalStorage()
 								save.lastNodeUUID = targetNode.id
@@ -108,7 +111,7 @@ export const moveOverworldCharacter = () => {
 export class NavigationMenu {}
 
 const navigationMenuToRemoveQuery = ecs.query.pick(Entity).with(NavigationMenu)
-const decidedDirectionQuery = ecs.query.removed(DecidingDirection)
+const decidedDirectionQuery = ecs.query.pick(Entity).removed(DecidingDirection)
 export const removeNavigationMenu = () => {
 	if (decidedDirectionQuery.size) {
 		for (const [entity] of navigationMenuToRemoveQuery.getAll()) {
@@ -120,8 +123,7 @@ export const removeNavigationMenu = () => {
 const needToAddArrowQuery = ecs.query.pick(Entity).added(DecidingDirection)
 export const addNavigationArrows = () => {
 	for (const [entity] of needToAddArrowQuery.getAll()) {
-		const menu = new Menu([[null, null, null], [null, null, null], [null, null, null]])
-		const navigationMenu = entity.spawn(new NavigationMenu(), new Position(), new Group(), menu)
+		const navigationMenu = entity.spawn(new NavigationMenu(), new Position(), new Group())
 		const currentNode = currentNodeQuery.getSingle()
 		if (currentNode) {
 			const [_entity, pos, navNode] = currentNode
@@ -137,9 +139,11 @@ export const addNavigationArrows = () => {
 						if (arrowX > 0) arrow = 'Right'
 						if (arrowX < 0) arrow = 'Left'
 						if (arrowY > 0) arrow = 'Up'
-						const [sprite, _animator, atlas] = TextureAtlas.single([assets.ui[`arrow${arrow}`].texture, assets.ui[`arrow${arrow}Selected`].texture])
-						const arrowEntity = navigationMenu.spawn(new Position(arrowX * 16, arrowY * 16), sprite, atlas, new IncrementOnSelected(), new MenuInputInteractable(arrow), new Interactable())
-						menu.entities[arrowX + 1][arrowY + 1] = arrowEntity
+						const [sprite, _animator, atlas] = TextureAtlas.single([
+							new PixelTexture(assets.ui[`arrow${arrow}`]),
+							new PixelTexture(assets.ui[`arrow${arrow}Selected`]),
+						])
+						navigationMenu.spawn(new Position(arrowX * 16, arrowY * 16), sprite, atlas, new IncrementOnSelected(), new MenuInputInteractable(arrow), new Interactable())
 					}
 				}
 			}
@@ -152,7 +156,7 @@ export const pickupOverworldTreasure = () => {
 		const treasure = navNode.data.Treasure
 		if (treasure && !save.treasureFound.includes(treasure)) {
 			const item = items[treasure]
-			const img = UIElement.fromCanvas(item.sprite, 10)?.setStyles({ margin: 'auto' })
+			const img = UIElement.fromImage(item.sprite, 10)?.setStyles({ margin: 'auto' })
 			// ecs.spawn(createDebugtexture(100, 100), new ItemPickupShader(0.5), new Position(_pos.x, _pos.y))
 			ecs.spawn(img)
 			navNode.data.Treasure = null

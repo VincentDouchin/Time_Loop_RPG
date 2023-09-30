@@ -22,7 +22,7 @@ import { Player } from '@/genericComponents/components'
 const spawnBattleUi = () => {
 	ecs.spawn(
 		new UIElement({ width: '50%', height: '50px', alignSelf: 'end', justifySelf: 'center', display: 'grid', gridTemplateColumns: '1fr 1fr', placeItems: 'center' }),
-		new NineSlice(assets.ui.frameBig.path, 16, 2),
+		new NineSlice(assets.ui.frameornate, 8, 4),
 		new BattlerMenu(),
 		new DialogContainer(),
 	)
@@ -130,7 +130,7 @@ export class WinOrLose {}
 export const winOrLoseUiQuery = ecs.query.pick(Entity).with(WinOrLose)
 const playerQuery = ecs.query.with(Player, Battler)
 const notPlayerQuery = ecs.query.with(Battler).without(Player)
-const winOrLoseBundle = () => [new UIElement({ position: 'absolute', placeSelf: 'center', width: 'fit-content', padding: '5%', color: 'black', placeContent: 'center', display: 'grid', fontSize: '3em' }), new NineSlice(assets.ui.framedisplay.path, 8, 3), new WinOrLose()]
+const winOrLoseBundle = () => [new UIElement({ position: 'absolute', placeSelf: 'center', width: 'fit-content', padding: '5%', color: 'black', placeContent: 'center', display: 'grid', fontSize: '3em' }), new NineSlice(assets.ui.framedisplay, 8, 4), new WinOrLose()]
 export const despawnBattleMenu = despawnEntities(BattlerMenu)
 
 export const winOrLose = () => {

@@ -18,7 +18,7 @@ import { Position } from '@/lib/transforms'
 import { overworldState } from '@/main'
 import { save, saveToLocalStorage } from '@/save/saveData'
 import { ColorShader } from '@/shaders/ColorShader'
-import { getBuffer } from '@/utils/buffer'
+import { getOffscreenBuffer } from '@/utils/buffer'
 
 export type direction = 'left' | 'right' | 'up' | 'down'
 @Component(ecs)
@@ -37,7 +37,7 @@ export class JustEntered { }
 export class Entrance extends LDTKEntityInstance<{ direction: direction }> { }
 
 const spawnLayer = (layer: LayerInstance) => {
-	const buffer = getBuffer(layer.__cWid * layer.__gridSize, layer.__cHei * layer.__gridSize)
+	const buffer = getOffscreenBuffer(layer.__cWid * layer.__gridSize, layer.__cHei * layer.__gridSize)
 	drawLayer(layer, buffer)
 	return Sprite.fromBuffer(buffer).setRenderOrder(layer.__identifier.includes('top') ? 100 : -1)
 }
@@ -102,7 +102,7 @@ export const spawnDungeon: System<DungeonRessources> = (mapName, levelIndex, dir
 					})
 				spawnIntGridEntities(map, mapFile, layerInstance, t => t?.identifier === 'Shadow',
 					(wall, w, h) => {
-						const buffer = getBuffer(w + 16, h + 8)
+						const buffer = getOffscreenBuffer(w + 16, h + 8)
 						buffer.fillStyle = 'black'
 						buffer.fillRect(0, 0, w + 16, h + 8)
 						wall.addComponent(Sprite.fromBuffer(buffer), new Inside())

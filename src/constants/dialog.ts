@@ -73,7 +73,8 @@ export const dialog: Partial<Record<characters | `sign${string}`, () => Generato
 			lockPlayer()
 			yield 'Oh great you found my axe!'
 			yield 'I\'ll take care of this log right away'
-			yield chopLog()
+			chopLog()
+			yield
 		}
 		while (true) {
 			yield 'I really wonder how such a huge trunk ended up here.'

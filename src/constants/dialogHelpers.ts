@@ -1,9 +1,11 @@
+import { RigidBody } from '@dimforge/rapier2d-compat'
 import { NPC } from '@/dungeon/NPC'
 import { LockedMovement } from '@/dungeon/playerMovement'
 import { Player } from '@/genericComponents/components'
-import { ecs } from '@/globals/init'
+import { assets, ecs } from '@/globals/init'
 import { Component, Entity } from '@/lib/ECS'
-import { TextureAtlas } from '@/lib/sprite'
+import { PixelTexture } from '@/lib/pixelTexture'
+import { Sprite, TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { Tween } from '@/lib/tween'
 import { sleep } from '@/utils/timing'
@@ -24,33 +26,33 @@ export const unlockPlayer = () => {
 }
 
 const npcQuery = ecs.query.pick(TextureAtlas, Position).with(NPC)
-// const _logQuery = ecs.query.pick(Entity).with(Log)
-export const chopLog = () => {
+const logQuery = ecs.query.pick(Entity).with(Log)
+export const chopLog = async () => {
 	for (const [atlas, pos] of npcQuery.getAll()) {
 		atlas.directionY = 'up'
 		atlas.state = 'walk'
-		new Tween(2000)
-			.onUpdate((x) => {
-				pos.y = x
-				pos.init = false
-			}, pos.y, pos.y + 8)
-			.onComplete(() => {
-				atlas.state = 'logging'
-				sleep(3000).then(() => {
-					unlockPlayer()
-					atlas.directionY = 'down'
-					atlas.directionX = 'right'
-					atlas.state = 'walk'
-					new Tween(2000)
-						.onUpdate((x) => {
-							pos.x = x
-							pos.init = false
-						}, pos.x, pos.x + 16)
-						.onComplete(() => {
-							unlockPlayer()
-							atlas.state = 'idle'
-						})
-				})
-			})
+		await new Tween(1000).onUpdate((x) => {
+			pos.y = x
+			pos.init = false
+		}, pos.y, pos.y + 8).start()
+		atlas.state = 'logging'
+		await sleep(1000)
+		const log = logQuery.extract()
+		log?.removeComponent(Sprite)
+		log?.addComponent(new Sprite(new PixelTexture(assets.staticItems.logSplit)))
+		// log?.addComponent(new )
+		// log?.getComponent(Sprite)?.composer.setInitialTexture(new PixelTexture(assets.staticItems.logSplit))
+		// log?.removeComponent(Sprite)
+		log?.removeComponent(RigidBody)
+		unlockPlayer()
+		atlas.directionY = 'down'
+		atlas.directionX = 'right'
+		atlas.state = 'walk'
+		await new Tween(2000).onUpdate((x) => {
+			pos.x = x
+			pos.init = false
+		}, pos.x, pos.x + 16).start()
+		unlockPlayer()
+		atlas.state = 'idle'
 	}
 }

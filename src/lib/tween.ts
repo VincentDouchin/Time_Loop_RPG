@@ -8,8 +8,17 @@ export class Tween {
 	#time = 0
 	#onComplete?: (...args: unknown[]) => unknown
 	finished = false
+	promise: Promise<void>
+	res?: () => void
 	constructor(private duration: number) {
 		Tween.tweens.add(this)
+		this.promise = new Promise((resolve) => {
+			this.res = resolve
+		})
+	}
+
+	start() {
+		return this.promise
 	}
 
 	easing(func: TEasing) {
@@ -29,6 +38,9 @@ export class Tween {
 			Tween.tweens.delete(this)
 			if (this.#onComplete) {
 				this.#onComplete()
+			}
+			if (this.res) {
+				this.res()
 			}
 		}
 		const ratio = this.#easingFunction(this.#time / this.duration)

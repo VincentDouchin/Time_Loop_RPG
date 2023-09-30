@@ -94,7 +94,7 @@ export const startDialogDungeon = () => {
 					if (!dialogContainerQuery.size) {
 						entity.spawn(
 							...new UIElement({ color: 'black', display: 'grid', gap: '0.2rem', padding: '0.2rem' }).withWorldPosition(0, 8),
-							new NineSlice(assets.ui.textbox.path, 4, 3),
+							new NineSlice(assets.ui.textbox, 4, 3),
 							new DialogContainer(dialog),
 						)
 					}

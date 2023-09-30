@@ -1,7 +1,7 @@
 import { AssetLoader, addAnimationsData, createAtlas, getCharacterName, getFileName, getFolderName, joinAtlas, loadImage } from '../utils/assetLoader'
 import type { LDTKMap } from '@/level/LDTK'
 import { PixelTexture } from '@/lib/pixelTexture'
-import { getBuffer } from '@/utils/buffer'
+import { getOffscreenBuffer, getScreenBuffer } from '@/utils/buffer'
 import { asyncMapValues, entries, groupByObject, mapKeys, mapValues, reduce } from '@/utils/mapFunctions'
 
 const imagesLoader = new AssetLoader()
@@ -23,12 +23,9 @@ const uiLoader = new AssetLoader()
 	.pipe(async (glob) => {
 		const ui = await asyncMapValues(glob, async (m) => {
 			const img = await loadImage(m.default)
-			return {
-				texture: new PixelTexture(img),
-				path: m.default,
-				width: img.width,
-				height: img.height,
-			}
+			const buffer = getScreenBuffer(img.width, img.height)
+			buffer.drawImage(img, 0, 0)
+			return buffer.canvas
 		})
 		return mapKeys(ui, getFileName)
 	})
@@ -50,7 +47,7 @@ const chestLoader = new AssetLoader()
 				for (let x = 0; x < 3; x++) {
 					for (let y = 0; y < 7; y++) {
 						const h = y === 6 ? 32 : 16
-						const buffer = getBuffer(24, h)
+						const buffer = getOffscreenBuffer(24, h)
 						buffer.drawImage(image, xOffset + x * 24, yOffset + y * 16 + (rowIndex === 1 ? 16 : 0) + (y === 6 ? 16 : 0), 24, h, 0, 0, 24, h)
 						result[color + names[x] + y] = new PixelTexture(buffer.canvas)
 					}
@@ -76,7 +73,7 @@ export const weaponsLoader = new AssetLoader()
 				metals.forEach((metal, mi) => {
 					gems.forEach((gem, gi) => {
 						if (gem !== null) {
-							const buffer = getBuffer(8, 8)
+							const buffer = getOffscreenBuffer(8, 8)
 							const xOffset = initialXOffset + 32 + wi * 11 * 8 + gi * 8
 							const yOffset = initialYOffset + 8 + si * 6 * 8 + mi * 8
 							buffer.drawImage(image, xOffset, yOffset, 8, 8, 0, 0, 8, 8)
@@ -102,7 +99,7 @@ const mergeImages = (images: Record<string, HTMLImageElement>) => {
 	const img = entries(images)
 		.sort(([pathA], [pathB]) => pathA.localeCompare(pathB))
 		.map(([_, i]) => i)
-	const buffer = getBuffer(img[0].width, img[0].height)
+	const buffer = getOffscreenBuffer(img[0].width, img[0].height)
 	for (const i of img) {
 		buffer.drawImage(i, 0, 0, i.width, i.height)
 	}

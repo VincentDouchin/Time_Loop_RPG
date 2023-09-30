@@ -26,18 +26,21 @@ export const openInventory = () => {
 			if (inventoryQuery.size === 0) {
 				ecs
 					.spawn(
-						new UIElement({ margin: '10vh 10vh 10vh 30vh', display: 'grid', gap: '5vh', gridTemplateColumns: 'repeat(6, 1fr)', width: 'fit-content', placeSelf: 'center' }), new NineSlice(assets.ui.frameBig.path, 16, 4)
-						,
+						new UIElement({ margin: '10vh 10vh 10vh 10vh', display: 'grid', gap: '1vh', gridTemplateColumns: 'repeat(6, 1fr)', width: 'fit-content', placeSelf: 'center' }), new NineSlice(assets.ui.frameornate, 8, 4),
 						new Inventory(),
 					)
 					.withChildren((inventory) => {
 						for (let i = 0; i < 24; i++) {
-							const spot = inventory.spawn(new UIElement({ width: '10vh', height: '10vh' }))
+							const spot = inventory.spawn(
+								UIElement
+									.fromImage(assets.ui.itemspot)
+									.setStyles({ width: '10vh', height: '10vh', display: 'grid', placeItems: 'center' }),
+							)
 							const itemName = save.treasureFound[i]
 							if (itemName) {
 								const item = items[itemName]
 								if (item.sprite) {
-									spot.spawn(UIElement.fromCanvas(item.sprite, 6).setStyles({ display: 'grid', placeItems: 'center' }))
+									spot.spawn(UIElement.fromImage(item.sprite, 6).setStyles({ display: 'grid', placeItems: 'center' }))
 								}
 							}
 						}

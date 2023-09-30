@@ -24,12 +24,12 @@ export const spawnStepsUi = () => {
 	const steps = new StepsUi()
 	ecs.spawn(
 		new UIElement({ position: 'absolute', top: '5vh', right: '5vh', display: 'flex', gap: '1rem', placeItems: 'center' }),
-		new NineSlice(assets.ui.frameBig.path, 8, 2),
+		new NineSlice(assets.ui.frameornate, 8, 4),
 		steps,
 	)
 		.withChildren((root) => {
 			root.spawn(UIElement.fromImage(assets.ui.boots, 7))
-			root.spawn(new UIElement({ margin: '2rem' })).spawn(steps.getTextElement())
+			root.spawn(new UIElement({ margin: '0.5rem' })).spawn(steps.getTextElement())
 		})
 }
 

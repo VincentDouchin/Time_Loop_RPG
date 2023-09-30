@@ -9,13 +9,13 @@ import { Component, Entity } from '@/lib/ECS'
 import { CameraBounds } from '@/lib/camera'
 import { Sprite } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
-import { getBuffer } from '@/utils/buffer'
+import { getOffscreenBuffer } from '@/utils/buffer'
 
 @Component(ecs)
 export class Battle {}
 export const spawnBattleBackground: System<[BattleData]> = ({ enemies, background }) => {
 	const level = assets.levels.minibattle.levels[background]
-	const buffer = getBuffer(level.pxWid, level.pxHei)
+	const buffer = getOffscreenBuffer(level.pxWid, level.pxHei)
 	const battle = ecs.spawn()
 	if (level.layerInstances) {
 		for (const layerInstance of [...level.layerInstances].reverse()) {

@@ -10,14 +10,14 @@ import { PixelTexture } from '@/lib/pixelTexture'
 import { Sprite } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { save, saveToLocalStorage } from '@/save/saveData'
-import { getBuffer } from '@/utils/buffer'
+import { getOffscreenBuffer } from '@/utils/buffer'
 
 @Component(ecs)
 export class Map {}
 
 export const spawnOverworld = () => {
 	const level = assets.levels.overworld.levels[1]
-	const buffer = getBuffer(level.pxWid, level.pxHei)
+	const buffer = getOffscreenBuffer(level.pxWid, level.pxHei)
 	const map = ecs.spawn(CameraBounds.fromLevel(level), new Map())
 	if (level.layerInstances) {
 		for (const layerInstance of [...level.layerInstances].reverse()) {

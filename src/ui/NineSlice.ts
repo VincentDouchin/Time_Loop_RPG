@@ -19,7 +19,7 @@ const getMargins = (margins: margins) => {
 @Component(ecs)
 export class NineSlice {
 	margins: { left: number; right: number; top: number; bottom: number }
-	constructor(public image: string, margins: margins, public scale = 1) {
+	constructor(public image: HTMLCanvasElement, margins: margins, public scale = 1) {
 		this.margins = getMargins(margins)
 	}
 }
@@ -30,7 +30,7 @@ export const addNineSlicetoUI = () => {
 	for (const [uiElement, nineSlice] of ninesliceUIQuery.getAll()) {
 		const allMargins = [nineSlice.margins.top, nineSlice.margins.bottom, nineSlice.margins.left, nineSlice.margins.right]
 		uiElement.setStyles({
-			borderImage: `url(${nineSlice.image})`,
+			borderImage: `url(${nineSlice.image.toDataURL()})`,
 			borderImageSlice: `${allMargins.join(' ')} fill`,
 			borderImageRepeat: 'round',
 			imageRendering: 'pixelated',

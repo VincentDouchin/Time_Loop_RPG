@@ -1,6 +1,5 @@
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
 import { easing } from 'ts-easing'
-import { DecidingDirection } from './navigation'
 import { Player } from '@/genericComponents/components'
 import { assets, despawnEntities, ecs } from '@/globals/init'
 import { Component, Entity } from '@/lib/ECS'
@@ -43,9 +42,9 @@ const meteor = () => new Promise<void>((resolve) => {
 			})
 		})
 })
-const teleportPlayer = () => new Promise<void>((resolve) => {
+const teleportPlayer = async () => {
+	save.lastNodeUUID = null
 	for (const [player, pos, atlas] of playerPositionQuery.getAll()) {
-		player.removeComponent(DecidingDirection)
 		const bundle = TextureAtlas.bundle<'start' | 'middle' | 'end'>({
 			states: {
 				start: assets.animations.portalStart,
@@ -55,22 +54,17 @@ const teleportPlayer = () => new Promise<void>((resolve) => {
 			speed: { default: 100 },
 		}, 'start')
 		const portal = ecs.spawn(...bundle, new Position(pos.x, pos.y + 8), new Portal())
-		bundle[2].playAnimation('start').then(() => {
-			bundle[2].state = 'middle'
-			atlas.state = 'walk'
-			atlas.directionY = 'up'
-			new Tween(1000)
-				.onUpdate(y => pos.y = y, pos.y, pos.y + 8)
-				.onComplete(() => {
-					player.removeComponent(Sprite)
-					bundle[2].playAnimation('end').then(() => {
-						portal.despawn()
-						resolve()
-					})
-				})
-		})
+		await bundle[2].playAnimation('start')
+		bundle[2].state = 'middle'
+		atlas.state = 'walk'
+		atlas.directionY = 'up'
+		await new Tween(1000).onUpdate(y => pos.y = y, pos.y, pos.y + 8).start()
+
+		player.removeComponent(Sprite)
+		await bundle[2].playAnimation('end')
+		portal.despawn()
 	}
-})
+}
 const apocalypseState = ecs.state()
 	.onEnter(() => {
 		teleportPlayer().then(() => meteor().then(() => sleep(1000).then(() => apocalypseState.disable())))
