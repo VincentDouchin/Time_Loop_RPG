@@ -1,7 +1,7 @@
 import { Collider, ColliderDesc, RigidBodyDesc } from '@dimforge/rapier2d-compat'
 import { Group } from 'three'
 import { getPlayerInputMap } from './playerInputs'
-import { dialog } from '@/constants/dialog'
+import { dialog, hasKey } from '@/constants/dialog'
 import { Log } from '@/constants/dialogHelpers'
 import { Dialog, NPCBundle } from '@/dungeon/NPC'
 import { Player } from '@/genericComponents/components'
@@ -50,7 +50,7 @@ export const SignBundle = (sign: EntityInstance, layerInstance: LayerInstance) =
 	const components: InstanceType<Class>[] = [
 		signPost,
 		signPost.position(layerInstance),
-		RigidBodyDesc.fixed().lockRotations(),
+		RigidBodyDesc.fixed(),
 		ColliderDesc.cuboid(4, 4),
 		new Group(),
 	]
@@ -62,16 +62,29 @@ export const SignBundle = (sign: EntityInstance, layerInstance: LayerInstance) =
 }
 
 export const PlayerBundle = (pos: Position) => {
+	const bundle = TextureAtlas.bundle(assets.characters.paladin, 'idle', 'left', 'down')
+	bundle[0].setRenderOrder(10)
 	return [
-		...TextureAtlas.bundle(assets.characters.paladin, 'idle', 'left', 'down'),
+		...bundle,
 		new Position(pos.x, pos.y),
 		getPlayerInputMap(),
 		new CameraTarget(),
 		new Player(),
 		new JustEntered(),
-		RigidBodyDesc.dynamic().lockRotations(),
+		RigidBodyDesc.dynamic(),
 		ColliderDesc.cuboid(3, 3),
 	]
+}
+export const logBundle = (parent: Entity, split: boolean, entityInstance: LDTKEntityInstance, pos: Position) => {
+	if (split) {
+		return parent.spawn(new Sprite(new PixelTexture(assets.staticItems.logSplit)), pos, new Log(), entityInstance)
+			.withChildren((log) => {
+				log.spawn(RigidBodyDesc.fixed(), ColliderDesc.cuboid(entityInstance.w / 2, entityInstance.h / 2), new Position(entityInstance.w / 2 + 8))
+				log.spawn(RigidBodyDesc.fixed(), ColliderDesc.cuboid(entityInstance.w / 2, entityInstance.h / 2), new Position(-entityInstance.w / 2 - 8))
+			})
+	} else {
+		return parent.spawn(new Sprite(new PixelTexture(assets.staticItems.log)), pos, ...entityInstance.body(), entityInstance, new Log())
+	}
 }
 export type DungeonRessources = [levels, number, direction]
 export const spawnDungeon: System<DungeonRessources> = (mapName, levelIndex, direction) => {
@@ -94,11 +107,11 @@ export const spawnDungeon: System<DungeonRessources> = (mapName, levelIndex, dir
 			if (layerInstance.__identifier === 'Collisions') {
 				spawnIntGridEntities(map, mapFile, layerInstance, t => t?.identifier === 'Wall',
 					(wall, w, h) => {
-						wall.addComponent(RigidBodyDesc.fixed().lockRotations(), ColliderDesc.cuboid(w / 2, h / 2), new Wall())
+						wall.addComponent(RigidBodyDesc.fixed(), ColliderDesc.cuboid(w / 2, h / 2), new Wall())
 					})
 				spawnIntGridEntities(map, mapFile, layerInstance, t => t?.identifier === 'Inside',
 					(wall, w, h) => {
-						wall.addComponent(new InsideTrigger(), RigidBodyDesc.fixed().lockRotations(), ColliderDesc.cuboid(w / 2, h / 2).setSensor(true))
+						wall.addComponent(new InsideTrigger(), RigidBodyDesc.fixed(), ColliderDesc.cuboid(w / 2, h / 2).setSensor(true))
 					})
 				spawnIntGridEntities(map, mapFile, layerInstance, t => t?.identifier === 'Shadow',
 					(wall, w, h) => {
@@ -125,7 +138,7 @@ export const spawnDungeon: System<DungeonRessources> = (mapName, levelIndex, dir
 					}; break
 					case 'Log': {
 						const log = new LDTKEntityInstance(entityInstance)
-						map.spawn(new Sprite(new PixelTexture(assets.staticItems.log)), log.position(layerInstance), ...log.body(), new Log())
+						logBundle(map, hasKey('splitLog'), log, log.position(layerInstance))
 					}
 					}
 				}

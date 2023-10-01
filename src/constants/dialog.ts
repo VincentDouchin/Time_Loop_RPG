@@ -3,13 +3,17 @@ import { despwawnCutscene } from '@/battle/cutscenes'
 import { overworldState } from '@/main'
 import { save, saveToLocalStorage } from '@/save/saveData'
 
-export const keys = ['oldManBandit', 'lumberjack'] as const
-const addKey = (key: typeof keys[number]) => {
+export const keys = ['oldManBandit', 'lumberjack', 'splitLog'] as const
+export const addKey = (key: typeof keys[number]) => {
 	save.keys = [...save.keys, key]
 	saveToLocalStorage()
 }
+export const removeKeys = (...keysToRemove: Array<typeof keys[number]>) => {
+	save.keys = save.keys.filter(key => !keysToRemove.includes(key))
+	saveToLocalStorage()
+}
 
-const hasKey = (key: typeof keys[number]) => save.keys.includes(key)
+export const hasKey = (key: typeof keys[number]) => save.keys.includes(key)
 export const dialog: Partial<Record<characters | `sign${string}`, () => Generator>> = {
 	*howard() {
 		lockPlayer()
@@ -69,7 +73,7 @@ export const dialog: Partial<Record<characters | `sign${string}`, () => Generato
 			addKey('lumberjack')
 			yield
 		}
-		if (save.treasureFound.includes('LumberjackAxe')) {
+		if (save.treasureFound.includes('LumberjackAxe') && !hasKey('splitLog')) {
 			lockPlayer()
 			yield 'Oh great you found my axe!'
 			yield 'I\'ll take care of this log right away'

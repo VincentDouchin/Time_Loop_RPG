@@ -15,7 +15,7 @@ export const battles = {
 	},
 	BossBattleIntro: {
 		enemies: [enemies.angelOfDeath],
-		background: 1,
+		background: 2,
 	},
 	ForestAnimals: {
 		enemies: [enemies.bat, enemies.wolf, enemies.bat],

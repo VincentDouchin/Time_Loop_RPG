@@ -1,6 +1,7 @@
 import { Group } from 'three'
 import { easing } from 'ts-easing'
 import { updateSteps } from './overworldUi'
+import { InventoryIcon } from './InventoryUi'
 import { battles } from '@/constants/battles'
 import { items } from '@/constants/items'
 import type { direction } from '@/dungeon/spawnDungeon'
@@ -150,25 +151,40 @@ export const addNavigationArrows = () => {
 		}
 	}
 }
-
+const inventoryIcon = ecs.query.pick(UIElement).with(InventoryIcon)
+const playerQuery = ecs.query.pick(Entity)
 export const pickupOverworldTreasure = () => {
-	for (const [_entity, _pos, navNode] of currentNodeQuery.getAll()) {
-		const treasure = navNode.data.Treasure
-		if (treasure && !save.treasureFound.includes(treasure)) {
-			const item = items[treasure]
-			const img = UIElement.fromImage(item.sprite, 10)?.setStyles({ margin: 'auto' })
-			// ecs.spawn(createDebugtexture(100, 100), new ItemPickupShader(0.5), new Position(_pos.x, _pos.y))
-			ecs.spawn(img)
-			navNode.data.Treasure = null
-			new Tween(1500)
-				.easing(easing.elastic)
-				.onUpdate(scale => img?.setStyle('scale', scale), 0.5, 2)
-				.onComplete(() => {
-					sleep(2000).then(() => {
-						save.treasureFound.push(treasure)
-						saveToLocalStorage()
+	const playerEntity = playerQuery.extract()
+	if (playerEntity) {
+		playerEntity.removeComponent(DecidingDirection)
+		for (const [_entity, _pos, navNode] of currentNodeQuery.getAll()) {
+			const treasure = navNode.data.Treasure
+			// if (treasure && !save.treasureFound.includes(treasure)) {
+			if (treasure) {
+				const item = items[treasure]
+				const treasureUiElement = UIElement.fromImage(item.sprite, 10)?.setStyles({ margin: 'auto' })
+				const treasureEntity = ecs.spawn(treasureUiElement)
+				navNode.data.Treasure = null
+				new Tween(1500)
+					.easing(easing.elastic)
+					.onUpdate(scale => treasureUiElement?.setStyle('scale', scale), 0.5, 2)
+					.onComplete(() => {
+						sleep(2000).then(() => {
+							save.treasureFound.push(treasure)
+							saveToLocalStorage()
+							const target = inventoryIcon.extract()
+							if (target) {
+								treasureUiElement.moveTo(target, 1000)
+									.easing(easing.inQuad)
+									.onUpdate(r => treasureUiElement.setStyle('scale', 1.5 * (1 - r) + 0.5))
+									.onComplete(() => {
+										treasureEntity.despawn()
+										playerEntity.addComponent(new DecidingDirection())
+									})
+							}
+						})
 					})
-				})
+			}
 		}
 	}
 }

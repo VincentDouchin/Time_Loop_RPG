@@ -5,6 +5,9 @@ import { NineSlice } from '@/ui/NineSlice'
 import { TextElement, UIElement } from '@/ui/UiElement'
 
 @Component(ecs)
+export class OverWorldUI {}
+
+@Component(ecs)
 export class StepsUi {
 	text?: TextElement
 	constructor() {}
@@ -26,6 +29,7 @@ export const spawnStepsUi = () => {
 		new UIElement({ position: 'absolute', top: '5vh', right: '5vh', display: 'flex', gap: '1rem', placeItems: 'center' }),
 		new NineSlice(assets.ui.frameornate, 8, 4),
 		steps,
+		new OverWorldUI(),
 	)
 		.withChildren((root) => {
 			root.spawn(UIElement.fromImage(assets.ui.boots, 7))

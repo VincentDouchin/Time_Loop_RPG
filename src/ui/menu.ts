@@ -139,16 +139,18 @@ export const selectUiElement = () => {
 @Component(ecs)
 export class IncrementOnSelected {}
 
-const selectedAtlasQuery = ecs.query.pick(TextureAtlas, Sprite).with(IncrementOnSelected).added(Selected)
-const deselectedAtlasQuery = ecs.query.pick(TextureAtlas, Sprite).with(IncrementOnSelected).removed(Selected)
+const selectedAtlasQuery = ecs.query.pick(Interactable, TextureAtlas, Sprite).with(IncrementOnSelected)
 
 export const changeTextureOnSelected = () => {
-	for (const [atlas, sprite] of selectedAtlasQuery.getAll()) {
-		atlas.increment()
-		sprite.composer.setInitialTexture(atlas.currentTexture)
-	}
-	for (const [atlas, sprite] of deselectedAtlasQuery.getAll()) {
-		atlas.increment()
-		sprite.composer.setInitialTexture(atlas.currentTexture)
+	for (const [interactable, atlas, sprite] of selectedAtlasQuery.getAll()) {
+		const initialIndex = atlas.index
+		if (interactable.hover) {
+			atlas.index = 1
+		} else {
+			atlas.index = 0
+		}
+		if (initialIndex !== atlas.index) {
+			sprite.composer.setInitialTexture(atlas.currentTexture)
+		}
 	}
 }

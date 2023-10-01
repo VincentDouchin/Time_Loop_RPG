@@ -39,11 +39,13 @@ export class Dialog {
 }
 export const NPCBundle = (entityInstance: EntityInstance, layerInstance: LayerInstance) => {
 	const npc = new NPC(entityInstance)
+	const bundle = TextureAtlas.bundle(assets.characters[npc.data.name], 'idle', 'left', 'down')
+	bundle[0].setRenderOrder(9)
 	const components: InstanceType<Class>[] = [
-		...TextureAtlas.bundle(assets.characters[npc.data.name], 'idle', 'left', 'down'),
+		...bundle,
 		npc,
 		npc.position(layerInstance),
-		RigidBodyDesc.fixed().lockRotations(),
+		RigidBodyDesc.fixed(),
 		ColliderDesc.cuboid(4, 4),
 	]
 	const npcDialog = dialog[npc.data.name]

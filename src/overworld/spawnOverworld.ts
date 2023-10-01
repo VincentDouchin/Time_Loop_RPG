@@ -37,7 +37,10 @@ export const spawnOverworld = () => {
 							entity.addComponent(new CurrentNode())
 						}
 						if (navNode.data.Treasure) {
-							entity.addComponent(new Sprite(assets.chests.woodChestClosed2).setRenderOrder(1).anchor(0, 0.5))
+							const chestSprite = save.treasureFound.includes(navNode.data.Treasure)
+								? assets.chests.woodChestOpen2
+								: assets.chests.woodChestClosed2
+							entity.addComponent(new Sprite(chestSprite).setRenderOrder(1).anchor(0, 0.5))
 						}
 					}
 				}

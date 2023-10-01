@@ -92,7 +92,7 @@ const removedQuery = ecs.query.pick(RigidBody).removed(RigidBody)
 export const addToWorld = () => {
 	if (world) {
 		for (const [bodyDesc, entity] of bodyQuery.getAll()) {
-			const body = world.createRigidBody(bodyDesc)
+			const body = world.createRigidBody(bodyDesc.lockRotations())
 			entity.addComponent(body)
 		}
 		for (const [colliderDesc, rigidBody, entity] of colliderQuery.getAll()) {

@@ -8,12 +8,16 @@ import { Position } from '@/lib/transforms'
 export type LDTKEntityRef = () => Entity
 
 @Component(ecs)
-export class LDTKEntityInstance<EntityInstanceDef extends Record<string, any> > {
+export class LDTKEntityInstance<EntityInstanceDef extends Record<string, any> = Record<string, unknown> > {
 	static refs: Record<string, Entity> = {}
 	data = {} as EntityInstanceDef
 	id: string
+	w: number
+	h: number
 	constructor(private entityInstance: EntityInstance) {
 		this.id = entityInstance.iid
+		this.w = entityInstance.width
+		this.h = entityInstance.height
 		for (const field of this.entityInstance.fieldInstances) {
 			this.data[field.__identifier as keyof EntityInstanceDef] = this.getValue(field)
 		}
@@ -40,7 +44,7 @@ export class LDTKEntityInstance<EntityInstanceDef extends Record<string, any> > 
 
 	body(sensor = false) {
 		return [
-			RigidBodyDesc.fixed().lockRotations(),
+			RigidBodyDesc.fixed(),
 			ColliderDesc
 				.cuboid(this.entityInstance.width / 2, this.entityInstance.height / 2)
 				.setSensor(sensor),

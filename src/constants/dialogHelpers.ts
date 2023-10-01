@@ -1,4 +1,5 @@
-import { RigidBody } from '@dimforge/rapier2d-compat'
+import { Collider, ColliderDesc, RigidBody, RigidBodyDesc } from '@dimforge/rapier2d-compat'
+import { addKey } from './dialog'
 import { NPC } from '@/dungeon/NPC'
 import { LockedMovement } from '@/dungeon/playerMovement'
 import { Player } from '@/genericComponents/components'
@@ -9,6 +10,9 @@ import { Sprite, TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { Tween } from '@/lib/tween'
 import { sleep } from '@/utils/timing'
+import { Dungeon, logBundle } from '@/dungeon/spawnDungeon'
+import { LDTKEntityInstance } from '@/level/LDTKEntity'
+import { saveToLocalStorage } from '@/save/saveData'
 
 @Component(ecs)
 export class Log { }
@@ -26,7 +30,8 @@ export const unlockPlayer = () => {
 }
 
 const npcQuery = ecs.query.pick(TextureAtlas, Position).with(NPC)
-const logQuery = ecs.query.pick(Entity).with(Log)
+const logQuery = ecs.query.pick(Entity, Position, LDTKEntityInstance).with(Log)
+const dungeonQuery = ecs.query.pick(Entity).with(Dungeon)
 export const chopLog = async () => {
 	for (const [atlas, pos] of npcQuery.getAll()) {
 		atlas.directionY = 'up'
@@ -37,13 +42,16 @@ export const chopLog = async () => {
 		}, pos.y, pos.y + 8).start()
 		atlas.state = 'logging'
 		await sleep(1000)
-		const log = logQuery.extract()
-		log?.removeComponent(Sprite)
-		log?.addComponent(new Sprite(new PixelTexture(assets.staticItems.logSplit)))
-		// log?.addComponent(new )
-		// log?.getComponent(Sprite)?.composer.setInitialTexture(new PixelTexture(assets.staticItems.logSplit))
-		// log?.removeComponent(Sprite)
-		log?.removeComponent(RigidBody)
+		const log = logQuery.getSingle()
+		if (log) {
+			const [logEntity, logPos, logEntityInstance] = log
+			ecs.onNextTick(() => logEntity?.despawn())
+			const dungeonEntity = dungeonQuery.extract()
+			if (dungeonEntity) {
+				logBundle(dungeonEntity, true, logEntityInstance, logPos)
+			}
+		}
+		addKey('splitLog')
 		unlockPlayer()
 		atlas.directionY = 'down'
 		atlas.directionX = 'right'
@@ -52,7 +60,6 @@ export const chopLog = async () => {
 			pos.x = x
 			pos.init = false
 		}, pos.x, pos.x + 16).start()
-		unlockPlayer()
 		atlas.state = 'idle'
 	}
 }

@@ -18,6 +18,7 @@ import { gameOver, save, saveToLocalStorage } from '@/save/saveData'
 import type { Enemy } from '@/constants/enemies'
 import { DialogContainer } from '@/dungeon/NPC'
 import { Player } from '@/genericComponents/components'
+import { MenuInputInteractable } from '@/menus/menuInputs'
 
 const spawnBattleUi = () => {
 	ecs.spawn(
@@ -25,6 +26,8 @@ const spawnBattleUi = () => {
 		new NineSlice(assets.ui.frameornate, 8, 4),
 		new BattlerMenu(),
 		new DialogContainer(),
+		new Interactable(),
+		new MenuInputInteractable('Enter'),
 	)
 }
 const battlerSpriteBundle = (side: 'left' | 'right', textureAtlas: TextureAltasStates<'walk' | 'idle'>, background: number, index: number = 0, length: number = 1) => {
@@ -130,7 +133,7 @@ export class WinOrLose {}
 export const winOrLoseUiQuery = ecs.query.pick(Entity).with(WinOrLose)
 const playerQuery = ecs.query.with(Player, Battler)
 const notPlayerQuery = ecs.query.with(Battler).without(Player)
-const winOrLoseBundle = () => [new UIElement({ position: 'absolute', placeSelf: 'center', width: 'fit-content', padding: '5%', color: 'black', placeContent: 'center', display: 'grid', fontSize: '3em' }), new NineSlice(assets.ui.framedisplay, 8, 4), new WinOrLose()]
+const winOrLoseBundle = () => [new UIElement({ position: 'absolute', placeSelf: 'center', width: 'fit-content', padding: '5%', color: 'black', placeContent: 'center', display: 'grid', fontSize: '3em' }), new NineSlice(assets.ui.frameornate, 8, 4), new WinOrLose()]
 export const despawnBattleMenu = despawnEntities(BattlerMenu)
 
 export const winOrLose = () => {

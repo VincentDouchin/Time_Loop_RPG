@@ -1,4 +1,4 @@
-import type { keys } from '@/constants/dialog'
+import { type keys, removeKeys } from '@/constants/dialog'
 import type LDTKEnums from '@/constants/exports/LDTKEnums'
 import type { PlayerData } from '@/constants/players'
 import type { direction } from '@/dungeon/spawnDungeon'
@@ -39,6 +39,7 @@ export const getSave = () => {
 		Object.assign(save, saveData)
 	}
 }
+
 export const gameOver = () => {
 	for (const player of save.players) {
 		player.currentHealth = player.health
@@ -46,6 +47,7 @@ export const gameOver = () => {
 	save.lastDirection = null
 	save.lastNodeUUID = null
 	save.steps = 17
+	removeKeys('splitLog')
 	saveToLocalStorage()
 	overworldState.disable()
 	overworldState.enable()

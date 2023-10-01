@@ -1,3 +1,4 @@
+import { OverWorldUI } from './overworldUi'
 import { items } from '@/constants/items'
 import { assets, ecs } from '@/globals/init'
 import { Component, Entity } from '@/lib/ECS'
@@ -9,6 +10,8 @@ import { UIElement } from '@/ui/UiElement'
 
 @Component(ecs)
 export class Inventory { }
+@Component(ecs)
+export class InventoryIcon { }
 
 export const spawnInventoryToggle = () => {
 	ecs
@@ -16,6 +19,8 @@ export const spawnInventoryToggle = () => {
 			UIElement.fromImage(assets.ui.inventory, 10).setStyles({ width: '10vh', height: '10vh', position: 'fixed', top: '10vh', left: '10vh', display: 'grid', placeItems: 'center' }),
 			new Interactable(InteractableType.InventoryToggle),
 			new MenuInputInteractable('Inventory'),
+			new OverWorldUI(),
+			new InventoryIcon(),
 
 		)
 }

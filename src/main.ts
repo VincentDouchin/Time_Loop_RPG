@@ -24,7 +24,7 @@ import { Tween } from './lib/tween'
 import { MenuInputMap, clickOnMenuInput, spawnMenuInputs } from './menus/menuInputs'
 import { triggerApocalypse } from './overworld/apocalypse'
 import { addNavigationArrows, moveOverworldCharacter, pickupOverworldTreasure, removeNavigationMenu } from './overworld/navigation'
-import { StepsUi, spawnStepsUi } from './overworld/overworldUi'
+import { OverWorldUI, StepsUi, spawnStepsUi } from './overworld/overworldUi'
 import { setInitialState } from './overworld/setInitialState'
 import { despawnOverworld, setOverwolrdState, spawnOverworld } from './overworld/spawnOverworld'
 import { saveToLocalStorage } from './save/saveData'
@@ -55,7 +55,7 @@ ecs.addPlugin(addToScene(OrthographicCamera, Sprite, CSS2DObject))
 export const overworldState = ecs.state()
 	.onEnter(spawnOverworld, spawnStepsUi, setOverwolrdState, spawnInventoryToggle)
 	.onUpdate(moveOverworldCharacter, triggerApocalypse, addNavigationArrows, removeNavigationMenu, pickupOverworldTreasure, openInventory)
-	.onExit(despawnOverworld, despawnEntities(StepsUi))
+	.onExit(despawnOverworld, despawnEntities(OverWorldUI))
 
 export const battleState = ecs.state<[BattleData]>()
 	.onEnter(spawnBattle)

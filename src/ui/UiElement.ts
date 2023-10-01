@@ -4,6 +4,7 @@ import { ecs } from '@/globals/init'
 import { Component } from '@/lib/ECS'
 import { Position } from '@/lib/transforms'
 import { toCanvas } from '@/utils/buffer'
+import { Tween } from '@/lib/tween'
 
 @Component(ecs)
 export class UIElement extends HTMLDivElement {
@@ -32,6 +33,24 @@ export class UIElement extends HTMLDivElement {
 			height: `${canvas.height * scale}px`,
 			imageRendering: 'pixelated',
 			backgroundSize: 'cover',
+		})
+	}
+
+	get center() {
+		const coords = this.getBoundingClientRect()
+		return {
+			x: coords.left + this.clientWidth / 2,
+			y: coords.top + this.clientHeight / 2,
+		}
+	}
+
+	moveTo(target: UIElement, duration: number) {
+		const targetCoord = target.getBoundingClientRect()
+		const initialCoord = this.getBoundingClientRect()
+		return new Tween(duration).onUpdate((r) => {
+			const x = (targetCoord.left - initialCoord.left + (targetCoord.width - initialCoord.width) / 2) * r
+			const y = (targetCoord.top - initialCoord.top + (targetCoord.height - initialCoord.height) / 2) * r
+			this.setStyle('translate', `${x}px ${y}px`)
 		})
 	}
 

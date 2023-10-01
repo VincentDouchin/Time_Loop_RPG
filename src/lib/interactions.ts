@@ -17,7 +17,6 @@ export class Interactable {
 	hover = false
 	#pressed = false
 	#wasPressed = false
-	lastTouchedBy: PointerInput | null = null
 	constructor(public type?: InteractableType) {}
 	get pressed() {
 		return this.#pressed
@@ -111,6 +110,8 @@ const uiInteractablesQuery = ecs.query.pick(Interactable, UIElement)
 export const detectInteractions = () => {
 	const camera = mainCameraQuery.extract()
 	if (camera) {
+		const hovered: Interactable[] = []
+		const pressed: Interactable[] = []
 		for (const pointer of PointerInput.all) {
 			let distance = null
 			let closestInteractable: Interactable | null = null
@@ -123,17 +124,16 @@ export const detectInteractions = () => {
 					}
 				}
 			}
-			for (const [interactable] of interactablesQuery.getAll()) {
-				if (interactable === closestInteractable) {
-					interactable.hover = true
-					interactable.pressed = pointer.pressed
-					interactable.lastTouchedBy = pointer
-					break
-				} else {
-					interactable.pressed = false
-					interactable.hover = false
+			if (closestInteractable) {
+				hovered.push(closestInteractable)
+				if (pointer.pressed) {
+					pressed.push(closestInteractable)
 				}
 			}
+		}
+		for (const [interactable] of interactablesQuery.getAll()) {
+			interactable.hover = hovered.includes(interactable)
+			interactable.pressed = pressed.includes(interactable)
 		}
 	}
 	for (const [interactable, uiElement] of uiInteractablesQuery.getAll()) {
