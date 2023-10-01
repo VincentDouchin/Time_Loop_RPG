@@ -93,6 +93,7 @@ export const moveOverworldCharacter = () => {
 								saveToLocalStorage()
 								save.lastNodeUUID = targetNode.id
 								if (targetNode.data.Battle) {
+									save.lastBattle = targetNode.data.Battle
 									battleState.enable(battles[targetNode.data.Battle])
 								} else {
 									saveToLocalStorage()
@@ -159,8 +160,7 @@ export const pickupOverworldTreasure = () => {
 		playerEntity.removeComponent(DecidingDirection)
 		for (const [_entity, _pos, navNode] of currentNodeQuery.getAll()) {
 			const treasure = navNode.data.Treasure
-			// if (treasure && !save.treasureFound.includes(treasure)) {
-			if (treasure) {
+			if (treasure && !save.treasureFound.includes(treasure)) {
 				const item = items[treasure]
 				const treasureUiElement = UIElement.fromImage(item.sprite, 10)?.setStyles({ margin: 'auto' })
 				const treasureEntity = ecs.spawn(treasureUiElement)

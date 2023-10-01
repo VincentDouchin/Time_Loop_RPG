@@ -22,4 +22,10 @@ export const animations: Partial<Record<characters, AnimationData >> & Record<'d
 		},
 
 	},
+	angelOfDeath: {
+		size: 32,
+		speed: {
+			default: 200,
+		},
+	},
 }

@@ -156,7 +156,7 @@ class Input {
 
 @Component(ecs)
 export class InputMap<T extends readonly string[]> {
-	#inputs = new Map<T[number], Input>()
+	inputs = new Map<T[number], Input>()
 	#gamepads: number[] = []
 	setGamepad(...gamepadIndexes: number[]) {
 		this.#gamepads = gamepadIndexes
@@ -165,23 +165,23 @@ export class InputMap<T extends readonly string[]> {
 
 	constructor(...inputNames: T) {
 		for (const name of inputNames) {
-			this.#inputs.set(name, new Input())
+			this.inputs.set(name, new Input())
 		}
 	}
 
 	get(name: T[number]) {
-		return this.#inputs.get(name)!
+		return this.inputs.get(name)!
 	}
 
 	reset() {
-		for (const input of this.#inputs.values()) {
+		for (const input of this.inputs.values()) {
 			input.wasPressed = input.pressed
 			input.pressed = 0
 		}
 	}
 
 	updateInputsFromGamepad(gamepads: Gamepad[]) {
-		for (const input of this.#inputs.values()) {
+		for (const input of this.inputs.values()) {
 			if (gamepads.filter(Boolean).length) {
 				for (const gamepad of gamepads.filter((gamepad, i) => gamepad && this.#gamepads.includes(i))) {
 					input.update(gamepad)

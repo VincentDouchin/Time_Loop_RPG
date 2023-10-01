@@ -15,6 +15,7 @@ import { CameraBounds, CameraTarget } from '@/lib/camera'
 import { PixelTexture } from '@/lib/pixelTexture'
 import { Sprite, TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
+import type { dungeonRessources } from '@/main'
 import { overworldState } from '@/main'
 import { save, saveToLocalStorage } from '@/save/saveData'
 import { ColorShader } from '@/shaders/ColorShader'
@@ -86,8 +87,8 @@ export const logBundle = (parent: Entity, split: boolean, entityInstance: LDTKEn
 		return parent.spawn(new Sprite(new PixelTexture(assets.staticItems.log)), pos, ...entityInstance.body(), entityInstance, new Log())
 	}
 }
-export type DungeonRessources = [levels, number, direction]
-export const spawnDungeon: System<DungeonRessources> = (mapName, levelIndex, direction) => {
+
+export const spawnDungeon: System<dungeonRessources> = (mapName, levelIndex, direction) => {
 	const mapFile = assets.levels[mapName]
 	const level = mapFile.levels[levelIndex]
 	const map = ecs.spawn(
@@ -196,7 +197,7 @@ export const allowPlayerToExit = () => {
 	}
 }
 
-export const setDungeonState: System<DungeonRessources> = (mapName, level, direction) => {
+export const setDungeonState: System<dungeonRessources> = (mapName, level, direction) => {
 	save.lastDungeon = mapName
 	save.lastLevelIndex = level
 	save.lastDirection = direction

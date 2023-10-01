@@ -1,3 +1,4 @@
+import type { battles } from '@/constants/battles'
 import { type keys, removeKeys } from '@/constants/dialog'
 import type LDTKEnums from '@/constants/exports/LDTKEnums'
 import type { PlayerData } from '@/constants/players'
@@ -5,8 +6,10 @@ import type { direction } from '@/dungeon/spawnDungeon'
 import { overworldState } from '@/main'
 
 interface saveData {
+	finishedDemo: boolean
 	players: PlayerData[]
 	lastDungeon: levels | null
+	lastBattle: keyof typeof battles | null
 	lastState: 'dungeon' | 'overworld' | 'battle'
 	lastLevelIndex: number | null
 	lastNodeUUID: string | null
@@ -17,6 +20,8 @@ interface saveData {
 }
 
 export const save: saveData = {
+	finishedDemo: false,
+	lastBattle: null,
 	players: [],
 	keys: [],
 	lastNodeUUID: null,

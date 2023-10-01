@@ -1,18 +1,15 @@
-import { Collider, ColliderDesc, RigidBody, RigidBodyDesc } from '@dimforge/rapier2d-compat'
 import { addKey } from './dialog'
 import { NPC } from '@/dungeon/NPC'
 import { LockedMovement } from '@/dungeon/playerMovement'
+import { Dungeon, logBundle } from '@/dungeon/spawnDungeon'
 import { Player } from '@/genericComponents/components'
-import { assets, ecs } from '@/globals/init'
+import { ecs } from '@/globals/init'
+import { LDTKEntityInstance } from '@/level/LDTKEntity'
 import { Component, Entity } from '@/lib/ECS'
-import { PixelTexture } from '@/lib/pixelTexture'
-import { Sprite, TextureAtlas } from '@/lib/sprite'
+import { TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { Tween } from '@/lib/tween'
 import { sleep } from '@/utils/timing'
-import { Dungeon, logBundle } from '@/dungeon/spawnDungeon'
-import { LDTKEntityInstance } from '@/level/LDTKEntity'
-import { saveToLocalStorage } from '@/save/saveData'
 
 @Component(ecs)
 export class Log { }
@@ -41,7 +38,7 @@ export const chopLog = async () => {
 			pos.init = false
 		}, pos.y, pos.y + 8).start()
 		atlas.state = 'logging'
-		await sleep(1000)
+		await sleep(5000)
 		const log = logQuery.getSingle()
 		if (log) {
 			const [logEntity, logPos, logEntityInstance] = log

@@ -6,12 +6,13 @@ import { despawnBattle, spawnBattleBackground as spawnBattle } from './battle/sp
 import { battleTurn, despawnBattleMenu, outlineSelectedEnemy, removeDeadBattlers, winOrLose } from './battle/spawnBattlers'
 import type { BattleData } from './constants/battles'
 import { startDialogDungeon } from './dungeon/NPC'
+import { hideThanks, showEndOfDemo } from './dungeon/endOfDemo'
 import { PlayerInputMap } from './dungeon/playerInputs'
 import { movePlayer } from './dungeon/playerMovement'
-import type { DungeonRessources } from './dungeon/spawnDungeon'
+import type { direction } from './dungeon/spawnDungeon'
 import { Dungeon, allowPlayerToExit, exitDungeon, isPlayerInside, setDungeonState, spawnDungeon } from './dungeon/spawnDungeon'
 import { despawnEntities, ecs } from './globals/init'
-import { State } from './lib/ECS'
+import { State, SystemSet } from './lib/ECS'
 import { animateSprites } from './lib/animation'
 import { adjustScreenSize, cameraFollow, initializeCameraBounds, render, spawnCamera, updateCameraZoom } from './lib/camera'
 import { disableTouchJoystick, enableTouchJoystick, registerInput } from './lib/inputs'
@@ -22,22 +23,22 @@ import { time } from './lib/time'
 import { stepWorld, updatePosition, updateSpritePosition } from './lib/transforms'
 import { Tween } from './lib/tween'
 import { MenuInputMap, clickOnMenuInput, spawnMenuInputs } from './menus/menuInputs'
+import { openInventory, spawnInventoryToggle } from './overworld/InventoryUi'
 import { triggerApocalypse } from './overworld/apocalypse'
 import { addNavigationArrows, moveOverworldCharacter, pickupOverworldTreasure, removeNavigationMenu } from './overworld/navigation'
-import { OverWorldUI, StepsUi, spawnStepsUi } from './overworld/overworldUi'
+import { OverWorldUI, spawnStepsUi } from './overworld/overworldUi'
 import { setInitialState } from './overworld/setInitialState'
 import { despawnOverworld, setOverwolrdState, spawnOverworld } from './overworld/spawnOverworld'
-import { saveToLocalStorage } from './save/saveData'
+import { save, saveToLocalStorage } from './save/saveData'
 import { ApocalypseShader, updateApocalypseShader } from './shaders/ApocalypseShader'
 import { ColorShader } from './shaders/ColorShader'
+import { ItemPickupShader } from './shaders/ItemPickupShader'
 import { OutlineShader, addOutlineShader } from './shaders/OutlineShader'
 import { addNineSlicetoUI } from './ui/NineSlice'
 import { addUIElementsToDOM, spawnUIRoot } from './ui/UI'
 import { setDefaultFontSize } from './ui/UiElement'
 import { changeTextureOnSelected, selectUiElement, unSelectDespawnMenus, updateMenus } from './ui/menu'
 import { addToScene, addToWorld, registerFullScreenShader, registerShader } from './utils/registerComponents'
-import { openInventory, spawnInventoryToggle } from './overworld/InventoryUi'
-import { ItemPickupShader } from './shaders/ItemPickupShader'
 
 // !Lib
 ecs
@@ -53,16 +54,17 @@ ecs.addPlugin(addToScene(OrthographicCamera, Sprite, CSS2DObject))
 
 // ! States
 export const overworldState = ecs.state()
-	.onEnter(spawnOverworld, spawnStepsUi, setOverwolrdState, spawnInventoryToggle)
-	.onUpdate(moveOverworldCharacter, triggerApocalypse, addNavigationArrows, removeNavigationMenu, pickupOverworldTreasure, openInventory)
+	.onEnter(spawnOverworld, SystemSet(spawnStepsUi).runIf(() => !save.finishedDemo), setOverwolrdState, spawnInventoryToggle, showEndOfDemo)
+	.onUpdate(moveOverworldCharacter, SystemSet(triggerApocalypse).runIf(() => !save.finishedDemo), addNavigationArrows, removeNavigationMenu, pickupOverworldTreasure, openInventory, hideThanks)
 	.onExit(despawnOverworld, despawnEntities(OverWorldUI))
 
-export const battleState = ecs.state<[BattleData]>()
+export type battleRessources = [BattleData]
+export const battleState = ecs.state<battleRessources>()
 	.onEnter(spawnBattle)
 	.onUpdate(displayHealth, updateHealthDisplay, battleTurn, outlineSelectedEnemy, removeDeadBattlers, winOrLose, savePlayerHealth, battleDialog, banditCutscene)
 	.onExit(despawnBattle, saveToLocalStorage, despawnBattleMenu)
-
-export const dungeonState = ecs.state<DungeonRessources>()
+export type dungeonRessources = [levels, number, direction]
+export const dungeonState = ecs.state<dungeonRessources>()
 	.onEnter(spawnDungeon, setDungeonState, enableTouchJoystick)
 	.onUpdate(movePlayer, isPlayerInside, updateCameraZoom(7), startDialogDungeon, exitDungeon, allowPlayerToExit)
 	.onExit(disableTouchJoystick, despawnEntities(Dungeon))
