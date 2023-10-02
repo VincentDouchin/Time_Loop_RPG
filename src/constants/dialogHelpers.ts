@@ -1,3 +1,4 @@
+import { RigidBody } from '@dimforge/rapier2d-compat'
 import { addKey } from './dialog'
 import { NPC } from '@/dungeon/NPC'
 import { LockedMovement } from '@/dungeon/playerMovement'
@@ -14,9 +15,10 @@ import { sleep } from '@/utils/timing'
 @Component(ecs)
 export class Log { }
 
-const playerQuery = ecs.query.pick(Entity).with(Player)
+const playerQuery = ecs.query.pick(Entity, RigidBody).with(Player)
 export const lockPlayer = () => {
-	for (const [player] of playerQuery.getAll()) {
+	for (const [player, body] of playerQuery.getAll()) {
+		body.setLinvel({ x: 0, y: 0 }, true)
 		player.addComponent(new LockedMovement())
 	}
 }

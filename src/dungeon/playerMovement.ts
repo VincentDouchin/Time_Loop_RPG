@@ -9,6 +9,7 @@ import { Sprite, TextureAtlas } from '@/lib/sprite'
 export class LockedMovement {}
 
 const playerQuery = ecs.query.pick(PlayerInputMap, RigidBody, TextureAtlas<'idle' | 'walk'>, Sprite).without(LockedMovement)
+const playerLocked = ecs.query.pick(RigidBody).added(LockedMovement)
 export const movePlayer = () => {
 	for (const [inputs, body, atlas] of playerQuery.getAll()) {
 		let isMoving = false
@@ -38,5 +39,8 @@ export const movePlayer = () => {
 
 		body.setLinvel(vel, true)
 		atlas.state = isMoving ? 'walk' : 'idle'
+	}
+	for (const [body] of playerLocked.getAll()) {
+		body.setLinvel({ x: 0, y: 0 }, true)
 	}
 }
