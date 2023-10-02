@@ -145,6 +145,7 @@ export const addNavigationArrows = () => {
 							new PixelTexture(assets.ui[`arrow${arrow}`]),
 							new PixelTexture(assets.ui[`arrow${arrow}Selected`]),
 						])
+						sprite.setRenderOrder(2)
 						navigationMenu.spawn(new Position(arrowX * 16, arrowY * 16), sprite, atlas, new IncrementOnSelected(), new MenuInputInteractable(arrow), new Interactable())
 					}
 				}

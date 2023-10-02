@@ -90,4 +90,15 @@ export const dialog: Partial<Record<characters | `sign${string}`, () => Generato
 			yield 'Thirsty Chauldron Tavern'
 		}
 	},
+	*gnomeForest() {
+		yield 'Oi!'
+		yield 'Wot ya doin\' \'ere?'
+		yield 'Bugger off, why don\'t ya?'
+		yield
+		yield 'Awright, I\'ll tell ya where the portal is if ya leave me alone.'
+		yield 'After the tavern, go right into the bleedin\' woods.'
+		yield 'You\'ll find it there, mate.'
+		yield 'It won\'t be much use to ya unless ya find some other portals, though.'
+		yield 'And I\'m afraid with the end of the world scheduled for tonight, you won\'t \'ave much time.'
+	},
 } as const

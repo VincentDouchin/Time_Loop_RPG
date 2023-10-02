@@ -109,16 +109,17 @@ export const startDialogDungeon = () => {
 					entity.addComponent(new CanTalk())
 				}
 				const menuInputs = menuInputQuery.extract()
-				if (playerInputs.get('interact').justPressed || menuInputs?.get('Enter').justReleased) {
+				if (playerInputs.get('interact').justReleased || menuInputs?.get('Enter').justReleased) {
 					entity.removeComponent(CanTalk)
 					if (!dialogContainerQuery.size) {
-						entity.spawn(
-							...new UIElement({ color: 'black', display: 'grid', gap: '0.2rem', padding: '0.2rem' }).withWorldPosition(0, 8),
-							new NineSlice(assets.ui.textbox, 4, 3),
-							new DialogContainer(dialog),
-							new Interactable(),
-							new MenuInputInteractable('Enter'),
-						)
+						entity
+							.spawn(
+								...new UIElement({ color: 'black', display: 'grid', gap: '0.2rem', padding: '0.2rem', maxWidth: '200px', translate: '0% -50%' }).withWorldPosition(0, 8),
+								new NineSlice(assets.ui.textbox, 4, 3),
+								new DialogContainer(dialog),
+								new Interactable(),
+								new MenuInputInteractable('Enter'),
+							)
 					}
 					ecs.onNextTick(() => stepDialog(dialog, menu))
 				}

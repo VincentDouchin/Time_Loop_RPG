@@ -28,9 +28,9 @@ const ninesliceUIQuery = ecs.query.pick(UIElement, NineSlice).added(NineSlice)
 
 export const addNineSlicetoUI = () => {
 	for (const [uiElement, nineSlice] of ninesliceUIQuery.getAll()) {
-		const allMargins = [nineSlice.margins.top, nineSlice.margins.bottom, nineSlice.margins.left, nineSlice.margins.right]
+		const allMargins = [nineSlice.margins.top, nineSlice.margins.right, nineSlice.margins.left, nineSlice.margins.bottom]
 		uiElement.setStyles({
-			borderImage: `url(${nineSlice.image.toDataURL()})`,
+			borderImage: `url(${nineSlice.image.toDataURL()}) round`,
 			borderImageSlice: `${allMargins.join(' ')} fill`,
 			borderImageRepeat: 'round',
 			imageRendering: 'pixelated',

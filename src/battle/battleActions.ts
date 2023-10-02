@@ -6,9 +6,10 @@ import { ecs } from '@/globals/init'
 import { Component, Entity } from '@/lib/ECS'
 import { Interactable } from '@/lib/interactions'
 import { TextureAtlas } from '@/lib/sprite'
+import { MenuInputInteractable } from '@/menus/menuInputs'
 import { ColorShader } from '@/shaders/ColorShader'
 import { TextElement, UIElement } from '@/ui/UiElement'
-import { Menu, Selected } from '@/ui/menu'
+import { Menu, Selected, UnderlineOnSelected } from '@/ui/menu'
 
 @Component(ecs)
 export class BattlerMenu {}
@@ -94,6 +95,7 @@ export const selectAction = (battler: Battler) => {
 						new UIElement(),
 						new Interactable(),
 						new PlayerActionItem(action),
+						new UnderlineOnSelected(),
 					)
 					items.push(item)
 					item.spawn(new TextElement(action.label))

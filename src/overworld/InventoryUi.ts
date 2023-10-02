@@ -16,7 +16,7 @@ export class InventoryIcon { }
 export const spawnInventoryToggle = () => {
 	const bag = ecs
 		.spawn(
-			UIElement.fromImage(assets.ui.inventory, 10).setStyles({ width: '10vh', height: '10vh', position: 'relative', top: '10vh', left: '10vh', display: 'grid', placeItems: 'center' }),
+			UIElement.fromImage(assets.ui.inventory, 10).setStyles({ width: '10vh', height: '10vh', position: 'fixed', top: '10vh', left: '10vh', display: 'grid', placeItems: 'center' }),
 			new Interactable(InteractableType.InventoryToggle),
 			new MenuInputInteractable('Inventory'),
 			new OverWorldUI(),
@@ -26,7 +26,7 @@ export const spawnInventoryToggle = () => {
 		const menuInputMap = menuInputQuery.extract()
 		if (menuInputMap) {
 			const bundle = UIElement.inputIcon(menuInputMap.get('Inventory'))
-			bundle[0].setStyles({ position: 'absolute', right: '10%', bottom: '10%', scale: 2.5 })
+			bundle[0].setStyles({ position: 'absolute', right: '5%', bottom: '5%', width: '5vh', height: '5vh' })
 			bag.spawn(...bundle)
 		}
 	})
