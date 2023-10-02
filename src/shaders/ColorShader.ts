@@ -9,8 +9,9 @@ export const colorShader = new ShaderMaterial({ vertexShader, fragmentShader })
 
 @Component(ecs)
 export class ColorShader extends ShaderPass {
-	constructor(color: [x: number, y: number, z: number, w: number]) {
+	constructor(color: [x: number, y: number, z: number, w: number], additive: boolean = false) {
 		super(colorShader.clone())
 		this.uniforms.color = new Uniform(color)
+		this.uniforms.additive = new Uniform(additive)
 	}
 }

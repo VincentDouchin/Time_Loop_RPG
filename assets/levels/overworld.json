@@ -5,12 +5,12 @@
 		"doc": "https://ldtk.io/json",
 		"schema": "https://ldtk.io/files/JSON_SCHEMA.json",
 		"appAuthor": "Sebastien 'deepnight' Benard",
-		"appVersion": "1.3.4",
+		"appVersion": "1.4.1",
 		"url": "https://ldtk.io"
 	},
 	"iid": "334e2dc0-3b70-11ee-9490-d57adfa79ba6",
-	"jsonVersion": "1.3.4",
-	"appBuildId": 470178,
+	"jsonVersion": "1.4.1",
+	"appBuildId": 471015,
 	"nextUid": 182,
 	"identifierStyle": "Capitalize",
 	"toc": [],
@@ -64,8 +64,12 @@
 			"parallaxScaling": true,
 			"requiredTags": [],
 			"excludedTags": [],
-			"intGridValues": [ { "value": 1, "identifier": "inside", "color": "#FFFFFF", "tile": null }, { "value": 2, "identifier": "lava", "color": "#E43B44", "tile": null } ],
-			"autoRuleGroups": [{ "uid": 66, "name": "lava", "active": true, "isOptional": false, "rules": [
+			"intGridValues": [
+				{ "value": 1, "identifier": "inside", "color": "#FFFFFF", "tile": null, "groupUid": 0 },
+				{ "value": 2, "identifier": "lava", "color": "#E43B44", "tile": null, "groupUid": 0 }
+			],
+			"intGridValuesGroups": [],
+			"autoRuleGroups": [{ "uid": 66, "name": "lava", "color": null, "icon": null, "active": true, "isOptional": false, "rules": [
 				{
 					"uid": 78,
 					"active": true,
@@ -468,6 +472,7 @@
 			"requiredTags": [],
 			"excludedTags": [],
 			"intGridValues": [],
+			"intGridValuesGroups": [],
 			"autoRuleGroups": [],
 			"autoSourceLayerDefUid": null,
 			"tilesetDefUid": null,
@@ -498,6 +503,7 @@
 			"requiredTags": [],
 			"excludedTags": [],
 			"intGridValues": [],
+			"intGridValuesGroups": [],
 			"autoRuleGroups": [],
 			"autoSourceLayerDefUid": null,
 			"tilesetDefUid": 25,
@@ -528,6 +534,7 @@
 			"requiredTags": [],
 			"excludedTags": [],
 			"intGridValues": [],
+			"intGridValuesGroups": [],
 			"autoRuleGroups": [],
 			"autoSourceLayerDefUid": null,
 			"tilesetDefUid": null,
@@ -557,9 +564,13 @@
 			"parallaxScaling": true,
 			"requiredTags": [],
 			"excludedTags": [],
-			"intGridValues": [ { "value": 1, "identifier": "grass", "color": "#63C74D", "tile": null }, { "value": 2, "identifier": "road", "color": "#E8B796", "tile": null } ],
+			"intGridValues": [
+				{ "value": 1, "identifier": "grass", "color": "#63C74D", "tile": null, "groupUid": 0 },
+				{ "value": 2, "identifier": "road", "color": "#E8B796", "tile": null, "groupUid": 0 }
+			],
+			"intGridValuesGroups": [],
 			"autoRuleGroups": [
-				{ "uid": 153, "name": "New group", "active": true, "isOptional": false, "rules": [
+				{ "uid": 153, "name": "New group", "color": null, "icon": null, "active": true, "isOptional": false, "rules": [
 					{
 						"uid": 155,
 						"active": true,
@@ -623,7 +634,7 @@
 						"perlinOctaves": 2
 					}
 				], "usesWizard": false },
-				{ "uid": 137, "name": "road", "active": true, "isOptional": false, "rules": [
+				{ "uid": 137, "name": "road", "color": null, "icon": null, "active": true, "isOptional": false, "rules": [
 					{
 						"uid": 138,
 						"active": true,
@@ -1090,7 +1101,7 @@
 						"perlinOctaves": 2
 					}
 				], "usesWizard": true },
-				{ "uid": 9, "name": "grass", "active": true, "isOptional": false, "rules": [
+				{ "uid": 9, "name": "grass", "color": null, "icon": null, "active": true, "isOptional": false, "rules": [
 					{
 						"uid": 10,
 						"active": true,
@@ -1586,9 +1597,13 @@
 			"parallaxScaling": true,
 			"requiredTags": [],
 			"excludedTags": [],
-			"intGridValues": [ { "value": 1, "identifier": "Mountains", "color": "#000000", "tile": null }, { "value": 2, "identifier": "Trees", "color": "#193C3E", "tile": null } ],
+			"intGridValues": [
+				{ "value": 1, "identifier": "Mountains", "color": "#000000", "tile": null, "groupUid": 0 },
+				{ "value": 2, "identifier": "Trees", "color": "#193C3E", "tile": null, "groupUid": 0 }
+			],
+			"intGridValuesGroups": [],
 			"autoRuleGroups": [
-				{ "uid": 156, "name": "Mountains", "active": true, "isOptional": false, "rules": [
+				{ "uid": 156, "name": "Mountains", "color": null, "icon": null, "active": true, "isOptional": false, "rules": [
 					{
 						"uid": 157,
 						"active": true,
@@ -2024,7 +2039,7 @@
 						"perlinOctaves": 2
 					}
 				], "usesWizard": true },
-				{ "uid": 39, "name": "Trees", "active": true, "isOptional": false, "rules": [
+				{ "uid": 39, "name": "Trees", "color": null, "icon": null, "active": true, "isOptional": false, "rules": [
 					{
 						"uid": 40,
 						"active": true,
@@ -2489,8 +2504,9 @@
 			"parallaxScaling": true,
 			"requiredTags": [],
 			"excludedTags": [],
-			"intGridValues": [{ "value": 1, "identifier": "lava", "color": "#E43B44", "tile": null }],
-			"autoRuleGroups": [{ "uid": 99, "name": "details", "active": true, "isOptional": false, "rules": [
+			"intGridValues": [{ "value": 1, "identifier": "lava", "color": "#E43B44", "tile": null, "groupUid": 0 }],
+			"intGridValuesGroups": [],
+			"autoRuleGroups": [{ "uid": 99, "name": "details", "color": null, "icon": null, "active": true, "isOptional": false, "rules": [
 				{
 					"uid": 100,
 					"active": true,
@@ -2552,12 +2568,13 @@
 			"requiredTags": [],
 			"excludedTags": [],
 			"intGridValues": [
-				{ "value": 1, "identifier": "Grass", "color": "#63C74D", "tile": null },
-				{ "value": 2, "identifier": "lava", "color": "#3A4466", "tile": null },
-				{ "value": 3, "identifier": "rock", "color": "#8B9BB4", "tile": null }
+				{ "value": 1, "identifier": "Grass", "color": "#63C74D", "tile": null, "groupUid": 0 },
+				{ "value": 2, "identifier": "lava", "color": "#3A4466", "tile": null, "groupUid": 0 },
+				{ "value": 3, "identifier": "rock", "color": "#8B9BB4", "tile": null, "groupUid": 0 }
 			],
+			"intGridValuesGroups": [],
 			"autoRuleGroups": [
-				{ "uid": 103, "name": "lava", "active": true, "isOptional": false, "rules": [
+				{ "uid": 103, "name": "lava", "color": null, "icon": null, "active": true, "isOptional": false, "rules": [
 					{
 						"uid": 125,
 						"active": true,
@@ -2931,7 +2948,7 @@
 						"perlinOctaves": 2
 					}
 				], "usesWizard": true },
-				{ "uid": 82, "name": "rock", "active": true, "isOptional": false, "rules": [
+				{ "uid": 82, "name": "rock", "color": null, "icon": null, "active": true, "isOptional": false, "rules": [
 					{
 						"uid": 83,
 						"active": true,
@@ -3212,7 +3229,7 @@
 						"perlinOctaves": 2
 					}
 				], "usesWizard": true },
-				{ "uid": 5, "name": "grass", "active": true, "isOptional": false, "rules": [
+				{ "uid": 5, "name": "grass", "color": null, "icon": null, "active": true, "isOptional": false, "rules": [
 					{
 						"uid": 6,
 						"active": true,
@@ -3275,6 +3292,7 @@
 			"requiredTags": [],
 			"excludedTags": [],
 			"intGridValues": [],
+			"intGridValuesGroups": [],
 			"autoRuleGroups": [],
 			"autoSourceLayerDefUid": null,
 			"tilesetDefUid": null,
@@ -3307,6 +3325,7 @@
 			"tilesetId": 29,
 			"tileRenderMode": "FitInside",
 			"tileRect": { "tilesetUid": 29, "x": 160, "y": 64, "w": 16, "h": 16 },
+			"uiTileRect": null,
 			"nineSliceBorders": [],
 			"maxCount": 0,
 			"limitScope": "PerLevel",
@@ -3639,11 +3658,11 @@
 		}
 	], "enums": [], "externalEnums": [
 		{ "identifier": "Battles", "uid": 101, "values": [
-			{ "id": "Bandits", "tileRect": null, "tileId": -1, "color": 12470831, "__tileSrcRect": null },
-			{ "id": "BossBattleIntro", "tileRect": null, "tileId": -1, "color": 14120515, "__tileSrcRect": null },
-			{ "id": "ForestAnimals", "tileRect": null, "tileId": -1, "color": 15389866, "__tileSrcRect": null }
+			{ "id": "Bandits", "tileRect": null, "color": 12470831 },
+			{ "id": "BossBattleIntro", "tileRect": null, "color": 14120515 },
+			{ "id": "ForestAnimals", "tileRect": null, "color": 15389866 }
 		], "iconTilesetUid": null, "externalRelPath": "../../src/constants/exports/LDTKEnums.json", "externalFileChecksum": "6868b937157b4c0efb78460a07cad8d6", "tags": [] },
-		{ "identifier": "Treasure", "uid": 180, "values": [{ "id": "LumberjackAxe", "tileRect": null, "tileId": -1, "color": 12470831, "__tileSrcRect": null }], "iconTilesetUid": null, "externalRelPath": "../../src/constants/exports/LDTKEnums.json", "externalFileChecksum": "6868b937157b4c0efb78460a07cad8d6", "tags": [] }
+		{ "identifier": "Treasure", "uid": 180, "values": [{ "id": "LumberjackAxe", "tileRect": null, "color": 12470831 }], "iconTilesetUid": null, "externalRelPath": "../../src/constants/exports/LDTKEnums.json", "externalFileChecksum": "6868b937157b4c0efb78460a07cad8d6", "tags": [] }
 	], "levelFields": [] },
 	"levels": [
 		{
@@ -5659,14 +5678,14 @@
 						{ "px": [152,56], "src": [48,664], "f": 0, "t": 2662, "d": [271], "a": 1 },
 						{ "px": [160,56], "src": [56,664], "f": 0, "t": 2663, "d": [272], "a": 1 },
 						{ "px": [136,232], "src": [0,0], "f": 0, "t": 0, "d": [1061], "a": 1 },
-						{ "px": [48,312], "src": [128,32], "f": 0, "t": 144, "d": [1410], "a": 1 },
-						{ "px": [56,312], "src": [136,32], "f": 0, "t": 145, "d": [1411], "a": 1 },
+						{ "px": [48,296], "src": [128,32], "f": 0, "t": 144, "d": [1338], "a": 1 },
+						{ "px": [56,296], "src": [136,32], "f": 0, "t": 145, "d": [1339], "a": 1 },
+						{ "px": [48,304], "src": [128,40], "f": 0, "t": 176, "d": [1374], "a": 1 },
+						{ "px": [56,304], "src": [136,40], "f": 0, "t": 177, "d": [1375], "a": 1 },
 						{ "px": [144,312], "src": [32,296], "f": 0, "t": 1188, "d": [1422], "a": 1 },
 						{ "px": [152,312], "src": [40,296], "f": 0, "t": 1189, "d": [1423], "a": 1 },
 						{ "px": [160,312], "src": [48,296], "f": 0, "t": 1190, "d": [1424], "a": 1 },
 						{ "px": [168,312], "src": [56,296], "f": 0, "t": 1191, "d": [1425], "a": 1 },
-						{ "px": [48,320], "src": [128,40], "f": 0, "t": 176, "d": [1446], "a": 1 },
-						{ "px": [56,320], "src": [136,40], "f": 0, "t": 177, "d": [1447], "a": 1 },
 						{ "px": [144,320], "src": [32,304], "f": 0, "t": 1220, "d": [1458], "a": 1 },
 						{ "px": [152,320], "src": [40,304], "f": 0, "t": 1221, "d": [1459], "a": 1 },
 						{ "px": [160,320], "src": [48,304], "f": 0, "t": 1222, "d": [1460], "a": 1 },

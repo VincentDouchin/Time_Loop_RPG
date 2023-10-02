@@ -33,6 +33,8 @@ export class Wall { }
 @Component(ecs)
 export class Outside { }
 @Component(ecs)
+export class DarkenWhenInside { }
+@Component(ecs)
 export class JustEntered { }
 @Component(ecs)
 export class Entrance extends LDTKEntityInstance<{ direction: direction }> { }
@@ -99,11 +101,11 @@ export const spawnDungeon: System<dungeonRessources> = (mapName, levelIndex, dir
 	if (level.layerInstances) {
 		for (const layerInstance of [...level.layerInstances].reverse()) {
 			if (layerInstance.__identifier.toLowerCase().includes('outside')) {
-				map.spawn(spawnLayer(layerInstance), new Position(), new Outside())
+				map.spawn(spawnLayer(layerInstance), new Position(), new Outside(), new DarkenWhenInside())
 			} else if (layerInstance.__identifier.toLowerCase().includes('inside')) {
 				map.spawn(spawnLayer(layerInstance), new Position(), new Inside())
 			} else {
-				map.spawn(spawnLayer(layerInstance), new Position())
+				map.spawn(spawnLayer(layerInstance), new Position(), new DarkenWhenInside())
 			}
 			if (layerInstance.__identifier === 'Collisions') {
 				spawnIntGridEntities(map, mapFile, layerInstance, t => t?.identifier === 'Wall',
@@ -148,6 +150,7 @@ export const spawnDungeon: System<dungeonRessources> = (mapName, levelIndex, dir
 	}
 }
 
+const spritesToDarkenQuery = ecs.query.pick(Entity).with(DarkenWhenInside)
 const playerColliderQuery = ecs.query.pick(Collider, Position, Entity).with(Player)
 const insideTriggersQuery = ecs.query.pick(Collider).with(InsideTrigger)
 const insideQuery = ecs.query.pick(Sprite).with(Inside)
@@ -161,11 +164,17 @@ export const isPlayerInside = () => {
 		for (const [sprite] of insideQuery.getAll()) {
 			sprite.setOpacity(isInside ? 1 : 0)
 		}
-		for (const [sprite, entity] of outsideQuery.getAll()) {
+		for (const [sprite] of outsideQuery.getAll()) {
 			sprite.setOpacity(isInside ? 0 : 1)
-			if (isInside && !entity.getComponent(ColorShader)) {
-				entity.addComponent(new ColorShader([0, 0, 0, 0.3]))
-			} else if (entity.getComponent(ColorShader)) {
+		}
+		if (isInside) {
+			for (const [entity] of spritesToDarkenQuery.getAll()) {
+				if (!entity.getComponent(ColorShader)) {
+					entity.addComponent(new ColorShader([0.3, 0.3, 0.3, 1]))
+				}
+			}
+		} else {
+			for (const [entity] of spritesToDarkenQuery.getAll()) {
 				entity.removeComponent(ColorShader)
 			}
 		}
