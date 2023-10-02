@@ -221,6 +221,7 @@ export class Entity {
 				}
 			}
 		})
+		return this
 	}
 
 	removeComponent<C extends Class>(component: C) {
@@ -231,6 +232,7 @@ export class Entity {
 				this.ecs.onNextTick(() => this.ecs.eventBus.publish(component.name, this, 'deleted'))
 			}
 		})
+		return this
 	}
 
 	withChildren(fn: (entity: Entity) => void) {

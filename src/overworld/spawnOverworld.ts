@@ -11,6 +11,7 @@ import { Sprite } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { save, saveToLocalStorage } from '@/save/saveData'
 import { getOffscreenBuffer } from '@/utils/buffer'
+import { showEndOfDemo } from '@/dungeon/endOfDemo'
 
 @Component(ecs)
 export class Map {}
@@ -38,9 +39,18 @@ export const spawnOverworld = () => {
 						}
 						if (navNode.data.Treasure) {
 							const chestSprite = save.treasureFound.includes(navNode.data.Treasure)
-								? assets.chests.woodChestOpen2
-								: assets.chests.woodChestClosed2
-							entity.addComponent(new Sprite(chestSprite).setRenderOrder(1).anchor(0, 0.5))
+								? assets.chests.woodChestOpen1
+								: assets.chests.woodChestClosed1
+							entity.addComponent(new Sprite(new PixelTexture(assets.ui.nodeIcon)).setRenderOrder(1))
+							entity.spawn(new Sprite(chestSprite).setRenderOrder(2).anchor(0, 0.25), new Position())
+						} else if (navNode.data.Battle) {
+							entity.addComponent(new Sprite(new PixelTexture(assets.ui.nodeIcon)).setRenderOrder(1))
+							entity.spawn(new Sprite(new PixelTexture(assets.ui.battleIcon)).setRenderOrder(2), new Position())
+						} else if (navNode.data.Dungeon) {
+							entity.addComponent(new Sprite(new PixelTexture(assets.ui.nodeIcon)).setRenderOrder(1))
+							entity.spawn(new Sprite(new PixelTexture(assets.ui.houseIcon)).setRenderOrder(2), new Position())
+						} else {
+							entity.addComponent(new Sprite(new PixelTexture(assets.ui.smallNodeIcon)).setRenderOrder(1))
 						}
 					}
 				}

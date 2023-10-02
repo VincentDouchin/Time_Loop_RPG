@@ -43,23 +43,22 @@ class PointerInput {
 	}
 
 	position = new Vector2()
+	screenPosition = new Vector2()
 	pressed = false
-	target: EventTarget | null = null
 	constructor(private down: string, private up: string) {
 	}
 
 	setFromScreenCoords(element: HTMLElement, event: string, e: Touch | MouseEvent) {
 		const bounds = element.getBoundingClientRect()
+		this.screenPosition.x = e.clientX
+		this.screenPosition.y = e.clientY
 		const x = ((e.clientX - bounds.left) / element.clientWidth) * 2 - 1
 		const y = 1 - ((e.clientY - bounds.top) / element.clientHeight) * 2
 		this.position = new Vector2(x, y)
 		if (event === this.down) {
 			this.pressed = true
-			this.target = e.target
-		}
-		if (event === this.up) {
+		} else if (event === this.up) {
 			this.pressed = false
-			this.target = null
 		}
 	}
 
@@ -79,13 +78,13 @@ class PointerInput {
 
 export const updateMousePosition = () => {
 	for (const event of ['mouseup', 'mousemove', 'mousedown'] as const) {
-		window.addEventListener(event, (e) => {
+		document.addEventListener(event, (e) => {
 			e.preventDefault()
-			const touchInput = PointerInput.pointers.get('mouse')
-			if (!touchInput) {
+			const mouseInput = PointerInput.pointers.get('mouse')
+			if (!mouseInput) {
 				PointerInput.pointers.set('mouse', new PointerInput('mousedown', 'mouseup'))
 			} else {
-				touchInput.setFromScreenCoords(renderer.domElement, event, e)
+				mouseInput.setFromScreenCoords(renderer.domElement, event, e)
 			}
 		})
 	}
@@ -137,14 +136,15 @@ export const detectInteractions = () => {
 		}
 	}
 	for (const [interactable, uiElement] of uiInteractablesQuery.getAll()) {
-		const touchingPointer = PointerInput.all.find(pointer => pointer.target === uiElement)
-
-		if (touchingPointer) {
-			interactable.hover = true
-			interactable.pressed = touchingPointer.pressed
-		} else {
-			interactable.hover = false
-			interactable.pressed = false
+		const bounds = uiElement.getBoundingClientRect()
+		for (const pointer of PointerInput.all) {
+			if (pointer.screenPosition.x > bounds.left && pointer.screenPosition.x < bounds.right && pointer.screenPosition.y > bounds.top && pointer.screenPosition.y < bounds.bottom) {
+				interactable.hover = true
+				interactable.pressed = pointer.pressed
+			} else {
+				interactable.hover = false
+				interactable.pressed = false
+			}
 		}
 	}
 }

@@ -125,8 +125,11 @@ export const unSelectDespawnMenus = () => {
 	}
 }
 
-const selectedUiElement = ecs.query.pick(UIElement).added(Selected)
-const unselectedUiElement = ecs.query.pick(UIElement).removed(Selected)
+@Component(ecs)
+export class UnderlineOnSelected {}
+
+const selectedUiElement = ecs.query.pick(UIElement).with(UnderlineOnSelected).added(Selected)
+const unselectedUiElement = ecs.query.pick(UIElement).with(UnderlineOnSelected).removed(Selected)
 export const selectUiElement = () => {
 	for (const [uiElement] of selectedUiElement.getAll()) {
 		uiElement.setStyles({ textDecoration: 'underline' })

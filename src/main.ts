@@ -2,10 +2,10 @@ import { OrthographicCamera } from 'three'
 import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer'
 import { banditCutscene, battleDialog } from './battle/battleCutscene'
 import { displayHealth, savePlayerHealth, updateHealthDisplay } from './battle/health'
-import { despawnBattle, spawnBattleBackground as spawnBattle } from './battle/spawnBattleBackground'
+import { despawnBattle, spawnBattle } from './battle/spawnBattleBackground'
 import { battleTurn, despawnBattleMenu, outlineSelectedEnemy, removeDeadBattlers, winOrLose } from './battle/spawnBattlers'
 import type { BattleData } from './constants/battles'
-import { startDialogDungeon } from './dungeon/NPC'
+import { addTalkingIcon, startDialogDungeon } from './dungeon/NPC'
 import { hideThanks, showEndOfDemo } from './dungeon/endOfDemo'
 import { PlayerInputMap } from './dungeon/playerInputs'
 import { movePlayer } from './dungeon/playerMovement'
@@ -15,7 +15,7 @@ import { despawnEntities, ecs } from './globals/init'
 import { State, SystemSet } from './lib/ECS'
 import { animateSprites } from './lib/animation'
 import { adjustScreenSize, cameraFollow, initializeCameraBounds, render, spawnCamera, updateCameraZoom } from './lib/camera'
-import { disableTouchJoystick, enableTouchJoystick, registerInput } from './lib/inputs'
+import { changeControls, disableTouchJoystick, enableTouchJoystick, registerInput } from './lib/inputs'
 import { detectInteractions, updateMousePosition } from './lib/interactions'
 import { initThree } from './lib/rendering'
 import { Sprite } from './lib/sprite'
@@ -42,9 +42,9 @@ import { addToScene, addToWorld, registerFullScreenShader, registerShader } from
 
 // !Lib
 ecs
-	.core.onEnter(initThree, updateMousePosition, spawnCamera, spawnMenuInputs, spawnUIRoot, setDefaultFontSize)
-	.onPreUpdate(updatePosition)
-	.onUpdate(detectInteractions, updateMenus, addOutlineShader, animateSprites, addNineSlicetoUI, addUIElementsToDOM, selectUiElement, unSelectDespawnMenus, () => Tween.update(time.delta), adjustScreenSize(), initializeCameraBounds, registerShader(ColorShader, OutlineShader, ItemPickupShader), registerFullScreenShader(ApocalypseShader), addToWorld, updateApocalypseShader, changeTextureOnSelected, clickOnMenuInput)
+	.core.onEnter(initThree, updateMousePosition, spawnCamera, spawnMenuInputs, spawnUIRoot, setDefaultFontSize, changeControls)
+	.onPreUpdate(detectInteractions, updatePosition, clickOnMenuInput)
+	.onUpdate(updateMenus, addOutlineShader, animateSprites, addNineSlicetoUI, addUIElementsToDOM, selectUiElement, unSelectDespawnMenus, () => Tween.update(time.delta), adjustScreenSize(), initializeCameraBounds, registerShader(ColorShader, OutlineShader, ItemPickupShader), registerFullScreenShader(ApocalypseShader), addToWorld, updateApocalypseShader, changeTextureOnSelected)
 	.onPostUpdate(updateSpritePosition, cameraFollow, render, stepWorld)
 	.enable()
 
@@ -54,7 +54,7 @@ ecs.addPlugin(addToScene(OrthographicCamera, Sprite, CSS2DObject))
 
 // ! States
 export const overworldState = ecs.state()
-	.onEnter(spawnOverworld, SystemSet(spawnStepsUi).runIf(() => !save.finishedDemo), setOverwolrdState, spawnInventoryToggle, showEndOfDemo)
+	.onEnter(showEndOfDemo, spawnOverworld, SystemSet(spawnStepsUi).runIf(() => !save.finishedDemo), setOverwolrdState, spawnInventoryToggle)
 	.onUpdate(moveOverworldCharacter, SystemSet(triggerApocalypse).runIf(() => !save.finishedDemo), addNavigationArrows, removeNavigationMenu, pickupOverworldTreasure, openInventory, hideThanks)
 	.onExit(despawnOverworld, despawnEntities(OverWorldUI))
 
@@ -65,8 +65,8 @@ export const battleState = ecs.state<battleRessources>()
 	.onExit(despawnBattle, saveToLocalStorage, despawnBattleMenu)
 export type dungeonRessources = [levels, number, direction]
 export const dungeonState = ecs.state<dungeonRessources>()
-	.onEnter(spawnDungeon, setDungeonState, enableTouchJoystick)
-	.onUpdate(movePlayer, isPlayerInside, updateCameraZoom(7), startDialogDungeon, exitDungeon, allowPlayerToExit)
+	.onEnter(spawnDungeon, setDungeonState)
+	.onUpdate(movePlayer, isPlayerInside, updateCameraZoom(7), startDialogDungeon, exitDungeon, allowPlayerToExit, addTalkingIcon, enableTouchJoystick)
 	.onExit(disableTouchJoystick, despawnEntities(Dungeon))
 
 State.exclusive(overworldState, battleState, dungeonState)

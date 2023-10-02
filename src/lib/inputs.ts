@@ -3,6 +3,7 @@ import nipplejs from 'nipplejs'
 import type { Class, ECS } from './ECS'
 import { Component } from './ECS'
 import { ecs } from '@/globals/init'
+import { context } from '@/save/context'
 
 export const GAMEPAD_AXIS = {
 	LEFT_X: 0,
@@ -31,6 +32,18 @@ export const GAMEPAD_BUTTON = {
 } as const
 
 const keys: Record<string, boolean> = {}
+
+export const changeControls = () => {
+	window.addEventListener('touchstart', () => {
+		context.controls = 'touch'
+	})
+	window.addEventListener('keydown', () => {
+		context.controls = 'keyboard'
+	})
+	window.addEventListener('gamepadconnected', () => {
+		context.controls = 'gamepad'
+	})
+}
 
 window.addEventListener('keydown', (e) => {
 	if (e.code in keys) {
@@ -61,83 +74,90 @@ const touchJoystickInputs = {
 }
 type touchDirection = 'up' | 'down' | 'left' | 'right'
 let touchJoystick: null | JoystickManager = null
-export const enableTouchJoystick = () => {
-	touchJoystick = nipplejs.create({})
-	touchJoystick.on('move', (_, data) => {
-		const force = data.distance / 50
-		if (Math.abs(data.vector.x) > 0.1) {
-			if (data.vector.x > 0) {
-				touchJoystickInputs.right = Math.abs(data.vector.x) * force
-				touchJoystickInputs.left = 0
-			} else {
-				touchJoystickInputs.left = Math.abs(data.vector.x) * force
-				touchJoystickInputs.right = 0
-			}
-		}
-		if (Math.abs(data.vector.y) > 0.1) {
-			if (data.vector.y > 0) {
-				touchJoystickInputs.up = Math.abs(data.vector.y) * force
-				touchJoystickInputs.down = 0
-			} else {
-				touchJoystickInputs.down = Math.abs(data.vector.y) * force
-				touchJoystickInputs.up = 0
-			}
-		}
-	})
-	touchJoystick.on('removed', () => touchJoystickInputs.reset())
-}
+
 export const disableTouchJoystick = () => {
 	touchJoystick?.destroy()
 	touchJoystick = null
 	touchJoystickInputs.reset()
 }
 
-class Input {
+export const enableTouchJoystick = () => {
+	if (context.controls === 'touch' && !touchJoystick) {
+		touchJoystick = nipplejs.create({})
+		touchJoystick.on('move', (_, data) => {
+			const force = data.distance / 50
+			if (Math.abs(data.vector.x) > 0.1) {
+				if (data.vector.x > 0) {
+					touchJoystickInputs.right = Math.abs(data.vector.x) * force
+					touchJoystickInputs.left = 0
+				} else {
+					touchJoystickInputs.left = Math.abs(data.vector.x) * force
+					touchJoystickInputs.right = 0
+				}
+			}
+			if (Math.abs(data.vector.y) > 0.1) {
+				if (data.vector.y > 0) {
+					touchJoystickInputs.up = Math.abs(data.vector.y) * force
+					touchJoystickInputs.down = 0
+				} else {
+					touchJoystickInputs.down = Math.abs(data.vector.y) * force
+					touchJoystickInputs.up = 0
+				}
+			}
+		})
+		touchJoystick.on('removed', () => touchJoystickInputs.reset())
+	}
+	if (context.controls !== 'touch' && touchJoystick) {
+		disableTouchJoystick()
+	}
+}
+
+export class Input {
 	pressed = 0
 	wasPressed = 0
-	#buttons: number[] = []
-	#axis: { index: number; direction: 'up' | 'down' }[] = []
-	#codes: string[] = []
-	#touchAxis?: touchDirection
+	buttons: number[] = []
+	axis: { index: number; direction: 'up' | 'down' }[] = []
+	codes: string[] = []
+	touchAxis?: touchDirection
 	setKey(...codes: string[]) {
 		for (const code of codes) {
 			keys[code] = false
 		}
-		this.#codes.push(...codes)
+		this.codes.push(...codes)
 		return this
 	}
 
 	setTouchAxis(axis: touchDirection) {
-		this.#touchAxis = axis
+		this.touchAxis = axis
 		return this
 	}
 
 	setButton(button: number) {
-		this.#buttons.push(button)
+		this.buttons.push(button)
 		return this
 	}
 
 	setAxis(axis: number, direction: 'up' | 'down') {
-		this.#axis.push({ index: axis, direction })
+		this.axis.push({ index: axis, direction })
 		return this
 	}
 
 	update(gamepad?: Gamepad) {
-		for (const code of this.#codes) {
+		for (const code of this.codes) {
 			if (keys[code]) {
 				this.pressed = 1
 			}
 		}
-		if (this.#touchAxis && Math.abs(touchJoystickInputs[this.#touchAxis]) > 0.01) {
-			this.pressed = touchJoystickInputs[this.#touchAxis]
+		if (this.touchAxis && Math.abs(touchJoystickInputs[this.touchAxis]) > 0.01) {
+			this.pressed = touchJoystickInputs[this.touchAxis]
 		}
 		if (gamepad) {
-			for (const button of this.#buttons) {
+			for (const button of this.buttons) {
 				if (gamepad.buttons[button].pressed) {
 					this.pressed = gamepad.buttons[button].value
 				}
 			}
-			for (const axis of this.#axis) {
+			for (const axis of this.axis) {
 				if (Math.abs(gamepad.axes[axis.index]) > 0.2 && (gamepad.axes[axis.index] > 0) !== (axis.direction === 'up')) {
 					this.pressed = Math.abs(gamepad.axes[axis.index])
 				}

@@ -1778,18 +1778,18 @@
 					"entityInstances": [
 						{
 							"__identifier": "NPC",
-							"__grid": [11,9],
+							"__grid": [5,25],
 							"__pivot": [0.5,0.5],
 							"__tags": [],
 							"__tile": null,
 							"__smartColor": "#BE4A2F",
-							"__worldX": 56,
-							"__worldY": 76,
+							"__worldX": 8,
+							"__worldY": 204,
 							"iid": "3eb7a3e0-3b70-11ee-9a11-0dd499608729",
 							"width": 8,
 							"height": 8,
 							"defUid": 102,
-							"px": [88,76],
+							"px": [40,204],
 							"fieldInstances": [{ "__identifier": "name", "__type": "String", "__value": "howard", "__tile": null, "defUid": 103, "realEditorValues": [{
 								"id": "V_String",
 								"params": ["howard"]

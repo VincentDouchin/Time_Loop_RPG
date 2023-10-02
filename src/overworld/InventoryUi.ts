@@ -14,15 +14,22 @@ export class Inventory { }
 export class InventoryIcon { }
 
 export const spawnInventoryToggle = () => {
-	ecs
+	const bag = ecs
 		.spawn(
-			UIElement.fromImage(assets.ui.inventory, 10).setStyles({ width: '10vh', height: '10vh', position: 'fixed', top: '10vh', left: '10vh', display: 'grid', placeItems: 'center' }),
+			UIElement.fromImage(assets.ui.inventory, 10).setStyles({ width: '10vh', height: '10vh', position: 'relative', top: '10vh', left: '10vh', display: 'grid', placeItems: 'center' }),
 			new Interactable(InteractableType.InventoryToggle),
 			new MenuInputInteractable('Inventory'),
 			new OverWorldUI(),
 			new InventoryIcon(),
-
 		)
+	ecs.onNextTick(() => {
+		const menuInputMap = menuInputQuery.extract()
+		if (menuInputMap) {
+			const bundle = UIElement.inputIcon(menuInputMap.get('Inventory'))
+			bundle[0].setStyles({ position: 'absolute', right: '10%', bottom: '10%', scale: 2.5 })
+			bag.spawn(...bundle)
+		}
+	})
 }
 const inventoryQuery = ecs.query.pick(Entity).with(Inventory)
 export const openInventory = () => {

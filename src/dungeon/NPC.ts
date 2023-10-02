@@ -10,7 +10,9 @@ import { TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { NineSlice } from '@/ui/NineSlice'
 import { TextElement, UIElement } from '@/ui/UiElement'
-import { Menu } from '@/ui/menu'
+import { Menu, UnderlineOnSelected } from '@/ui/menu'
+import { Interactable } from '@/lib/interactions'
+import { MenuInputInteractable, menuInputQuery } from '@/menus/menuInputs'
 
 interface NPCLDTK {
 	name: characters
@@ -18,18 +20,25 @@ interface NPCLDTK {
 
 @Component(ecs)
 export class NPC extends LDTKEntityInstance<NPCLDTK> {}
+@Component(ecs)
+export class CanTalk {
+	constructor(public entity: Entity | null = null) {}
+}
 
 @Component(ecs)
 export class Dialog {
 	#dialog: Generator
 	current?: string | string[]
+	finished = false
 	text: TextElement | null = null
 	constructor(dialogResolver: () => Generator) {
 		this.#dialog = dialogResolver()
 	}
 
 	step(index?: number) {
-		this.current = this.#dialog.next(index).value
+		const next = this.#dialog.next(index)
+		this.current = next.value
+		this.finished = next.done ?? true
 		return this.current
 	}
 
@@ -63,6 +72,7 @@ export class DialogOption {
 export class DialogContainer {
 	constructor(public dialog?: Dialog) {}
 }
+
 const dialogQuery = ecs.query.pick(Entity, Position, Dialog, Menu)
 const dialogContainerQuery = ecs.query.pick(Entity, DialogContainer)
 const playerQuery = ecs.query.pick(PlayerInputMap, Position)
@@ -77,12 +87,15 @@ export const stepDialog = (dialog: Dialog, menu: Menu) => {
 		if (line) {
 			const lines = typeof line === 'string' ? [line] : line
 			const boxes = lines.map((line, index) => {
-				const box = bubble.spawn(new UIElement(), new DialogOption(index))
+				const box = bubble.spawn(new UIElement(), new Interactable(), new DialogOption(index))
 				box.spawn(new TextElement(line))
 				return box
 			}).filter(Boolean)
+			menu.fromColumn(...boxes)
 			if (boxes.length > 1) {
-				menu.fromColumn(...boxes)
+				for (const box of boxes) {
+					box.addComponent(new UnderlineOnSelected())
+				}
 			}
 		}
 	}
@@ -92,12 +105,19 @@ export const startDialogDungeon = () => {
 	for (const [playerInputs, playerPosition] of playerQuery.getAll()) {
 		for (const [entity, position, dialog, menu] of dialogQuery.getAll()) {
 			if (playerPosition.distanceTo(position) < 16) {
-				if (playerInputs.get('interact').justPressed) {
+				if (!entity.getComponent(CanTalk) && !dialog.finished && !dialog.current) {
+					entity.addComponent(new CanTalk())
+				}
+				const menuInputs = menuInputQuery.extract()
+				if (playerInputs.get('interact').justPressed || menuInputs?.get('Enter').justReleased) {
+					entity.removeComponent(CanTalk)
 					if (!dialogContainerQuery.size) {
 						entity.spawn(
 							...new UIElement({ color: 'black', display: 'grid', gap: '0.2rem', padding: '0.2rem' }).withWorldPosition(0, 8),
 							new NineSlice(assets.ui.textbox, 4, 3),
 							new DialogContainer(dialog),
+							new Interactable(),
+							new MenuInputInteractable('Enter'),
 						)
 					}
 					ecs.onNextTick(() => stepDialog(dialog, menu))
@@ -110,6 +130,7 @@ export const startDialogDungeon = () => {
 					}
 				}
 			} else {
+				entity.removeComponent(CanTalk)
 				for (const [entity, container] of dialogContainerQuery.getAll()) {
 					if (container.dialog === dialog) {
 						entity.despawn()
@@ -117,5 +138,20 @@ export const startDialogDungeon = () => {
 				}
 			}
 		}
+	}
+}
+
+const addedTalkQuery = ecs.query.pick(Entity, CanTalk, Dialog).added(CanTalk)
+const removedTalkQuery = ecs.query.pick(CanTalk).removed(CanTalk)
+export const addTalkingIcon = () => {
+	for (const [entity, canTalk] of addedTalkQuery.getAll()) {
+		canTalk.entity = entity.spawn(
+			...UIElement.fromImage(assets.ui.dialogIcon, 4).withWorldPosition(0, 8),
+			new Interactable(),
+			new MenuInputInteractable('Enter'),
+		)
+	}
+	for (const [canTalk] of removedTalkQuery.getAll()) {
+		canTalk.entity?.despawn()
 	}
 }

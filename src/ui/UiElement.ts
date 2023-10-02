@@ -1,10 +1,16 @@
 import type { Properties, StandardProperties } from 'csstype'
 import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer'
-import { ecs } from '@/globals/init'
+import { assets, ecs } from '@/globals/init'
 import { Component } from '@/lib/ECS'
 import { Position } from '@/lib/transforms'
-import { toCanvas } from '@/utils/buffer'
+import { getScreenBuffer, toCanvas } from '@/utils/buffer'
 import { Tween } from '@/lib/tween'
+import type { Input } from '@/lib/inputs'
+
+@Component(ecs)
+export class InputIcon {
+	constructor(public input: Input) {}
+}
 
 @Component(ecs)
 export class UIElement extends HTMLDivElement {
@@ -25,25 +31,6 @@ export class UIElement extends HTMLDivElement {
 		return this
 	}
 
-	static fromImage(source: HTMLCanvasElement | OffscreenCanvas, scale = 1) {
-		const canvas = source instanceof OffscreenCanvas ? toCanvas(source) : source
-		return new UIElement({
-			backgroundImage: `url(${canvas.toDataURL()})`,
-			width: `${canvas.width * scale}px`,
-			height: `${canvas.height * scale}px`,
-			imageRendering: 'pixelated',
-			backgroundSize: 'cover',
-		})
-	}
-
-	get center() {
-		const coords = this.getBoundingClientRect()
-		return {
-			x: coords.left + this.clientWidth / 2,
-			y: coords.top + this.clientHeight / 2,
-		}
-	}
-
 	moveTo(target: UIElement, duration: number) {
 		const targetCoord = target.getBoundingClientRect()
 		const initialCoord = this.getBoundingClientRect()
@@ -56,6 +43,22 @@ export class UIElement extends HTMLDivElement {
 
 	withWorldPosition(x = 0, y = 0) {
 		return [this, new CSS2DObject(this), new Position(x, y)]
+	}
+
+	static fromImage(source: HTMLCanvasElement | OffscreenCanvas, scale = 1) {
+		const canvas = source instanceof OffscreenCanvas ? toCanvas(source) : source
+		return new UIElement({
+			backgroundImage: `url(${canvas.toDataURL()})`,
+			width: `${canvas.width * scale}px`,
+			height: `${canvas.height * scale}px`,
+			imageRendering: 'pixelated',
+			backgroundSize: 'cover',
+		})
+	}
+
+	static inputIcon(input: Input) {
+		const img = assets.inputs('keyboard', input.codes[0]) ?? getScreenBuffer(16, 16).canvas
+		return [UIElement.fromImage(img), new InputIcon(input)] as const
 	}
 }
 customElements.define('ui-element', UIElement, { extends: 'div' })

@@ -14,7 +14,7 @@ export class AssetLoader< T = { default: string } > {
 		return this as AssetLoader<Awaited<ReturnType<F>>>
 	}
 
-	async loadAsync<K extends string>(glob: Record<string, T>) {
+	async loadRecord<K extends string>(glob: Record<string, T>) {
 		return await this.#fn(glob) as Promise<Record< K, T[keyof T]>>
 	}
 }

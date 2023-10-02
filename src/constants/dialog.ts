@@ -28,7 +28,6 @@ export const dialog: Partial<Record<characters | `sign${string}`, () => Generato
 		case 1:yield 'Alright!'
 			break
 		}
-
 		yield unlockPlayer()
 	},
 	*banditOldMan() {
