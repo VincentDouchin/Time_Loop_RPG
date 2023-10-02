@@ -1,5 +1,5 @@
-import { spawnOverworldCharacter } from './spawnOverworldCharacter'
 import { CurrentNode } from './navigation'
+import { spawnOverworldCharacter } from './spawnOverworldCharacter'
 import { assets, ecs } from '@/globals/init'
 import { LDTKEntityInstance } from '@/level/LDTKEntity'
 import { NavNode } from '@/level/NavNode'
@@ -11,7 +11,6 @@ import { Sprite } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { save, saveToLocalStorage } from '@/save/saveData'
 import { getOffscreenBuffer } from '@/utils/buffer'
-import { showEndOfDemo } from '@/dungeon/endOfDemo'
 
 @Component(ecs)
 export class Map {}
