@@ -48,3 +48,4 @@ for (const [folder, files] of Object.entries(animations)) {
 }
 result += '}'
 await writeFile(path.join(process.cwd(), 'assets', 'assets.d.ts'), result)
+console.log('regenerated asset names')

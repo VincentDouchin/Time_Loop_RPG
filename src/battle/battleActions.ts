@@ -156,22 +156,31 @@ export const selectTargets = (battler: Battler) => {
 		battler.targets = potentialTargets
 	}
 }
+const playEffect = async (parent: Entity, atlas: TextureAtlas<any>, effects: characterAnimations['battleEffects'][]): Promise<void> => {
+	const effectsAtlas = TextureAtlas.bundle(assets.characters.battleEffects, effects[0], atlas.directionX, atlas.directionY)
+	const effect = parent.spawn(new Position(), ...effectsAtlas)
+	await effectsAtlas[2].playAnimation(...effects)
+	effect.despawn()
+}
+
 const battlerToTakeActionOnQuery = ecs.query.pick(Entity, TextureAtlas, Health, Battler)
 export const takeAction = (battlerTakingAction: Battler) => {
 	battlerTakingAction.takingAction = true
 	for (const [entity, atlas, _health, battler] of battlerToTakeActionOnQuery.getAll()) {
 		if (battler === battlerTakingAction) {
 			if (battler.currentAction?.selfEffects) {
-				const effectsAtlas = TextureAtlas.bundle(assets.characters.battleEffects, battler.currentAction.selfEffects[0], atlas.directionX, atlas.directionY)
-				const effect = entity.spawn(new Position(), ...effectsAtlas)
-				effectsAtlas[2].playAnimation(...battler.currentAction.selfEffects).then(() => {
-					effect.despawn()
-				})
+				playEffect(entity, atlas, battler.currentAction.selfEffects)
 			}
 			atlas.playAnimation(...battler.currentAction!.animation).then(() => {
 				for (const [enemyEntity, enemyAtlas, enemyHealth, _enemyBattler] of battlerToTakeActionOnQuery.getAll()) {
 					if (battler.targets.includes(enemyEntity)) {
-						enemyAtlas.playAnimation('dmg').then(() => {
+						// !DAMAGE ANIMATIONS
+						(async () => {
+							if (battler.currentAction?.targetEffects) {
+								await playEffect(enemyEntity, enemyAtlas, battler.currentAction.targetEffects)
+							}
+							await enemyAtlas.playAnimation('dmg')
+						})().then(() => {
 							enemyHealth.currentHealth--
 							battler.finishedTurn = true
 							battler.currentTurn = false

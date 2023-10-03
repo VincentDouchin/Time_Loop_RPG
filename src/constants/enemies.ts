@@ -3,7 +3,7 @@ import { ecs } from '@/globals/init'
 import type { Class } from '@/lib/ECS'
 import { Component } from '@/lib/ECS'
 
-export interface Enemy<K extends keyof characterAnimations> {
+export interface Enemy<K extends keyof characterAnimations = keyof characterAnimations > {
 	atlas: K
 	actions: readonly BattleAction<K>[]
 	additionalComponents?: readonly (() => InstanceType<Class>)[]

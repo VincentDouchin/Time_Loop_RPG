@@ -1,6 +1,10 @@
-import { Health } from './health'
 import { Battler, BattlerMenu, selectAction, selectNextBattler, selectTargets, takeAction } from './battleActions'
 import { Cutscene } from './cutscenes'
+import { Health } from './health'
+import { spawnBattleUi } from './battleUi'
+import { ActionSelector, BattlerType, PlayerActions, TargetSelector } from '@/constants/actions'
+import type { Enemy } from '@/constants/enemies'
+import { Player } from '@/genericComponents/components'
 import { assets, despawnEntities, ecs } from '@/globals/init'
 import { Component, Entity } from '@/lib/ECS'
 import { Interactable } from '@/lib/interactions'
@@ -8,35 +12,20 @@ import { type TextureAltasStates, TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { Tween } from '@/lib/tween'
 import { overworldState } from '@/main'
+import { gameOver, save, saveToLocalStorage } from '@/save/saveData'
 import { OutlineShader } from '@/shaders/OutlineShader'
 import { NineSlice } from '@/ui/NineSlice'
 import { TextElement, UIElement } from '@/ui/UiElement'
 import { Selected } from '@/ui/menu'
 import { sleep } from '@/utils/timing'
-import { ActionSelector, BattlerType, PlayerActions, TargetSelector } from '@/constants/actions'
-import { gameOver, save, saveToLocalStorage } from '@/save/saveData'
-import type { Enemy } from '@/constants/enemies'
-import { DialogContainer } from '@/dungeon/NPC'
-import { Player } from '@/genericComponents/components'
-import { MenuInputInteractable } from '@/menus/menuInputs'
 
-const spawnBattleUi = () => {
-	ecs.spawn(
-		new UIElement({ width: '50%', height: '50px', alignSelf: 'end', justifySelf: 'center', display: 'grid', gridTemplateColumns: '1fr 1fr', placeItems: 'center' }),
-		new NineSlice(assets.ui.frameornate, 8, 4),
-		new BattlerMenu(),
-		new DialogContainer(),
-		new Interactable(),
-		new MenuInputInteractable('Enter'),
-	)
-}
 const battlerSpriteBundle = (side: 'left' | 'right', textureAtlas: TextureAltasStates<'walk' | 'idle'>, background: number, index: number = 0, length: number = 1) => {
 	const bundle = TextureAtlas.bundle<'walk' | 'idle'>(textureAtlas, 'walk', side, 'down')
 	const [sprite, _, atlas] = bundle
 	sprite.setRenderOrder(10)
 
 	const direction = side === 'right' ? -1 : 1
-	const width = sprite.scaledDimensions.x / 2
+	const width = sprite.scaledDimensions.x
 	const height = sprite.scaledDimensions.y / 2
 	const edge = (assets.levels.minibattle.levels[background].pxWid / 2 - (width / 2)) * direction
 	const position = new Position(edge, index * height - height * length / 2)

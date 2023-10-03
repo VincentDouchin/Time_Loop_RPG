@@ -1,15 +1,12 @@
 import path from 'node:path'
 import type { UserConfig } from 'vite'
 import { defineConfig } from 'vite'
+import watchAssets from './scripts/generateAssetNamesPlugin'
 
 // https://vitejs.dev/config/
 export default defineConfig(() => {
 	const config: UserConfig = {
-		server: {
-			watch: {
-				ignored: /assets/,
-			},
-		},
+		plugins: [watchAssets()],
 		base: '',
 
 		build: {

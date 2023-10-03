@@ -27,6 +27,7 @@ export interface BattleAction<K extends keyof characterAnimations> {
 	animation: characterAnimations[K][]
 	weapon?: string
 	selfEffects?: characterAnimations['battleEffects'][]
+	targetEffects?: characterAnimations['battleEffects'][]
 
 }
 export enum ActionSelector {
@@ -55,6 +56,7 @@ export const PlayerActions: { [k in playerNames]: BattleAction<k>[] } = {
 			type: ActionType.Damage,
 			animation: ['dictum'],
 			selfEffects: ['blades-start', 'blades-middle', 'blades-middle', 'blades-end'],
+			targetEffects: ['blades-dictum-effect'],
 		},
 	],
 }

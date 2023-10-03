@@ -85,13 +85,14 @@ export const moveOverworldCharacter = () => {
 						.onComplete(() => {
 							if (target && targetNode && selectedDirection) {
 								atlas.state = 'idle'
-								updateSteps(-1)
+
 								if (save.steps > 0) {
 									target.addComponent(new CurrentNode())
 									ecs.onNextTick(() => entity.addComponent(new DecidingDirection()))
 								}
 								save.lastDirection = selectedDirection
 								saveToLocalStorage()
+								updateSteps(-1)
 								save.lastNodeUUID = targetNode.id
 								if (targetNode.data.Battle) {
 									save.lastBattle = targetNode.data.Battle
