@@ -1,14 +1,15 @@
+export type playerNames = 'paladin' & characters
 export interface PlayerData {
-	animations: characters
+	name: playerNames
 	health: number
 	currentHealth: null | number
 }
 
 export const players = {
 	paladin: {
-		animations: 'paladin',
+		name: 'paladin',
 		health: 20,
 		currentHealth: null,
 	},
 
-} as const satisfies Record<string, PlayerData>
+} as const satisfies Record<playerNames, PlayerData>

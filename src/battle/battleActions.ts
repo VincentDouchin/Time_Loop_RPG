@@ -2,10 +2,11 @@ import { Health } from './health'
 import type { BattleAction, BattlerType } from '@/constants/actions'
 import { ActionSelector, TargetSelector, TargetType } from '@/constants/actions'
 import { DialogOption } from '@/dungeon/NPC'
-import { ecs } from '@/globals/init'
+import { assets, ecs } from '@/globals/init'
 import { Component, Entity } from '@/lib/ECS'
 import { Interactable } from '@/lib/interactions'
 import { TextureAtlas } from '@/lib/sprite'
+import { Position } from '@/lib/transforms'
 import { ColorShader } from '@/shaders/ColorShader'
 import { TextElement, UIElement } from '@/ui/UiElement'
 import { Menu, Selected, UnderlineOnSelected } from '@/ui/menu'
@@ -17,7 +18,7 @@ export class EnemySelectMenu {}
 
 @Component(ecs)
 export class PlayerActionItem {
-	constructor(public action: BattleAction) {}
+	constructor(public action: BattleAction<any>) {}
 }
 
 @Component(ecs)
@@ -26,10 +27,10 @@ export class Battler {
 	finishedTurn = false
 	takingAction = false
 	targets: Entity[] = []
-	currentAction: BattleAction | null = null
+	currentAction: BattleAction<any> | null = null
 	constructor(
 		public type: BattlerType,
-		public actions: readonly BattleAction[],
+		public actions: readonly BattleAction<any>[],
 		public actionSelector: ActionSelector,
 		public targetSelector: TargetSelector,
 	) {}
@@ -158,14 +159,19 @@ export const selectTargets = (battler: Battler) => {
 const battlerToTakeActionOnQuery = ecs.query.pick(Entity, TextureAtlas, Health, Battler)
 export const takeAction = (battlerTakingAction: Battler) => {
 	battlerTakingAction.takingAction = true
-	for (const [_entity, atlas, _health, battler] of battlerToTakeActionOnQuery.getAll()) {
+	for (const [entity, atlas, _health, battler] of battlerToTakeActionOnQuery.getAll()) {
 		if (battler === battlerTakingAction) {
-			atlas.playAnimation(battler.currentAction!.animation).then(() => {
-				atlas.state = 'idle'
+			if (battler.currentAction?.selfEffects) {
+				const effectsAtlas = TextureAtlas.bundle(assets.characters.battleEffects, battler.currentAction.selfEffects[0], atlas.directionX, atlas.directionY)
+				const effect = entity.spawn(new Position(), ...effectsAtlas)
+				effectsAtlas[2].playAnimation(...battler.currentAction.selfEffects).then(() => {
+					effect.despawn()
+				})
+			}
+			atlas.playAnimation(...battler.currentAction!.animation).then(() => {
 				for (const [enemyEntity, enemyAtlas, enemyHealth, _enemyBattler] of battlerToTakeActionOnQuery.getAll()) {
 					if (battler.targets.includes(enemyEntity)) {
 						enemyAtlas.playAnimation('dmg').then(() => {
-							enemyAtlas.state = 'idle'
 							enemyHealth.currentHealth--
 							battler.finishedTurn = true
 							battler.currentTurn = false

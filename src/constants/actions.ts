@@ -1,3 +1,5 @@
+import type { playerNames } from './players'
+
 export enum BattlerType {
 	Player,
 	Enemy,
@@ -16,14 +18,16 @@ export enum ActionType {
 	Heal,
 	Flee,
 }
-export interface BattleAction {
+export interface BattleAction<K extends keyof characterAnimations> {
 	label: string
 	target: TargetType
 	targetAmount: number
 	power: number
 	type: ActionType
-	animation: string
+	animation: characterAnimations[K][]
 	weapon?: string
+	selfEffects?: characterAnimations['battleEffects'][]
+
 }
 export enum ActionSelector {
 	PlayerMenu,
@@ -33,38 +37,33 @@ export enum TargetSelector {
 	PlayerTargetMenu,
 	EnemyAuto,
 }
-export const PlayerActions: Record<string, BattleAction> = {
-	attack: {
-		label: 'Attack',
-		target: TargetType.Others,
-		power: 1,
-		targetAmount: 1,
-		type: ActionType.Damage,
-		animation: 'attack',
-	},
-	flee: {
-		label: 'Flee',
-		target: TargetType.Self,
-		power: 0,
-		targetAmount: 0,
-		type: ActionType.Flee,
-		animation: 'walk',
-	},
+export const PlayerActions: { [k in playerNames]: BattleAction<k>[] } = {
+	paladin: [
+		{
+			label: 'Attack',
+			target: TargetType.Others,
+			power: 1,
+			targetAmount: 1,
+			type: ActionType.Damage,
+			animation: ['attack'],
+		},
+		{
+			label: 'Blades',
+			target: TargetType.Others,
+			power: 1,
+			targetAmount: 1,
+			type: ActionType.Damage,
+			animation: ['dictum'],
+			selfEffects: ['blades-start', 'blades-middle', 'blades-middle', 'blades-end'],
+		},
+	],
 }
 
-export const singleEnemyAttack = (animation = 'attack', power = 1) => ({
+export const singleEnemyAttack = <A extends string>(animation: A, power = 1) => ({
 	label: 'Attack',
 	target: TargetType.Others,
 	power,
 	targetAmount: 1,
 	type: ActionType.Damage,
-	animation,
+	animation: [animation],
 })
-export const defaultEnemyAction = {
-	label: 'Attack',
-	target: TargetType.Others,
-	power: 1,
-	targetAmount: 1,
-	type: ActionType.Damage,
-	animation: 'attack',
-}

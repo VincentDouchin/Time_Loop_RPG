@@ -1,8 +1,10 @@
+import { easing } from 'ts-easing'
 import { OverWorldUI } from './overworldUi'
 import { items } from '@/constants/items'
 import { assets, ecs } from '@/globals/init'
 import { Component, Entity } from '@/lib/ECS'
 import { Interactable, InteractableType } from '@/lib/interactions'
+import { Tween } from '@/lib/tween'
 import { MenuInputInteractable, menuInputQuery } from '@/menus/menuInputs'
 import { save } from '@/save/saveData'
 import { NineSlice } from '@/ui/NineSlice'
@@ -31,14 +33,16 @@ export const spawnInventoryToggle = () => {
 		}
 	})
 }
-const inventoryQuery = ecs.query.pick(Entity).with(Inventory)
+const inventoryQuery = ecs.query.pick(Entity, UIElement).with(Inventory)
 export const openInventory = () => {
 	for (const [inputs] of menuInputQuery.getAll()) {
 		if (inputs.get('Inventory').justPressed) {
 			if (inventoryQuery.size === 0) {
+				const inventoryElement = new UIElement({ margin: '10vh 10vh 10vh 10vh', display: 'grid', gap: '0.5vh', gridTemplateColumns: 'repeat(6, 1fr)', width: 'fit-content', placeSelf: 'center' })
 				ecs
 					.spawn(
-						new UIElement({ margin: '10vh 10vh 10vh 10vh', display: 'grid', gap: '1vh', gridTemplateColumns: 'repeat(6, 1fr)', width: 'fit-content', placeSelf: 'center' }), new NineSlice(assets.ui.frameornate, 8, 4),
+						inventoryElement,
+						new NineSlice(assets.ui.frameornate, 8, 4),
 						new Inventory(),
 					)
 					.withChildren((inventory) => {
@@ -46,7 +50,7 @@ export const openInventory = () => {
 							const spot = inventory.spawn(
 								UIElement
 									.fromImage(assets.ui.itemspot)
-									.setStyles({ width: '10vh', height: '10vh', display: 'grid', placeItems: 'center' }),
+									.setStyles({ width: '15vh', height: '15vh', display: 'grid', placeItems: 'center' }),
 							)
 							const itemName = save.treasureFound[i]
 							if (itemName) {
@@ -57,9 +61,14 @@ export const openInventory = () => {
 							}
 						}
 					})
+				new Tween(300).easing(easing.inOutExpo).onUpdate((r) => {
+					inventoryElement.setStyles({ translate: `0% ${r}%` })
+				}, 200, 0)
 			} else {
-				for (const [entity] of inventoryQuery.getAll()) {
-					entity.despawn()
+				for (const [entity, inventoryElement] of inventoryQuery.getAll()) {
+					new Tween(300).easing(easing.inOutExpo).onUpdate((r) => {
+						inventoryElement.setStyles({ translate: `0% ${r}%` })
+					}, 0, 200).onComplete(() => entity.despawn())
 				}
 			}
 		}

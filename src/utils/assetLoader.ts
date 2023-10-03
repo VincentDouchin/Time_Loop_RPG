@@ -38,7 +38,7 @@ export const getAnimationName = (path: string) => {
 	if (fromCreatures !== -1) {
 		parts = parts.filter((_, i) => i !== fromCreatures && i !== fromCreatures + 1)
 	}
-	return parts.join('')
+	return parts.join('-')
 }
 export const getCharacterName = (path: string) => getFolderName(path).replace('_', '') as characters
 

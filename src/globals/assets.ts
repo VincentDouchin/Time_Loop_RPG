@@ -126,7 +126,7 @@ const inputsLoader = async (glob: Record<string, { default: string }>) => {
 export const loadAssets = async () => {
 	const levels = await levelLoader.loadRecord<levels>(import.meta.glob('./../../assets/levels/*.json', { eager: true }))
 	const tilesets = await imagesLoader.loadRecord<tilesets>(import.meta.glob('./../../assets/tilesets/*.png', { eager: true }))
-	const characters = await characterLoader.loadRecord<characters>(import.meta.glob('./../../assets/characters/**/*[!Shadows].png', { eager: true }))
+	const characters = await characterLoader.loadRecord<characters>(import.meta.glob('./../../assets/characters/**/*.png', { eager: true }))
 	const ui = await uiLoader.loadRecord<ui>(import.meta.glob('./../../assets/ui/*.png', { eager: true }))
 	const fonts = await fontLoader.loadRecord<fonts>(import.meta.glob('./../../assets/fonts/*.*', { eager: true }))
 	const animatedTextures = await animateSpritesLoader.loadRecord<items>(import.meta.glob('./../../assets/items/**/*.png', { eager: true }))

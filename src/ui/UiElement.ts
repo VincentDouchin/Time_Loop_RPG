@@ -42,7 +42,7 @@ export class UIElement extends HTMLDivElement {
 	}
 
 	withWorldPosition(x = 0, y = 0) {
-		return [this, new CSS2DObject(this), new Position(x, y)]
+		return [this, new CSS2DObject(this), new Position(x, y)] as const
 	}
 
 	static fromImage(source: HTMLCanvasElement | OffscreenCanvas, scale = 1) {

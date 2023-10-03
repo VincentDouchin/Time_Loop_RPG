@@ -13,6 +13,7 @@ import { TextElement, UIElement } from '@/ui/UiElement'
 import { Menu, UnderlineOnSelected } from '@/ui/menu'
 import { Interactable } from '@/lib/interactions'
 import { MenuInputInteractable, menuInputQuery } from '@/menus/menuInputs'
+import { Tween } from '@/lib/tween'
 
 interface NPCLDTK {
 	name: characters
@@ -112,14 +113,18 @@ export const startDialogDungeon = () => {
 				if (playerInputs.get('interact').justReleased || menuInputs?.get('Enter').justReleased) {
 					entity.removeComponent(CanTalk)
 					if (!dialogContainerQuery.size) {
+						const bundle = new UIElement({ color: 'black', display: 'grid', gap: '0.2rem', padding: '0.2rem', maxWidth: '200px', translate: '0% -50%' }).withWorldPosition(0, 8)
 						entity
 							.spawn(
-								...new UIElement({ color: 'black', display: 'grid', gap: '0.2rem', padding: '0.2rem', maxWidth: '200px', translate: '0% -50%' }).withWorldPosition(0, 8),
+								...bundle,
 								new NineSlice(assets.ui.textbox, 4, 3),
 								new DialogContainer(dialog),
 								new Interactable(),
 								new MenuInputInteractable('Enter'),
 							)
+						new Tween(100)
+							.onUpdate(r => bundle[0].setStyles({ translate: `0px ${r}px` }), 16, 0)
+							.onUpdate(r => bundle[0].setStyles({ opacity: r }), 0, 1)
 					}
 					ecs.onNextTick(() => stepDialog(dialog, menu))
 				}

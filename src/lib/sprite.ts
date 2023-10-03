@@ -94,9 +94,21 @@ export class Animator extends Timer {
 
 @Component(ecs)
 export class TextureAtlas<K extends string> {
+	nextStates: K[] = []
 	index = 0
-	animationsPlaying = new Set<(val?: unknown) => void>()
-	constructor(public atlas: TextureAltasStates<K>, public state: K, public directionX: directionX = 'left', public directionY: directionY = 'down') {}
+	animationsPlaying: Array<(val?: unknown) => void> = []
+	constructor(public atlas: TextureAltasStates<K>, state: K, public directionX: directionX = 'left', public directionY: directionY = 'down') {
+		this.nextStates = [state]
+	}
+
+	get state() {
+		return this.nextStates[0]
+	}
+
+	set state(newState: K) {
+		this.nextStates[0] = newState
+	}
+
 	get currentSpeed() {
 		return this.atlas.speed[this.state] ?? this.atlas.speed.default
 	}
@@ -121,15 +133,20 @@ export class TextureAtlas<K extends string> {
 	}
 
 	changeIndex(nb: number) {
-		const newIndex = (this.index + nb) % (this.#currentAtlas?.length ?? 0)
-		if (newIndex === (this.#currentAtlas?.length ?? 0) - 1) {
-			for (const resolve of this.animationsPlaying) {
-				resolve()
-				this.animationsPlaying.delete(resolve)
+		const newIndex = (this.index + nb)
+		if (newIndex === (this.#currentAtlas?.length ?? 0)) {
+			const res = this.animationsPlaying.shift()
+			if (this.nextStates.length > 1) {
+				this.nextStates.shift()
+				this.index = 0
+			}
+			if (res) {
+				res()
 			}
 		}
+
 		if (this.index !== newIndex) {
-			this.index = newIndex
+			this.index = newIndex % (this.#currentAtlas?.length ?? 0)
 		}
 	}
 
@@ -145,11 +162,14 @@ export class TextureAtlas<K extends string> {
 		this.changeIndex(-1)
 	}
 
-	playAnimation(state: K) {
-		this.state = state
-		return new Promise((resolve) => {
-			this.animationsPlaying.add(resolve)
-		})
+	playAnimation(...states: K[]) {
+		this.index = 0
+		this.nextStates = [...states, this.state]
+		return Promise.all(states.map(() => {
+			return new Promise((resolve) => {
+				this.animationsPlaying.push(resolve)
+			})
+		}))
 	}
 }
 

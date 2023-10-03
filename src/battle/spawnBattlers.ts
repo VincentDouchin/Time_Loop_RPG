@@ -49,10 +49,10 @@ const battlerSpriteBundle = (side: 'left' | 'right', textureAtlas: TextureAltasS
 export const spawnBattlers = (battle: Entity, background: number, enemies: readonly Enemy[]) => {
 	// ! PLAYER
 	for (const playerData of save.players) {
-		const bundle = battlerSpriteBundle('right', assets.characters[playerData.animations], background)
+		const bundle = battlerSpriteBundle('right', assets.characters[playerData.name], background)
 		const player = battle.spawn(...bundle, Health.fromPlayerData(playerData), new Player())
 		new Tween(2000)
-			.onComplete(() => player.addComponent(new Battler(BattlerType.Player, [PlayerActions.attack, PlayerActions.flee], ActionSelector.PlayerMenu, TargetSelector.PlayerTargetMenu)))
+			.onComplete(() => player.addComponent(new Battler(BattlerType.Player, PlayerActions[playerData.name], ActionSelector.PlayerMenu, TargetSelector.PlayerTargetMenu)))
 	}
 
 	// !ENEMIES

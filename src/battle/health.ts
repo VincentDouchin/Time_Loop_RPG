@@ -12,7 +12,7 @@ export class Health {
 	}
 
 	static fromPlayerData(playerData: PlayerData) {
-		return new Health(playerData.health, playerData.currentHealth, playerData.animations)
+		return new Health(playerData.health, playerData.currentHealth, playerData.name)
 	}
 }
 
@@ -47,7 +47,7 @@ const healthQuery = ecs.query.pick(Health)
 export const savePlayerHealth = () => {
 	for (const [health] of healthQuery.getAll()) {
 		if (health.label) {
-			const playerData = save.players.find(player => player.animations === health.label)
+			const playerData = save.players.find(player => player.name === health.label)
 			if (playerData && playerData.currentHealth !== health.currentHealth) {
 				playerData.currentHealth = health.currentHealth
 			}

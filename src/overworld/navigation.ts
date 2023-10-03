@@ -76,14 +76,15 @@ export const moveOverworldCharacter = () => {
 				const targetNode = target.getComponent(NavNode)
 				if (targetPosition) {
 					atlas.state = 'walk'
+
 					entity.removeComponent(DecidingDirection)
+					currentNodeQuery.extract()?.removeComponent(CurrentNode)
 					new Tween(position.distanceTo(targetPosition) * 20)
 						.onUpdate(y => position.y = y, position.y, targetPosition.y)
 						.onUpdate(x => position.x = x, position.x, targetPosition.x)
 						.onComplete(() => {
 							if (target && targetNode && selectedDirection) {
 								atlas.state = 'idle'
-								currentNodeQuery.extract()?.removeComponent(CurrentNode)
 								updateSteps(-1)
 								if (save.steps > 0) {
 									target.addComponent(new CurrentNode())

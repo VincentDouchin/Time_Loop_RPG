@@ -3,9 +3,9 @@ import { ecs } from '@/globals/init'
 import type { Class } from '@/lib/ECS'
 import { Component } from '@/lib/ECS'
 
-export interface Enemy {
-	atlas: characters
-	actions: readonly BattleAction[]
+export interface Enemy<K extends keyof characterAnimations> {
+	atlas: K
+	actions: readonly BattleAction<K>[]
 	additionalComponents?: readonly (() => InstanceType<Class>)[]
 }
 @Component(ecs)
@@ -23,14 +23,14 @@ export const enemies = {
 	},
 	angelOfDeath: {
 		atlas: 'angelOfDeath',
-		actions: [singleEnemyAttack()],
+		actions: [singleEnemyAttack('attack')],
 	},
 	bat: {
 		atlas: 'bat',
-		actions: [singleEnemyAttack()],
+		actions: [singleEnemyAttack('attack')],
 	},
 	wolf: {
 		atlas: 'wolf',
-		actions: [singleEnemyAttack()],
+		actions: [singleEnemyAttack('attack')],
 	},
-} as const satisfies Record<string, Enemy>
+} as const satisfies { [k in keyof characterAnimations]?: Enemy<k> }
