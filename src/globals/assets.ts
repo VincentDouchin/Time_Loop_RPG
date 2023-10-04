@@ -123,6 +123,25 @@ const inputsLoader = async (glob: Record<string, { default: string }>) => {
 	const img = await loadImage(Object.values(glob)[0].default)
 	return await inputs(img)
 }
+const heroIconsNames = [
+	['bard', 'attack1', 'attack2', 'attack3', 'attack4'],
+	['cleric', 'attack1', 'attack2', 'attack3', 'attack4'],
+	['paladin', 'attack1', 'attack2', 'attack3', 'attack4'],
+] as const
+const heroIconsLoader = new AssetLoader()
+	.pipe(async (glob) => {
+		const res: Record<string, HTMLCanvasElement> = {}
+		const img = await loadImage(Object.values(glob)[0].default)
+		for (let y = 0; y < 3; y++) {
+			for (let x = 0; x < 5; x++) {
+				const buffer = getScreenBuffer(8, 8)
+				buffer.drawImage(img, x * 16 + 8, y * 16 + 8, 8, 8, 0, 0, 8, 8)
+				res[heroIconsNames[y][x]] = buffer.canvas
+			}
+		}
+		return res
+	})
+
 export const loadAssets = async () => {
 	const levels = await levelLoader.loadRecord<levels>(import.meta.glob('./../../assets/levels/*.json', { eager: true }))
 	const tilesets = await imagesLoader.loadRecord<tilesets>(import.meta.glob('./../../assets/tilesets/*.png', { eager: true }))
@@ -134,6 +153,7 @@ export const loadAssets = async () => {
 	const staticItems = await imagesLoader.loadRecord<staticItems>(import.meta.glob('./../../assets/staticItems/*.png', { eager: true }))
 	const chests = await chestLoader.loadRecord<chests>(import.meta.glob('./../../assets/_singles/Chests.png', { eager: true }))
 	const weapons = await weaponsLoader.loadRecord<weapons>(import.meta.glob('./../../assets/_singles/Minifantasy_CraftingAndProfessionsWeaponIcons.png', { eager: true }))
+	const heroIcons = await heroIconsLoader.loadRecord<typeof heroIconsNames[number][number]>(import.meta.glob('./../../assets/_singles/TrueHeroes2Icons.png', { eager: true }))
 	const inputs = await inputsLoader(import.meta.glob('./../../assets/_singles/tilemap_packed.png', { eager: true }))
-	return { levels, tilesets, characters, ui, fonts, animatedTextures, animations, staticItems, chests, weapons, inputs } as const
+	return { levels, tilesets, characters, ui, fonts, animatedTextures, animations, staticItems, chests, weapons, inputs, heroIcons } as const
 }

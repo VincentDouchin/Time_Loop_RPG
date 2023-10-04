@@ -191,11 +191,19 @@ export class Entity {
 		return this.ecs.getComponents(this)
 	}
 
-	spawn(...components: InstanceType<Class>[]) {
-		const entity = this.ecs.spawn(...components)
+	addChildren(entity: Entity) {
 		entity.parent = this
 		this.children.add(entity)
-		return entity
+	}
+
+	spawn(...components: InstanceType<Class>[] | [(entity: Entity) => Entity]): Entity {
+		if (components[0] instanceof Function) {
+			return components[0](this)
+		} else {
+			const entity = this.ecs.spawn(...components)
+			this.addChildren(entity)
+			return entity
+		}
 	}
 
 	despawn() {
@@ -331,7 +339,7 @@ export class ECS {
 	#components = new Map<Class, Map<Entity, InstanceType<Class>>>()
 	#queries = new Set<Query>()
 	core = new State(this)
-	eventBus = new EventBus<Record<Class['name'], [Entity, 'added' | 'removed' | 'deleted'] >>()
+	eventBus = new EventBus<Record<Class['name'], [Entity, 'added' | 'removed' | 'deleted']>>()
 	constructor() {
 		this.registerComponent(Entity)
 	}

@@ -13,6 +13,12 @@ export default defineConfig(() => {
 			target: 'esnext',
 
 		},
+		esbuild: {
+			jsxFactory: 'createUiEntity',
+			jsx: 'transform',
+			jsxInject: 'import { createUiEntity } from \"@/utils/JSXEntity\"',
+
+		},
 		resolve: {
 			alias: [
 				{ find: '@', replacement: path.resolve(__dirname, './src') },

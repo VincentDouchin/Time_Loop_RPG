@@ -21,8 +21,11 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@/*": [ "./src/*" ],
-    }
-
+    },
+    "jsx": "preserve",
+    "jsxFactory": "createUiEntity",
+    "jsxFragmentFactory": "createUiFragment",
   },
-  "include": [ "src", "assets" ]
+
+  "include": [ "src", "assets", "./src/JSXEntity2", ]
 }

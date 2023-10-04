@@ -1,6 +1,6 @@
 import { RigidBody } from '@dimforge/rapier2d-compat'
 import { addKey } from './dialog'
-import { NPC } from '@/dungeon/NPC'
+import { Dialog, NPC } from '@/dungeon/NPC'
 import { LockedMovement } from '@/dungeon/playerMovement'
 import { Dungeon, logBundle } from '@/dungeon/spawnDungeon'
 import { Player } from '@/genericComponents/components'
@@ -28,37 +28,42 @@ export const unlockPlayer = () => {
 	}
 }
 
-const npcQuery = ecs.query.pick(TextureAtlas, Position).with(NPC)
+const npcQuery = ecs.query.pick(Entity, TextureAtlas, Position, NPC)
 const logQuery = ecs.query.pick(Entity, Position, LDTKEntityInstance).with(Log)
 const dungeonQuery = ecs.query.pick(Entity).with(Dungeon)
 export const chopLog = async () => {
-	for (const [atlas, pos] of npcQuery.getAll()) {
-		atlas.directionY = 'up'
-		atlas.state = 'walk'
-		await new Tween(1000).onUpdate((x) => {
-			pos.y = x
-			pos.init = false
-		}, pos.y, pos.y + 8).start()
-		atlas.state = 'logging'
-		await sleep(5000)
-		const log = logQuery.getSingle()
-		if (log) {
-			const [logEntity, logPos, logEntityInstance] = log
-			ecs.onNextTick(() => logEntity?.despawn())
-			const dungeonEntity = dungeonQuery.extract()
-			if (dungeonEntity) {
-				logBundle(dungeonEntity, true, logEntityInstance, logPos)
+	for (const [entity, atlas, pos, npc] of npcQuery.getAll()) {
+		if (npc.data.name === 'lumberjack') {
+			const dialog = entity.getComponent(Dialog)
+			entity.removeComponent(Dialog)
+			atlas.directionY = 'up'
+			atlas.state = 'walk'
+			await new Tween(1000).onUpdate((x) => {
+				pos.y = x
+				pos.init = false
+			}, pos.y, pos.y + 8).start()
+			atlas.state = 'logging'
+			await sleep(5000)
+			const log = logQuery.getSingle()
+			if (log) {
+				const [logEntity, logPos, logEntityInstance] = log
+				ecs.onNextTick(() => logEntity?.despawn())
+				const dungeonEntity = dungeonQuery.extract()
+				if (dungeonEntity) {
+					dungeonEntity.spawn(logBundle(true, logEntityInstance, logPos))
+				}
 			}
+			addKey('splitLog')
+			unlockPlayer()
+			atlas.directionY = 'down'
+			atlas.directionX = 'right'
+			atlas.state = 'walk'
+			await new Tween(2000).onUpdate((x) => {
+				pos.x = x
+				pos.init = false
+			}, pos.x, pos.x + 16).start()
+			atlas.state = 'idle'
+			entity.addComponent(dialog)
 		}
-		addKey('splitLog')
-		unlockPlayer()
-		atlas.directionY = 'down'
-		atlas.directionX = 'right'
-		atlas.state = 'walk'
-		await new Tween(2000).onUpdate((x) => {
-			pos.x = x
-			pos.init = false
-		}, pos.x, pos.x + 16).start()
-		atlas.state = 'idle'
 	}
 }

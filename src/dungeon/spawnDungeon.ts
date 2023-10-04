@@ -78,7 +78,7 @@ export const PlayerBundle = (pos: Position) => {
 		ColliderDesc.cuboid(3, 3),
 	]
 }
-export const logBundle = (parent: Entity, split: boolean, entityInstance: LDTKEntityInstance, pos: Position) => {
+export const logBundle = (split: boolean, entityInstance: LDTKEntityInstance, pos: Position) => (parent: Entity) => {
 	if (split) {
 		return parent.spawn(new Sprite(new PixelTexture(assets.staticItems.logSplit)), pos, new Log(), entityInstance)
 			.withChildren((log) => {
@@ -141,7 +141,7 @@ export const spawnDungeon: System<dungeonRessources> = (mapName, levelIndex, dir
 					}; break
 					case 'Log': {
 						const log = new LDTKEntityInstance(entityInstance)
-						logBundle(map, hasKey('splitLog'), log, log.position(layerInstance))
+						map.spawn(logBundle(hasKey('splitLog'), log, log.position(layerInstance)))
 					}
 					}
 				}

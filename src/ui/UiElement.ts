@@ -69,7 +69,7 @@ export class TextElement extends HTMLSpanElement {
 		super()
 		this.textContent = text
 		this.style.pointerEvents = 'none'
-		this.style.fontFamily = 'm5x7'
+		this.style.fontFamily = 'at01'
 		this.style.fontSize = `${fontSize}em`
 	}
 }

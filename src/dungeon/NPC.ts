@@ -149,6 +149,7 @@ export const startDialogDungeon = () => {
 
 const addedTalkQuery = ecs.query.pick(Entity, CanTalk, Dialog).added(CanTalk)
 const removedTalkQuery = ecs.query.pick(CanTalk).removed(CanTalk)
+const removedDialogQuery = ecs.query.pick(Entity, CanTalk).without(Dialog)
 export const addTalkingIcon = () => {
 	for (const [entity, canTalk] of addedTalkQuery.getAll()) {
 		canTalk.entity = entity.spawn(
@@ -159,5 +160,9 @@ export const addTalkingIcon = () => {
 	}
 	for (const [canTalk] of removedTalkQuery.getAll()) {
 		canTalk.entity?.despawn()
+	}
+	for (const [entity, canTalk] of removedDialogQuery.getAll()) {
+		canTalk.entity?.despawn()
+		entity.removeComponent(CanTalk)
 	}
 }
