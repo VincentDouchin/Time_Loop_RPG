@@ -5,7 +5,6 @@ export function Component(ecs: ECS) {
 		ecs.registerComponent(constructor)
 	}
 }
-
 export interface Class { new(...args: any[]): any }
 export type Constructor<T> = new (...args: any[]) => T
 
@@ -379,15 +378,18 @@ export class ECS {
 		return query
 	}
 
-	spawn<C extends InstanceType<Class>[]>(...components: C) {
-		const entity = new Entity(this)
-		entity.addComponent(entity)
-		this.entities.add(entity)
-		for (const component of components) {
-			entity.addComponent(component)
+	spawn(...components: InstanceType<Class>[] | [(ecs: ECS) => Entity]) {
+		if (components[0] instanceof Function) {
+			return components[0](this)
+		} else {
+			const entity = new Entity(this)
+			entity.addComponent(entity)
+			this.entities.add(entity)
+			for (const component of components) {
+				entity.addComponent(component)
+			}
+			return entity
 		}
-
-		return entity
 	}
 
 	despawn(entity: Entity) {

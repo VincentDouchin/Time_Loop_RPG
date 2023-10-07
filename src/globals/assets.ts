@@ -91,7 +91,8 @@ const fontLoader = new AssetLoader()
 	.pipe(async (glob) => {
 		const fonts = mapKeys(glob, getFileName)
 		for (const [key, m] of entries(fonts)) {
-			const font = new FontFace(key, `url(${m.default})`)
+			const [name, weight] = key.split('-')
+			const font = new FontFace(name, `url(${m.default})`, { weight: weight ?? 'normal' })
 			await font.load()
 			document.fonts.add(font)
 		}
@@ -126,7 +127,7 @@ const inputsLoader = async (glob: Record<string, { default: string }>) => {
 const heroIconsNames = [
 	['bard', 'attack1', 'attack2', 'attack3', 'attack4'],
 	['cleric', 'attack1', 'attack2', 'attack3', 'attack4'],
-	['paladin', 'attack1', 'attack2', 'attack3', 'attack4'],
+	['paladin', 'paladinAttack1', 'paladinAttack2', 'paladinAttack3', 'paladinAttack4'],
 ] as const
 const heroIconsLoader = new AssetLoader()
 	.pipe(async (glob) => {

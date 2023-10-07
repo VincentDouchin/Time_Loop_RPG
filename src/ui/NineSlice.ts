@@ -22,20 +22,24 @@ export class NineSlice {
 	constructor(public image: HTMLCanvasElement, margins: margins, public scale = 1) {
 		this.margins = getMargins(margins)
 	}
+
+	update(element: UIElement) {
+		const allMargins = [this.margins.top, this.margins.right, this.margins.left, this.margins.bottom]
+		element.setStyles({
+			borderImage: `url(${this.image.toDataURL()}) round`,
+			borderImageSlice: `${allMargins.join(' ')} fill`,
+			borderImageRepeat: 'round',
+			imageRendering: 'pixelated',
+			borderWidth: allMargins.map(border => `${border * this.scale}px`).join(' '),
+			borderStyle: 'solid',
+		})
+	}
 }
 
 const ninesliceUIQuery = ecs.query.pick(UIElement, NineSlice).added(NineSlice)
 
 export const addNineSlicetoUI = () => {
 	for (const [uiElement, nineSlice] of ninesliceUIQuery.getAll()) {
-		const allMargins = [nineSlice.margins.top, nineSlice.margins.right, nineSlice.margins.left, nineSlice.margins.bottom]
-		uiElement.setStyles({
-			borderImage: `url(${nineSlice.image.toDataURL()}) round`,
-			borderImageSlice: `${allMargins.join(' ')} fill`,
-			borderImageRepeat: 'round',
-			imageRendering: 'pixelated',
-			borderWidth: allMargins.map(border => `${border * nineSlice.scale}px`).join(' '),
-			borderStyle: 'solid',
-		})
+		nineSlice.update(uiElement)
 	}
 }

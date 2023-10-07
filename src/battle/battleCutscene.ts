@@ -5,6 +5,7 @@ import { Dialog, stepDialog } from '@/dungeon/NPC'
 import { ecs } from '@/globals/init'
 import { Entity } from '@/lib/ECS'
 import { menuInputQuery } from '@/menus/menuInputs'
+import { dialogContainer } from '@/ui/dialogUi'
 import { Menu } from '@/ui/menu'
 
 const battlerDialogQuery = ecs.query.pick(Dialog, Menu)
@@ -27,7 +28,9 @@ export const banditCutscene = () => {
 		ecs.spawn(new Cutscene())
 		for (const [leader] of banditLeaderQuery.getAll()) {
 			if (dialog.banditLeader) {
-				leader.addComponent(...new Dialog(dialog.banditLeader).withMenu())
+				const dialogComponent = new Dialog(dialog.banditLeader)
+				leader.addComponent(dialogComponent, new Menu())
+				leader.addChildren(dialogContainer(dialogComponent))
 				ecs.onNextTick(stepBattleDialog)
 			}
 		}

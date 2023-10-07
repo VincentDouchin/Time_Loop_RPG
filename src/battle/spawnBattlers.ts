@@ -1,10 +1,10 @@
 import { Battler, BattlerMenu, selectAction, selectNextBattler, selectTargets, takeAction } from './battleActions'
+import { battleUi } from './battleUi'
 import { Cutscene } from './cutscenes'
 import { Health } from './health'
-import { spawnBattleUi } from './battleUi'
 import { ActionSelector, BattlerType, PlayerActions, TargetSelector } from '@/constants/actions'
 import type { Enemy } from '@/constants/enemies'
-import { Player } from '@/genericComponents/components'
+import { Player } from '@/generic/components'
 import { assets, despawnEntities, ecs } from '@/globals/init'
 import { Component, Entity } from '@/lib/ECS'
 import { Interactable } from '@/lib/interactions'
@@ -14,8 +14,8 @@ import { Tween } from '@/lib/tween'
 import { overworldState } from '@/main'
 import { gameOver, save, saveToLocalStorage } from '@/save/saveData'
 import { OutlineShader } from '@/shaders/OutlineShader'
-import { NineSlice } from '@/ui/NineSlice'
-import { TextElement, UIElement } from '@/ui/UiElement'
+import { NineSlice } from '@/ui/nineSlice'
+import { UIElement } from '@/ui/UiElement'
 import { Selected } from '@/ui/menu'
 import { sleep } from '@/utils/timing'
 
@@ -32,7 +32,7 @@ const battlerSpriteBundle = (side: 'left' | 'right', textureAtlas: TextureAltasS
 	new Tween(1500)
 		.onUpdate(x => position.x = x, edge, edge - width * direction)
 		.onComplete(() => atlas.state = 'idle')
-	return [...bundle, position, new Interactable()]
+	return [...bundle, position]
 }
 
 export const spawnBattlers = (battle: Entity, background: number, enemies: readonly Enemy[]) => {
@@ -48,7 +48,7 @@ export const spawnBattlers = (battle: Entity, background: number, enemies: reado
 	for (let i = 0; i < enemies.length; i++) {
 		const enemyData = enemies[i]
 		const bundle = battlerSpriteBundle('left', assets.characters[enemyData.atlas], background, i, enemies.length)
-		const enemy = battle.spawn(...bundle, new Health(2))
+		const enemy = battle.spawn(...bundle, new Health(2), new Interactable(8))
 		if (enemyData.additionalComponents) {
 			enemy.addComponent(...enemyData.additionalComponents?.map(getComponent => getComponent()))
 		}
@@ -56,7 +56,7 @@ export const spawnBattlers = (battle: Entity, background: number, enemies: reado
 			enemy.addComponent(new Battler(BattlerType.Enemy, enemyData.actions, ActionSelector.EnemyAuto, TargetSelector.EnemyAuto))
 		})
 	}
-	spawnBattleUi()
+	battleUi()
 }
 const battlersQuery = ecs.query.pick(Battler)
 const cutsceneQuery = ecs.query.with(Cutscene)
@@ -128,7 +128,7 @@ export const despawnBattleMenu = despawnEntities(BattlerMenu)
 export const winOrLose = () => {
 	if (winOrLoseUiQuery.size === 0) {
 		if (playerQuery.size === 0 && notPlayerQuery.size > 0) {
-			ecs.spawn(...winOrLoseBundle()).spawn(new TextElement('Game Over'))
+			ecs.spawn(...winOrLoseBundle()).spawn(UIElement.text('Game Over'))
 			despawnBattleMenu()
 			sleep(3000).then(() => {
 				gameOver()
@@ -136,7 +136,7 @@ export const winOrLose = () => {
 			})
 		}
 		if (notPlayerQuery.size === 0 && playerQuery.size > 0) {
-			ecs.spawn(...winOrLoseBundle()).spawn(new TextElement('You won!'))
+			ecs.spawn(...winOrLoseBundle()).spawn(UIElement.text('You won!'))
 			despawnBattleMenu()
 			sleep(3000).then(() => {
 				overworldState.enable()

@@ -1,4 +1,4 @@
-import { chopLog, lockPlayer, unlockPlayer } from './dialogHelpers'
+import { chopLog, lockPlayer, unlockPlayer } from '../utils/dialogHelpers'
 import { despwawnCutscene } from '@/battle/cutscenes'
 import { overworldState } from '@/main'
 import { save, saveToLocalStorage } from '@/save/saveData'

@@ -5,12 +5,13 @@ import type { PlayerData } from '@/constants/players'
 import type { direction } from '@/dungeon/spawnDungeon'
 import { overworldState } from '@/main'
 
+type states = 'dungeon' | 'overworld' | 'battle'
 interface saveData {
 	finishedDemo: boolean
 	players: PlayerData[]
 	lastDungeon: levels | null
 	lastBattle: keyof typeof battles | null
-	lastState: 'dungeon' | 'overworld' | 'battle'
+	lastState: states
 	lastLevelIndex: number | null
 	lastNodeUUID: string | null
 	keys: Array<typeof keys[number]>

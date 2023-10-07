@@ -26,7 +26,7 @@ export class Sprite extends Mesh<PlaneGeometry, MeshBasicMaterial> {
 
 	setScale(x: number, y?: number) {
 		this.#scale.x = x
-		this.#scale.y = y ?? x
+		this.#scale.y = y || x
 		this.geometry.scale(this.#scale.x, this.#scale.y, 1)
 		return this
 	}
@@ -136,12 +136,12 @@ export class TextureAtlas<K extends string> {
 		const newIndex = (this.index + nb)
 		if (newIndex === (this.#currentAtlas?.length ?? 0)) {
 			const res = this.animationsPlaying.shift()
-			if (this.nextStates.length > 1) {
-				this.nextStates.shift()
-				this.index = 0
-			}
 			if (res) {
 				res()
+			}
+			if (this.nextStates.length > 1) {
+				this.index = 0
+				this.nextStates.shift()
 			}
 		}
 

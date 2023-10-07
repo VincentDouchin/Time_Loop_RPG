@@ -1,18 +1,15 @@
 import { assets, ecs } from '@/globals/init'
 import { Component } from '@/lib/ECS'
 import { save } from '@/save/saveData'
-import { NineSlice } from '@/ui/NineSlice'
-import { TextElement, UIElement } from '@/ui/UiElement'
-
-@Component(ecs)
-export class OverWorldUI {}
+import { NineSlice } from '@/ui/nineSlice'
+import { OverWorldUI, UIElement } from '@/ui/UiElement'
 
 @Component(ecs)
 export class StepsUi {
-	text?: TextElement
+	text?: UIElement
 	constructor() {}
 	getTextElement() {
-		this.text = new TextElement(String(save.steps), 2)
+		this.text = UIElement.text(String(save.steps), 2)
 		return this.text
 	}
 

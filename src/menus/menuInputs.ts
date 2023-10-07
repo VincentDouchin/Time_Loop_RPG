@@ -11,7 +11,7 @@ export class MenuInputMap extends InputMap<typeof MenuInputs> {
 		super(...MenuInputs)
 	}
 }
-export const spawnMenuInputs = () => {
+export const getMenuInputMap = () => {
 	const inputs = new MenuInputMap().setGamepad(0)
 	inputs.get('Pause').setKey('Escape').setButton(GAMEPAD_BUTTON.SELECT)
 	inputs.get('Up').setKey('ArrowUp').setButton(GAMEPAD_BUTTON.UP)
@@ -20,7 +20,10 @@ export const spawnMenuInputs = () => {
 	inputs.get('Left').setKey('ArrowLeft').setButton(GAMEPAD_BUTTON.LEFT)
 	inputs.get('Enter').setKey('Enter').setButton(GAMEPAD_BUTTON.A)
 	inputs.get('Inventory').setKey('KeyE').setButton(GAMEPAD_BUTTON.START)
-	ecs.spawn(inputs)
+	return inputs
+}
+export const spawnMenuInputs = () => {
+	ecs.spawn(getMenuInputMap())
 }
 
 export const menuInputQuery = ecs.query.pick(MenuInputMap)

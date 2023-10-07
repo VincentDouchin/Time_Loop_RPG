@@ -1,7 +1,7 @@
 import { Group } from 'three'
 import { easing } from 'ts-easing'
 import { updateSteps } from './overworldUi'
-import { InventoryIcon } from './InventoryUi'
+import { InventoryIcon, inventoryQuery } from './InventoryUi'
 import { battles } from '@/constants/battles'
 import { items } from '@/constants/items'
 import type { direction } from '@/dungeon/spawnDungeon'
@@ -35,7 +35,7 @@ const currentNodeQuery = ecs.query.pick(Entity, Position, NavNode).with(CurrentN
 export const moveOverworldCharacter = () => {
 	for (const [entity, navigator, position, atlas] of navigatorQuery.getAll()) {
 		const inputs = menuInputQuery.extract()
-		if (inputs) {
+		if (inputs && !inventoryQuery.size) {
 			let target: Entity | null = null
 			let selectedDirection: direction | null = null
 			for (const [input, direction] of [['Up', 'up'], ['Down', 'down'], ['Left', 'left'], ['Right', 'right']] as const) {
@@ -98,6 +98,7 @@ export const moveOverworldCharacter = () => {
 									save.lastBattle = targetNode.data.Battle
 									battleState.enable(battles[targetNode.data.Battle])
 								} else {
+									save.lastDirection = null
 									saveToLocalStorage()
 									if (targetNode.data.Dungeon) {
 										dungeonState.enable(getLevelName(targetNode.data.Dungeon), targetNode.data.Level, selectedDirection)

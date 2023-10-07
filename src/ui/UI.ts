@@ -1,6 +1,6 @@
 import { Group } from 'three'
 import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer'
-import { TextElement, UIElement } from './UiElement'
+import { UIElement } from './UiElement'
 import { Component, Entity } from '@/lib/ECS'
 import { ecs } from '@/globals/init'
 
@@ -14,10 +14,8 @@ export const spawnUIRoot = () => {
 }
 
 const uiElementQuery = ecs.query.pick(Entity, UIElement).added(UIElement).without(UIRoot).without(CSS2DObject)
-const uiTextElementQuery = ecs.query.pick(Entity, TextElement).added(TextElement).without(UIRoot)
 const UIRootQuery = ecs.query.pick(UIElement).with(UIRoot)
 const removedUiElements = ecs.query.pick(UIElement).removed(UIElement)
-const removedTextElements = ecs.query.pick(TextElement).removed(TextElement)
 export const addUIElementsToDOM = () => {
 	const root = UIRootQuery.extract()
 	if (root) {
@@ -29,15 +27,8 @@ export const addUIElementsToDOM = () => {
 			const parent = entity.parent?.getComponent(UIElement) ?? root
 			parent.appendChild(uiElement)
 		}
-		for (const [entity, textElement] of uiTextElementQuery.getAll()) {
-			const parent = entity.parent?.getComponent(UIElement) ?? root
-			parent.appendChild(textElement)
-		}
 	}
 	for (const [uiElement] of removedUiElements.getAll()) {
-		uiElement.remove()
-	}
-	for (const [uiElement] of removedTextElements.getAll()) {
 		uiElement.remove()
 	}
 }

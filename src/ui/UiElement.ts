@@ -1,12 +1,16 @@
-import type { Properties, StandardProperties } from 'csstype'
+import type { StandardProperties } from 'csstype'
 import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer'
 import { assets, ecs } from '@/globals/init'
 import { Component } from '@/lib/ECS'
-import { Position } from '@/lib/transforms'
-import { getScreenBuffer, toCanvas } from '@/utils/buffer'
-import { Tween } from '@/lib/tween'
 import type { Input } from '@/lib/inputs'
+import { Position } from '@/lib/transforms'
+import { Tween } from '@/lib/tween'
+import { getScreenBuffer, toCanvas } from '@/utils/buffer'
 
+@Component(ecs)
+export class OverWorldUI {}
+@Component(ecs)
+export class BattleUI {}
 @Component(ecs)
 export class InputIcon {
 	constructor(public input: Input) {}
@@ -14,6 +18,7 @@ export class InputIcon {
 
 @Component(ecs)
 export class UIElement extends HTMLDivElement {
+	static font: fonts = 'm5x7'
 	constructor(styles: StandardProperties = {}) {
 		super()
 		this.setStyles(styles)
@@ -25,7 +30,7 @@ export class UIElement extends HTMLDivElement {
 	}
 
 	setStyles(styles: StandardProperties) {
-		for (const [key, val] of Object.entries(styles) as [keyof Properties, any]) {
+		for (const [key, val] of Object.entries(styles) as [keyof StandardProperties, any]) {
 			this.style[key] = val
 		}
 		return this
@@ -45,36 +50,51 @@ export class UIElement extends HTMLDivElement {
 		return [this, new CSS2DObject(this), new Position(x, y)] as const
 	}
 
-	static fromImage(source: HTMLCanvasElement | OffscreenCanvas, scale = 1) {
-		const canvas = source instanceof OffscreenCanvas ? toCanvas(source) : source
-		return new UIElement({
-			backgroundImage: `url(${canvas.toDataURL()})`,
-			width: `${canvas.width * scale}px`,
-			height: `${canvas.height * scale}px`,
+	setImage(image: HTMLCanvasElement | OffscreenCanvas, size?: number | string) {
+		this.setStyles({
 			imageRendering: 'pixelated',
 			backgroundSize: 'cover',
 		})
+		const canvas = image instanceof OffscreenCanvas ? toCanvas(image) : image
+		this.setStyle('backgroundImage', `url(${canvas.toDataURL()})`)
+		if (size) {
+			let finalWidth = `${image.width}px`
+			let finalHeight = `${image.height}px`
+			if (typeof size === 'number') {
+				finalWidth = `${image.width * size}px`
+				finalHeight = `${image.height * size}px`
+			} else if (typeof size === 'string') {
+				finalWidth = size
+				finalHeight = size
+			}
+			this.setStyles({
+				width: finalWidth,
+				height: finalHeight,
+			})
+		}
+		return this
+	}
+
+	static fromImage(source: HTMLCanvasElement | OffscreenCanvas, size?: number | string) {
+		return new UIElement().setImage(source, size)
 	}
 
 	static inputIcon(input: Input) {
 		const img = assets.inputs('keyboard', input.codes[0]) ?? getScreenBuffer(16, 16).canvas
 		return [UIElement.fromImage(img), new InputIcon(input)] as const
 	}
-}
-customElements.define('ui-element', UIElement, { extends: 'div' })
 
-@Component(ecs)
-export class TextElement extends HTMLSpanElement {
-	constructor(text: string, fontSize: number = 1) {
-		super()
+	text(text: string, size = 1) {
+		this.setStyles({ pointerEvents: 'none', fontFamily: UIElement.font, fontSize: `${size}em` })
 		this.textContent = text
-		this.style.pointerEvents = 'none'
-		this.style.fontFamily = 'at01'
-		this.style.fontSize = `${fontSize}em`
+		return this
+	}
+
+	static text(text: string, size = 1) {
+		return new UIElement().text(text, size)
 	}
 }
-
-customElements.define('text-element', TextElement, { extends: 'span' })
+customElements.define('ui-element', UIElement, { extends: 'div' })
 
 export const setDefaultFontSize = () => {
 	document.body.style.fontSize = '30px'

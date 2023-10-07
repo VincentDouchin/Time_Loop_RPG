@@ -16,7 +16,7 @@ export default defineConfig(() => {
 		esbuild: {
 			jsxFactory: 'createUiEntity',
 			jsx: 'transform',
-			jsxInject: 'import { createUiEntity } from \"@/utils/JSXEntity\"',
+			jsxInject: 'import { createUiEntity } from \"@/ui/JSXEntity\"',
 
 		},
 		resolve: {

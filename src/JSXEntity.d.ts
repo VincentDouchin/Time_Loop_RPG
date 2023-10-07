@@ -1,27 +1,27 @@
 /// <reference lib="DOM" />
 
+type UIElement = import('./ui/UiElement').UIElement  
+
+type Class = import('./lib/ECS').Class
+
 type StandardProperties = import('csstype').StandardProperties
 
-type Entity = import('@/lib/ECS').Entity
+type Entity = import('./lib/ECS').Entity
 // eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace JSX {
-
-	// IntrinsicElementMap grabs all the standard HTML tags in the TS DOM lib.
-	type IntrinsicElements = IntrinsicElementMap & {
-		'ui-element': { nineslice?: [HTMLCanvasElement, number, number], image?: [HTMLCanvasElement, number], style?: StandardProperties }
+	type Element = Entity
+	type IntrinsicElements= {
+	[k in keyof IntrinsicElementsMap]:IntrinsicElementsMap[k] & {
+		components?:InstanceType<Class>[],
+		style?: StandardProperties
+		bind?:(UIElement)=>void
+		worldPosition?:{x:number,y:number}
 	}
-
-	// The following are custom types, not part of TS's known JSX namespace:
-	type IntrinsicElementMap = {
-		[K in keyof HTMLElementTagNameMap]: {
-			[k: string]: never
-		}
-
 	}
-
-	interface Component {
-		(properties?: { [key: string]: any }, children?: Node[]): Node
+	type IntrinsicElementsMap = {
+		'nineslice':{image:HTMLCanvasElement,margin:number,scale?:number,}
+		'image':{image:HTMLCanvasElement|OffscreenCanvas,scale?:number|string,}
+		'ui-element': { }
+		'text':{size?:number}
 	}
-
-
 }

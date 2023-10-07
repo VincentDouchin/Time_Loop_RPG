@@ -3,8 +3,8 @@ import { Component, Entity } from '@/lib/ECS'
 import { Interactable } from '@/lib/interactions'
 import { MenuInputInteractable, menuInputQuery } from '@/menus/menuInputs'
 import { save, saveToLocalStorage } from '@/save/saveData'
-import { NineSlice } from '@/ui/NineSlice'
-import { TextElement, UIElement } from '@/ui/UiElement'
+import { NineSlice } from '@/ui/nineSlice'
+import { UIElement } from '@/ui/UiElement'
 
 @Component(ecs)
 export class Thanks {}
@@ -26,7 +26,7 @@ export const showEndOfDemo = () => {
 					'Thanks for playing this demo!',
 					'Please do tell me if you have any feedback',
 				].forEach((text) => {
-					root.spawn(new TextElement(text))
+					root.spawn(UIElement.text(text))
 				})
 			})
 	}

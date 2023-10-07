@@ -1,4 +1,5 @@
 import type { playerNames } from './players'
+import { assets } from '@/globals/init'
 
 export enum BattlerType {
 	Player,
@@ -20,9 +21,10 @@ export enum ActionType {
 }
 export interface BattleAction<K extends keyof characterAnimations> {
 	label: string
-	target: TargetType
+	icon?: HTMLCanvasElement
 	targetAmount: number
 	power: number
+	target: TargetType
 	type: ActionType
 	animation: characterAnimations[K][]
 	weapon?: string
@@ -42,6 +44,7 @@ export const PlayerActions: { [k in playerNames]: BattleAction<k>[] } = {
 	paladin: [
 		{
 			label: 'Attack',
+			icon: assets.heroIcons.paladinAttack1,
 			target: TargetType.Others,
 			power: 1,
 			targetAmount: 1,
@@ -50,9 +53,10 @@ export const PlayerActions: { [k in playerNames]: BattleAction<k>[] } = {
 		},
 		{
 			label: 'Blades',
+			icon: assets.heroIcons.paladinAttack2,
 			target: TargetType.Others,
 			power: 1,
-			targetAmount: 1,
+			targetAmount: 2,
 			type: ActionType.Damage,
 			animation: ['dictum'],
 			selfEffects: ['blades-start', 'blades-middle', 'blades-middle', 'blades-end'],

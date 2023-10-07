@@ -27,5 +27,5 @@
     "jsxFragmentFactory": "createUiFragment",
   },
 
-  "include": [ "src", "assets", "./src/JSXEntity2", ]
+  "include": [ "src", "assets" ]
 }

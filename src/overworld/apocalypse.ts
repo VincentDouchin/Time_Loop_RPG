@@ -1,6 +1,6 @@
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
 import { easing } from 'ts-easing'
-import { Player } from '@/genericComponents/components'
+import { Player } from '@/generic/components'
 import { assets, despawnEntities, ecs } from '@/globals/init'
 import { Component, Entity } from '@/lib/ECS'
 import { mainCameraQuery } from '@/lib/camera'

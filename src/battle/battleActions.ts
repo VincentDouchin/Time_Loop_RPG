@@ -1,3 +1,4 @@
+import { actionMenu } from './battleUi'
 import { Health } from './health'
 import type { BattleAction, BattlerType } from '@/constants/actions'
 import { ActionSelector, TargetSelector, TargetType } from '@/constants/actions'
@@ -7,9 +8,9 @@ import { Component, Entity } from '@/lib/ECS'
 import { Interactable } from '@/lib/interactions'
 import { TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
+import { getMenuInputMap } from '@/menus/menuInputs'
 import { ColorShader } from '@/shaders/ColorShader'
-import { TextElement, UIElement } from '@/ui/UiElement'
-import { Menu, Selected, UnderlineOnSelected } from '@/ui/menu'
+import { Menu, Selected } from '@/ui/menu'
 
 @Component(ecs)
 export class BattlerMenu {}
@@ -87,21 +88,8 @@ export const selectAction = (battler: Battler) => {
 	case ActionSelector.PlayerMenu:{
 		const battlerMenu = battlerMenuQuery.extract()
 		const existingMenu = battlerMenu?.getComponent(Menu)
-		if (!actionItemsQuery.size && dialogOptionQuery.size === 0) {
-			if (battlerMenu) {
-				const items: Entity[] = []
-				for (const action of battler.actions) {
-					const item = battlerMenu.spawn(
-						new UIElement(),
-						new Interactable(),
-						new PlayerActionItem(action),
-						new UnderlineOnSelected(),
-					)
-					items.push(item)
-					item.spawn(new TextElement(action.label))
-				}
-				battlerMenu.addComponent(Menu.fromRow(...items))
-			}
+		if (!battlerMenu && dialogOptionQuery.size === 0) {
+			ecs.spawn(actionMenu(battler.actions))
 		}
 		if (existingMenu) {
 			existingMenu.active = true
@@ -136,12 +124,12 @@ export const selectTargets = (battler: Battler) => {
 		case TargetSelector.PlayerTargetMenu:{
 			const enemySelectMenu = enemySelectMenuQuery.extract()
 			if (!enemySelectMenu && !battler.hasSelectedTargets) {
-				ecs.spawn(Menu.fromColumn(...potentialTargets), new EnemySelectMenu())
+				ecs.spawn(new Menu(potentialTargets), new EnemySelectMenu(), getMenuInputMap())
 			}
 			for (const [entity, interactable] of possibleTargetsQuery.getAll()) {
 				if (interactable.justPressed) {
 					battler.targets.push(entity)
-					entity.addComponent(new ColorShader([1, 0, 0, 1]))
+					entity.addComponent(new ColorShader([1, 1, 1, 0.8]))
 					if (battler.hasSelectedTargets) {
 						enemySelectMenu?.despawn()
 					}
@@ -182,8 +170,8 @@ export const takeAction = (battlerTakingAction: Battler) => {
 							await enemyAtlas.playAnimation('dmg')
 						})().then(() => {
 							enemyHealth.currentHealth--
-							battler.finishedTurn = true
 							battler.currentTurn = false
+							battler.finishedTurn = true
 							enemyEntity.removeComponent(ColorShader)
 						})
 					}
