@@ -134,11 +134,13 @@ export class TextureAtlas<K extends string> {
 
 	changeIndex(nb: number) {
 		const newIndex = (this.index + nb)
-		if (newIndex === (this.#currentAtlas?.length ?? 0)) {
+		if (newIndex === this.#currentAtlas!.length - 1) {
 			const res = this.animationsPlaying.shift()
 			if (res) {
 				res()
 			}
+		}
+		if (newIndex === this.#currentAtlas?.length) {
 			if (this.nextStates.length > 1) {
 				this.index = 0
 				this.nextStates.shift()

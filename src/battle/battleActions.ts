@@ -75,7 +75,6 @@ export class Battler {
 	}
 }
 
-const actionItemsQuery = ecs.query.with(PlayerActionItem)
 const battlerMenuQuery = ecs.query.pick(Entity).with(BattlerMenu)
 const playerActionItemQuery = ecs.query.pick(PlayerActionItem, Interactable)
 
