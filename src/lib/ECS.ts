@@ -378,7 +378,7 @@ export class ECS {
 		return query
 	}
 
-	spawn(...components: InstanceType<Class>[] | [(ecs: ECS) => Entity]) {
+	spawn(...components: InstanceType<Class>[] | [(ecs: ECS) => Entity]): Entity {
 		if (components[0] instanceof Function) {
 			return components[0](this)
 		} else {

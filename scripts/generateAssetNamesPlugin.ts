@@ -1,3 +1,4 @@
+import { exec } from 'node:child_process'
 import { readdir, writeFile } from 'node:fs/promises'
 
 import path from 'node:path'
@@ -54,6 +55,7 @@ export default function watchAssets(): PluginOption {
 			}
 			result += '}'
 			await writeFile(path.join(process.cwd(), 'assets', 'assets.d.ts'), result)
+			exec('eslint assets/assets.d.ts --fix')
 			console.log('regenerated asset names')
 		}
 	}

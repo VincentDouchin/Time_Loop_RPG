@@ -12,5 +12,5 @@ export default antfu({
 		'antfu/if-newline': 'off',
 
 	},
-	ignores: ['dev-dist', 'assets'],
+	ignores: ['dev-dist', 'assets/*', 'node-modules', 'dist'],
 })
