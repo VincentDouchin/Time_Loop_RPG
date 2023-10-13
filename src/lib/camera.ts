@@ -105,9 +105,7 @@ export const cameraFollow = () => {
 			}
 		}
 		for (const [bounds] of cameraBoundsQuery.getAll()) {
-			// console.log(bounds.min.x, bounds.max.x)
 			cameraPosition.x = Math.max(Math.min(bounds.max.x + camera.left / camera.zoom, cameraPosition.x), bounds.min.x + camera.right / camera.zoom)
-			// console.log(camera.position.x,)
 			cameraPosition.y = Math.max(Math.min(bounds.max.y + camera.bottom / camera.zoom, cameraPosition.y), bounds.min.y + camera.top / camera.zoom)
 		}
 	}
