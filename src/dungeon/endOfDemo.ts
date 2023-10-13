@@ -3,7 +3,7 @@ import { Component, Entity } from '@/lib/ECS'
 import { Interactable } from '@/lib/interactions'
 import { MenuInputInteractable, menuInputQuery } from '@/menus/menuInputs'
 import { save, saveToLocalStorage } from '@/save/saveData'
-import { NineSlice } from '@/ui/nineSlice'
+import { NineSlice } from '@/ui/nineSliceUi'
 import { UIElement } from '@/ui/UiElement'
 
 @Component(ecs)

@@ -2,8 +2,6 @@ import { UIElement } from './UiElement'
 import { ecs } from '@/globals/init'
 import { Component } from '@/lib/ECS'
 
-// const shader = new ShaderMaterial({ vertexShader, fragmentShader })
-
 export type margins = number | { x: number; y: number } | { top: number; bottom: number; right: number; left: number }
 
 const getMargins = (margins: margins) => {

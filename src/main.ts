@@ -34,7 +34,7 @@ import { ApocalypseShader, updateApocalypseShader } from './shaders/ApocalypseSh
 import { ColorShader } from './shaders/ColorShader'
 import { ItemPickupShader } from './shaders/ItemPickupShader'
 import { OutlineShader, addOutlineShader } from './shaders/OutlineShader'
-import { addNineSlicetoUI } from './ui/nineSlice'
+import { addNineSlicetoUI } from './ui/nineSliceUi'
 import { addUIElementsToDOM, spawnUIRoot } from './ui/UI'
 import { BattleUI, OverWorldUI, setDefaultFontSize } from './ui/UiElement'
 import { selectEntities, unSelectDespawnMenus, updateMenus } from './ui/menu'

@@ -1,7 +1,7 @@
 import { assets, ecs } from '@/globals/init'
 import { Component } from '@/lib/ECS'
 import { save } from '@/save/saveData'
-import { NineSlice } from '@/ui/nineSlice'
+import { NineSlice } from '@/ui/nineSliceUi'
 import { OverWorldUI, UIElement } from '@/ui/UiElement'
 
 @Component(ecs)

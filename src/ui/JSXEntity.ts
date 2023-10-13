@@ -2,7 +2,7 @@ import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer'
 import { ecs } from '@/globals/init'
 import { Entity } from '@/lib/ECS'
 import { Position } from '@/lib/transforms'
-import { NineSlice } from '@/ui/nineSlice'
+import { NineSlice } from '@/ui/nineSliceUi'
 import { UIElement } from '@/ui/UiElement'
 
 export function createUiEntity<Element extends keyof JSX.IntrinsicElements>(
