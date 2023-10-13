@@ -108,41 +108,38 @@ export const spawnDungeon: System<dungeonRessources> = (mapName, levelIndex, dir
 				map.spawn(spawnLayer(layerInstance), new Position(), new DarkenWhenInside())
 			}
 			if (layerInstance.__identifier === 'Collisions') {
-				spawnIntGridEntities(map, mapFile, layerInstance, t => t?.identifier === 'Wall',
-					(wall, w, h) => {
-						wall.addComponent(RigidBodyDesc.fixed(), ColliderDesc.cuboid(w / 2, h / 2), new Wall())
-					})
-				spawnIntGridEntities(map, mapFile, layerInstance, t => t?.identifier === 'Inside',
-					(wall, w, h) => {
-						wall.addComponent(new InsideTrigger(), RigidBodyDesc.fixed(), ColliderDesc.cuboid(w / 2, h / 2).setSensor(true))
-					})
-				spawnIntGridEntities(map, mapFile, layerInstance, t => t?.identifier === 'Shadow',
-					(wall, w, h) => {
-						const buffer = getOffscreenBuffer(w + 16, h + 8)
-						buffer.fillStyle = 'black'
-						buffer.fillRect(0, 0, w + 16, h + 8)
-						wall.addComponent(Sprite.fromBuffer(buffer), new Inside())
-					})
+				spawnIntGridEntities(map, mapFile, layerInstance, t => t?.identifier === 'Wall',					(wall, w, h) => {
+					wall.addComponent(RigidBodyDesc.fixed(), ColliderDesc.cuboid(w / 2, h / 2), new Wall())
+				})
+				spawnIntGridEntities(map, mapFile, layerInstance, t => t?.identifier === 'Inside',					(wall, w, h) => {
+					wall.addComponent(new InsideTrigger(), RigidBodyDesc.fixed(), ColliderDesc.cuboid(w / 2, h / 2).setSensor(true))
+				})
+				spawnIntGridEntities(map, mapFile, layerInstance, t => t?.identifier === 'Shadow',					(wall, w, h) => {
+					const buffer = getOffscreenBuffer(w + 16, h + 8)
+					buffer.fillStyle = 'black'
+					buffer.fillRect(0, 0, w + 16, h + 8)
+					wall.addComponent(Sprite.fromBuffer(buffer), new Inside())
+				})
 			}
 			if (layerInstance.__type === 'Entities') {
 				for (const entityInstance of layerInstance.entityInstances) {
 					switch (entityInstance.__identifier) {
-					case 'NPC': map.spawn(...NPCBundle(entityInstance, layerInstance))
-						break
-					case 'Sign': map.spawn(...SignBundle(entityInstance, layerInstance))
-						break
-					case 'Entrance': {
-						const entrance = new Entrance(entityInstance)
-						const position = entrance.position(layerInstance)
-						map.spawn(entrance, position, ...entrance.body(true))
-						if (entrance.data.direction === direction) {
-							map.spawn(...PlayerBundle(position))
+						case 'NPC': map.spawn(...NPCBundle(entityInstance, layerInstance))
+							break
+						case 'Sign': map.spawn(...SignBundle(entityInstance, layerInstance))
+							break
+						case 'Entrance': {
+							const entrance = new Entrance(entityInstance)
+							const position = entrance.position(layerInstance)
+							map.spawn(entrance, position, ...entrance.body(true))
+							if (entrance.data.direction === direction) {
+								map.spawn(...PlayerBundle(position))
+							}
+						}; break
+						case 'Log': {
+							const log = new LDTKEntityInstance(entityInstance)
+							map.spawn(logBundle(hasKey('splitLog'), log, log.position(layerInstance)))
 						}
-					}; break
-					case 'Log': {
-						const log = new LDTKEntityInstance(entityInstance)
-						map.spawn(logBundle(hasKey('splitLog'), log, log.position(layerInstance)))
-					}
 					}
 				}
 			}

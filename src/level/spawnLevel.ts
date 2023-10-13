@@ -21,8 +21,14 @@ export const drawLayer = (layerInstance: LayerInstance, buffer: OffscreenCanvasR
 			for (const tile of layerInstance[tiles]) {
 				buffer.drawImage(
 					tileset,
-					tile.src[0], tile.src[1], layerInstance.__gridSize, layerInstance.__gridSize,
-					tile.px[0] + layerInstance.__pxTotalOffsetX, tile.px[1] + layerInstance.__pxTotalOffsetY, layerInstance.__gridSize, layerInstance.__gridSize,
+					tile.src[0],
+					tile.src[1],
+					layerInstance.__gridSize,
+					layerInstance.__gridSize,
+					tile.px[0] + layerInstance.__pxTotalOffsetX,
+					tile.px[1] + layerInstance.__pxTotalOffsetY,
+					layerInstance.__gridSize,
+					layerInstance.__gridSize,
 				)
 			}
 		}

@@ -41,6 +41,7 @@ import { selectEntities, unSelectDespawnMenus, updateMenus } from './ui/menu'
 import { addToScene, addToWorld, registerFullScreenShader, registerShader } from './utils/registerComponents'
 
 // !Lib
+
 ecs
 	.core.onEnter(initThree, updateMousePosition, spawnCamera, spawnMenuInputs, spawnUIRoot, setDefaultFontSize, changeControls)
 	.onPreUpdate(detectInteractions, updatePosition, clickOnMenuInput)

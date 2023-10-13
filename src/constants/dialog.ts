@@ -23,10 +23,10 @@ export const dialog: Partial<Record<characters | `sign${string}`, () => Generato
 		yield 'Do you want a drink?'
 		const answer = yield ['yes', 'no']
 		switch (answer) {
-		case 0:yield 'Here you go'
-			break
-		case 1:yield 'Alright!'
-			break
+			case 0:yield 'Here you go'
+				break
+			case 1:yield 'Alright!'
+				break
 		}
 		yield unlockPlayer()
 	},

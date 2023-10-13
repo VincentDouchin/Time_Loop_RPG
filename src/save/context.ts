@@ -1,6 +1,6 @@
 interface contextData {
-startup: boolean
-controls: 'touch' | 'keyboard' | 'gamepad'
+	startup: boolean
+	controls: 'touch' | 'keyboard' | 'gamepad'
 }
 
 export const context: contextData = {

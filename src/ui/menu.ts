@@ -6,7 +6,7 @@ import { Component, Entity, SystemSet } from '@/lib/ECS'
 
 import { Interactable } from '@/lib/interactions'
 import { Sprite, TextureAtlas } from '@/lib/sprite'
-import { MenuInputMap, menuInputQuery } from '@/menus/menuInputs'
+import { MenuInputMap } from '@/menus/menuInputs'
 
 @Component(ecs)
 export class Menu {

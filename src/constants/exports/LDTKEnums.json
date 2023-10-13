@@ -1,4 +1,4 @@
 {
-	"battles": [ "Bandits", "BossBattleIntro", "ForestAnimals" ],
-	"treasure": [ "LumberjackAxe" ]
+	"battles": ["Bandits", "BossBattleIntro", "ForestAnimals"],
+	"treasure": ["LumberjackAxe"]
 }

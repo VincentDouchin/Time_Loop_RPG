@@ -50,10 +50,10 @@ export const moveOverworldCharacter = () => {
 							const pos = ref().getComponent(Position)
 							if (pos && initialNodePos) {
 								switch (direction) {
-								case 'up' : return pos.x === initialNodePos.x && pos.y > initialNodePos.y
-								case 'down' :return pos.x === initialNodePos.x && pos.y < initialNodePos.y
-								case 'left' :return pos.x < initialNodePos.x && pos.y === initialNodePos.y
-								case 'right' :return pos.x > initialNodePos.x && pos.y === initialNodePos.y
+									case 'up' : return pos.x === initialNodePos.x && pos.y > initialNodePos.y
+									case 'down' :return pos.x === initialNodePos.x && pos.y < initialNodePos.y
+									case 'left' :return pos.x < initialNodePos.x && pos.y === initialNodePos.y
+									case 'right' :return pos.x > initialNodePos.x && pos.y === initialNodePos.y
 								}
 							}
 							return false

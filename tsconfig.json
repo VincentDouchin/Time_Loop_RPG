@@ -1,31 +1,32 @@
 {
-  "compilerOptions": {
-    "target": "ESNext",
-    "useDefineForClassFields": true,
-    "module": "ESNext",
-    "lib": [ "ESNext", "DOM", "DOM.Iterable" ],
-    "skipLibCheck": true,
-    "types": [ "vite/client" ],
-    /* Bundler mode */
-    "moduleResolution": "Node",
-    "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    /* Linting */
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "experimentalDecorators": true,
-    "noFallthroughCasesInSwitch": true,
-    "paths": {
-      "@/*": [ "./src/*" ],
-    },
-    "jsx": "preserve",
-    "jsxFactory": "createUiEntity",
-    "jsxFragmentFactory": "createUiFragment",
-  },
+	"compilerOptions": {
+		"target": "ESNext",
+		"jsx": "preserve",
+		"jsxFactory": "createUiEntity",
+		"jsxFragmentFactory": "createUiFragment",
+		"lib": ["ESNext", "DOM", "DOM.Iterable"],
+		"useDefineForClassFields": true,
+		"experimentalDecorators": true,
+		"module": "ESNext",
+		/* Bundler mode */
+		"moduleResolution": "Node",
+		"paths": {
+			"@/*": ["./src/*"]
+		},
+		"resolveJsonModule": true,
+		"types": ["vite/client"],
+		"allowImportingTsExtensions": true,
+		/* Linting */
+		"strict": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noEmit": true,
+		"esModuleInterop": true,
+		"isolatedModules": true,
+		"skipLibCheck": true
 
-  "include": [ "src", "assets" ]
+	},
+
+	"include": ["src", "assets"]
 }

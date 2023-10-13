@@ -22,38 +22,38 @@ export const spawnOverworld = () => {
 	if (level.layerInstances) {
 		for (const layerInstance of [...level.layerInstances].reverse()) {
 			switch (layerInstance.__type) {
-			case 'IntGrid':
-			case 'Tiles': drawLayer(layerInstance, buffer)
-				break
-			case 'Entities' : {
-				if (layerInstance.__identifier === 'Nodes') {
-					for (const entityInstance of layerInstance.entityInstances) {
-						const navNode = new NavNode(entityInstance)
-						const nodePosition = navNode.position(layerInstance)
-						const entity = map.spawn(navNode, nodePosition)
-						LDTKEntityInstance.register(entity, entityInstance)
-						if (save.lastNodeUUID === navNode.id || (!save.lastNodeUUID && navNode.data.Start)) {
-							map.spawn(...spawnOverworldCharacter(nodePosition))
-							entity.addComponent(new CurrentNode())
-						}
-						if (navNode.data.Treasure) {
-							const chestSprite = save.treasureFound.includes(navNode.data.Treasure)
-								? assets.chests.woodChestOpen1
-								: assets.chests.woodChestClosed1
-							entity.addComponent(new Sprite(new PixelTexture(assets.ui.nodeIcon)).setRenderOrder(1))
-							entity.spawn(new Sprite(chestSprite).setRenderOrder(2).anchor(0, 0.25), new Position())
-						} else if (navNode.data.Battle) {
-							entity.addComponent(new Sprite(new PixelTexture(assets.ui.nodeIcon)).setRenderOrder(1))
-							entity.spawn(new Sprite(new PixelTexture(assets.ui.battleIcon)).setRenderOrder(2), new Position())
-						} else if (navNode.data.Dungeon) {
-							entity.addComponent(new Sprite(new PixelTexture(assets.ui.nodeIcon)).setRenderOrder(1))
-							entity.spawn(new Sprite(new PixelTexture(assets.ui.houseIcon)).setRenderOrder(2), new Position())
-						} else {
-							entity.addComponent(new Sprite(new PixelTexture(assets.ui.smallNodeIcon)).setRenderOrder(1))
+				case 'IntGrid':
+				case 'Tiles': drawLayer(layerInstance, buffer)
+					break
+				case 'Entities' : {
+					if (layerInstance.__identifier === 'Nodes') {
+						for (const entityInstance of layerInstance.entityInstances) {
+							const navNode = new NavNode(entityInstance)
+							const nodePosition = navNode.position(layerInstance)
+							const entity = map.spawn(navNode, nodePosition)
+							LDTKEntityInstance.register(entity, entityInstance)
+							if (save.lastNodeUUID === navNode.id || (!save.lastNodeUUID && navNode.data.Start)) {
+								map.spawn(...spawnOverworldCharacter(nodePosition))
+								entity.addComponent(new CurrentNode())
+							}
+							if (navNode.data.Treasure) {
+								const chestSprite = save.treasureFound.includes(navNode.data.Treasure)
+									? assets.chests.woodChestOpen1
+									: assets.chests.woodChestClosed1
+								entity.addComponent(new Sprite(new PixelTexture(assets.ui.nodeIcon)).setRenderOrder(1))
+								entity.spawn(new Sprite(chestSprite).setRenderOrder(2).anchor(0, 0.25), new Position())
+							} else if (navNode.data.Battle) {
+								entity.addComponent(new Sprite(new PixelTexture(assets.ui.nodeIcon)).setRenderOrder(1))
+								entity.spawn(new Sprite(new PixelTexture(assets.ui.battleIcon)).setRenderOrder(2), new Position())
+							} else if (navNode.data.Dungeon) {
+								entity.addComponent(new Sprite(new PixelTexture(assets.ui.nodeIcon)).setRenderOrder(1))
+								entity.spawn(new Sprite(new PixelTexture(assets.ui.houseIcon)).setRenderOrder(2), new Position())
+							} else {
+								entity.addComponent(new Sprite(new PixelTexture(assets.ui.smallNodeIcon)).setRenderOrder(1))
+							}
 						}
 					}
 				}
-			}
 			}
 		}
 		map.addComponent(new Sprite(new PixelTexture(buffer.canvas)), new Position())

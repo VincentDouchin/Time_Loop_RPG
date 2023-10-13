@@ -37,25 +37,36 @@ const inventory = () => {
 	const slots = range(0, 24, (i) => {
 		const itemName = save.treasureFound[i]
 		const item = items?.[itemName]
-		return <image
-			image={assets.ui.itemspot} scale={'15vh'}
-			style={{ display: 'grid', placeItems: 'center' }}
-			components={[new ChangeBackgroundOnSelected(assets.ui['itemspot-selected']), new Interactable()]}
-		>{
+		return (
+			<image
+				image={assets.ui.itemspot}
+				scale="15vh"
+				style={{ display: 'grid', placeItems: 'center' }}
+				components={[new ChangeBackgroundOnSelected(assets.ui['itemspot-selected']), new Interactable()]}
+			>
+				{
 				item?.sprite
-					? <image image={item.sprite} scale={6} style={{ display: 'grid', placeItems: 'center' }}/>
+					? <image image={item.sprite} scale={6} style={{ display: 'grid', placeItems: 'center' }} />
 					: null
-			}</image>
+			}
+			</image>
+		)
 	})
 	const moveDown = (element: UIElement) => new Tween(300).easing(easing.inOutExpo).onUpdate((r) => {
 		element.setStyles({ translate: `0% ${r}%` })
 	}, 200, 0)
-	const inventory = <nineslice
-		bind={moveDown}
-		image={assets.ui.frameornate} margin={8} scale={4}
-		style={{ margin: '10vh 10vh 10vh 10vh', display: 'grid', gap: '0.5vh', gridTemplateColumns: 'repeat(6, 1fr)', width: 'fit-content', placeSelf: 'center' }}
-		components={[new Inventory(), new Menu(slots)]}
-	>{slots}</nineslice>
+	const inventory = (
+		<nineslice
+			bind={moveDown}
+			image={assets.ui.frameornate}
+			margin={8}
+			scale={4}
+			style={{ margin: '10vh 10vh 10vh 10vh', display: 'grid', gap: '0.5vh', gridTemplateColumns: 'repeat(6, 1fr)', width: 'fit-content', placeSelf: 'center' }}
+			components={[new Inventory(), new Menu(slots)]}
+		>
+			{slots}
+		</nineslice>
+	)
 
 	return inventory
 }

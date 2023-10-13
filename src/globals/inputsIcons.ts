@@ -12,16 +12,16 @@ export const inputs = async (img: HTMLImageElement) => {
 	const layout = await (<any>navigator).keyboard.getLayoutMap() as Map<string, string>
 	return (type: 'keyboard', input: string) => {
 		switch (type) {
-		case 'keyboard':{
-			const key = layout.get(input)
-			if (key) {
-				const x = keyboardMap.findIndex(r => r.includes(key))
-				const y = keyboardMap[x].indexOf(key)
-				const buffer = getScreenBuffer(16, 16)
-				buffer.drawImage(img, 272 + x * 16, y * 16, 16, 16, 0, 0, 16, 16)
-				return buffer.canvas
-			}
-		};break
+			case 'keyboard':{
+				const key = layout.get(input)
+				if (key) {
+					const x = keyboardMap.findIndex(r => r.includes(key))
+					const y = keyboardMap[x].indexOf(key)
+					const buffer = getScreenBuffer(16, 16)
+					buffer.drawImage(img, 272 + x * 16, y * 16, 16, 16, 0, 0, 16, 16)
+					return buffer.canvas
+				}
+			};break
 		}
 	}
 }

@@ -64,8 +64,14 @@ export const createAtlas = (img: HTMLImageElement | HTMLCanvasElement | Offscree
 			const buffer = getOffscreenBuffer(dimension, dimension)
 			buffer.drawImage(
 				img,
-				x * dimension, y * dimension, dimension, dimension,
-				0, 0, dimension, dimension,
+				x * dimension,
+				y * dimension,
+				dimension,
+				dimension,
+				0,
+				0,
+				dimension,
+				dimension,
 			)
 			result[y].push(new PixelTexture(buffer.canvas))
 		}

@@ -55,21 +55,21 @@ export class Battler {
 	compareTo(battler: Battler) {
 		if (this.currentAction) {
 			switch (this.currentAction.target) {
-			case TargetType.Self:{
-				return this === battler
-			}
-			case TargetType.AllOthers:
-			case TargetType.Others:{
-				return this.type !== battler.type
-			}
-			case TargetType.AllSame:
-			case TargetType.Same:{
-				return this.type === battler.type
-			}
-			case TargetType.Any:
-			case TargetType.All: {
-				return true
-			}
+				case TargetType.Self:{
+					return this === battler
+				}
+				case TargetType.AllOthers:
+				case TargetType.Others:{
+					return this.type !== battler.type
+				}
+				case TargetType.AllSame:
+				case TargetType.Same:{
+					return this.type === battler.type
+				}
+				case TargetType.Any:
+				case TargetType.All: {
+					return true
+				}
 			}
 		}
 	}
@@ -84,29 +84,28 @@ export const selectNextBattler = (battlers: Battler[]) => {
 const dialogOptionQuery = ecs.query.with(DialogOption)
 export const selectAction = (battler: Battler) => {
 	switch (battler.actionSelector) {
-	case ActionSelector.PlayerMenu:{
-		const battlerMenu = battlerMenuQuery.extract()
-		const existingMenu = battlerMenu?.getComponent(Menu)
-		if (!battlerMenu && dialogOptionQuery.size === 0) {
-			ecs.spawn(actionMenu(battler.actions))
-		}
-		if (existingMenu) {
-			existingMenu.active = true
-		}
-		for (const [item, interactable] of playerActionItemQuery.getAll()) {
-			if (interactable.justPressed) {
-				battler.currentAction = item.action
-				const battlerMenu = battlerMenuQuery.extract()
-				const existingMenu = battlerMenu?.getComponent(Menu)
-				if (existingMenu) {
-					existingMenu.active = false
+		case ActionSelector.PlayerMenu:{
+			const battlerMenu = battlerMenuQuery.extract()
+			const existingMenu = battlerMenu?.getComponent(Menu)
+			if (!battlerMenu && dialogOptionQuery.size === 0) {
+				ecs.spawn(actionMenu(battler.actions))
+			}
+			if (existingMenu) {
+				existingMenu.active = true
+			}
+			for (const [item, interactable] of playerActionItemQuery.getAll()) {
+				if (interactable.justPressed) {
+					battler.currentAction = item.action
+					const battlerMenu = battlerMenuQuery.extract()
+					const existingMenu = battlerMenu?.getComponent(Menu)
+					if (existingMenu) {
+						existingMenu.active = false
+					}
 				}
 			}
-		}
-	};break
-	case ActionSelector.EnemyAuto:{
-		battler.currentAction = battler.actions[0]
-	};break
+		};break
+		case ActionSelector.EnemyAuto:battler.currentAction = battler.actions[0]
+			break
 	}
 }
 
@@ -120,24 +119,24 @@ export const selectTargets = (battler: Battler) => {
 
 	if (battler.canSelectTarget) {
 		switch (battler.targetSelector) {
-		case TargetSelector.PlayerTargetMenu:{
-			const enemySelectMenu = enemySelectMenuQuery.extract()
-			if (!enemySelectMenu && !battler.hasSelectedTargets) {
-				ecs.spawn(new Menu(potentialTargets), new EnemySelectMenu(), getMenuInputMap())
-			}
-			for (const [entity, interactable] of possibleTargetsQuery.getAll()) {
-				if (interactable.justPressed) {
-					battler.targets.push(entity)
-					entity.addComponent(new ColorShader([1, 1, 1, 0.8]))
-					if (battler.hasSelectedTargets) {
-						enemySelectMenu?.despawn()
+			case TargetSelector.PlayerTargetMenu:{
+				const enemySelectMenu = enemySelectMenuQuery.extract()
+				if (!enemySelectMenu && !battler.hasSelectedTargets) {
+					ecs.spawn(new Menu(potentialTargets), new EnemySelectMenu(), getMenuInputMap())
+				}
+				for (const [entity, interactable] of possibleTargetsQuery.getAll()) {
+					if (interactable.justPressed) {
+						battler.targets.push(entity)
+						entity.addComponent(new ColorShader([1, 1, 1, 0.8]))
+						if (battler.hasSelectedTargets) {
+							enemySelectMenu?.despawn()
+						}
 					}
 				}
-			}
-		};break
-		case TargetSelector.EnemyAuto:{
-			battler.targets.push(potentialTargets[Math.floor(Math.random() * potentialTargets.length)])
-		};break
+			};break
+			case TargetSelector.EnemyAuto:
+				battler.targets.push(potentialTargets[Math.floor(Math.random() * potentialTargets.length)])
+				break
 		}
 	} else {
 		battler.targets = potentialTargets

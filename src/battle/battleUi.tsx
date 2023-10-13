@@ -13,13 +13,13 @@ const characterCard = () => (
 	<nineslice image={assets.ui.framebordered} scale={4} margin={4} style={containerStyles} components={[new BattleUI()]}>
 		<ui-element>
 			<nineslice image={assets.ui.label} margin={4} scale={4} style={{ display: 'flex', gap: '1vw' }}>
-				<image image={assets.heroIcons.paladin} scale={3}/>
+				<image image={assets.heroIcons.paladin} scale={3} />
 				<text>Paladin</text>
 			</nineslice>
 			<text>Level 2</text>
 		</ui-element>
 		<ui-element>
-			<ui-element >
+			<ui-element>
 				<text>HP 20/20</text>
 				<image image={assets.ui.hpbar} scale={4} />
 			</ui-element>
@@ -39,19 +39,21 @@ export const actionMenu = (actions: readonly BattleAction<any>[]) => {
 			style={{ display: 'flex', placeItems: 'center', gap: '1vw' }}
 			components={[new Interactable(), new ChangeBorderOnSelected(assets.ui['itemspot-selected']), new PlayerActionItem(action)]}
 		>
-			{action.icon ? <image image={action.icon} scale={'2vw'}></image> : null}
+			{action.icon ? <image image={action.icon} scale="2vw"></image> : null}
 			<text>{action.label}</text>
 		</nineslice>
 	))
-	return <nineslice
-		image={assets.ui.framebordered}
-		margin={4}
-		scale={4}
-		style={{ display: 'grid', alignSelf: 'end', width: '10vw', margin: '3vw', gap: '1vh', padding: '1vh' }}
-		components={[new Menu(options), getMenuInputMap(), new BattlerMenu(), new BattleUI()]}
-	>
-		{options}
-	</nineslice>
+	return (
+		<nineslice
+			image={assets.ui.framebordered}
+			margin={4}
+			scale={4}
+			style={{ display: 'grid', alignSelf: 'end', width: '10vw', margin: '3vw', gap: '1vh', padding: '1vh' }}
+			components={[new Menu(options), getMenuInputMap(), new BattlerMenu(), new BattleUI()]}
+		>
+			{options}
+		</nineslice>
+	)
 }
 
 export const battleUi = () => {
