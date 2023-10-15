@@ -1,5 +1,5 @@
 import type { Texture, WebGLRenderer } from 'three'
-import { NearestFilter, RepeatWrapping, WebGLRenderTarget } from 'three'
+import { ClampToEdgeWrapping, NearestFilter, RepeatWrapping, WebGLRenderTarget } from 'three'
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
 import { CopyShader } from 'three/examples/jsm/shaders/CopyShader'
 import type { PixelTexture } from './pixelTexture'
@@ -30,8 +30,8 @@ export class ShaderComposer {
 		const target = new WebGLRenderTarget(this.width, this.height)
 		target.texture.minFilter = NearestFilter
 		target.texture.magFilter = NearestFilter
-		target.texture.wrapS = RepeatWrapping
-		target.texture.wrapT = RepeatWrapping
+		target.texture.wrapS = ClampToEdgeWrapping
+		target.texture.wrapT = ClampToEdgeWrapping
 		return target
 	}
 
