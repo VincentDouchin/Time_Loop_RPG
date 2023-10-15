@@ -22,9 +22,9 @@ export default defineConfig(() => {
 					start_url: 'index.html?fullscreen=true',
 					display: 'fullscreen',
 					orientation: 'landscape',
-					name: 'Hell\'s Tea Shop',
-					short_name: 'Hell\'s Tea Shop',
-					description: 'Hell\'s Tea Shop',
+					name: 'Time Loop RPG',
+					short_name: 'Time Loop RPG',
+					description: 'Time Loop RPG',
 					theme_color: '#000000',
 					icons: [
 					  {
