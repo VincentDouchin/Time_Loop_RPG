@@ -21,7 +21,7 @@ export default defineConfig(() => {
 					name: 'Time Loop RPG',
 					short_name: 'TimeLoopRPG',
 					description: 'Time Loop RPG',
-					theme_color: '#000000',
+					theme_color: '#ffffff',
 					icons: [
 						{
 							src: 'pwa-192x192.png',
