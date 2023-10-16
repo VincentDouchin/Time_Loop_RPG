@@ -8,7 +8,7 @@ import type { Class } from '@/lib/ECS'
 import { ECS, Entity, State, SystemSet } from '@/lib/ECS'
 import { createWorld } from '@/lib/world'
 import { ColorShader } from '@/shaders/ColorShader'
-import type { direction } from '@/stateDungeon/spawnDungeon'
+import type { direction } from '@/states/dungeon/spawnDungeon'
 import { PixelTexture } from '@/lib/pixelTexture'
 
 export const world = await createWorld()

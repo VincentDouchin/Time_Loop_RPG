@@ -2,7 +2,7 @@ import { BanditLeader } from './enemyTags'
 import { dialog } from '@/constants/dialogs'
 import { ecs } from '@/globals/init'
 import { Component, Entity } from '@/lib/ECS'
-import { Dialog } from '@/stateDungeon/dialog'
+import { Dialog } from '@/states/dungeon/dialog'
 import { Menu } from '@/ui/menu'
 import { dialogContainer } from '@/ui/dialogUi'
 

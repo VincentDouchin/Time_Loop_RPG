@@ -1,4 +1,4 @@
-import { type Dialog, DialogContainer } from '@/stateDungeon/dialog'
+import { type Dialog, DialogContainer } from '@/states/dungeon/dialog'
 import { assets } from '@/globals/init'
 import { Interactable } from '@/lib/interactions'
 import { Tween } from '@/lib/tween'

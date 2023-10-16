@@ -1,5 +1,5 @@
 import { ColliderDesc, RigidBodyDesc } from '@dimforge/rapier2d-compat'
-import { LDTKEntityInstance } from '../level/LDTKEntity'
+import { LDTKEntityInstance } from '../../level/LDTKEntity'
 import { Dialog, dialogContainerQuery, stepDialog } from './dialog'
 import { PlayerInputMap } from './playerInputs'
 import { dialog } from '@/constants/dialogs'

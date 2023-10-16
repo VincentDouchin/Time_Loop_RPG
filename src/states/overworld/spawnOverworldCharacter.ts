@@ -1,10 +1,10 @@
-import type { direction } from '@/stateDungeon/spawnDungeon'
+import type { direction } from '@/states/dungeon/spawnDungeon'
 import { Player } from '@/generic/components'
 import { assets } from '@/globals/init'
 import { CameraTarget } from '@/lib/camera'
 import { TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
-import { DecidingDirection, Navigator } from '@/overworld/navigation'
+import { DecidingDirection, Navigator } from '@/states/overworld/navigation'
 import { context } from '@/save/context'
 import { save } from '@/save/saveData'
 

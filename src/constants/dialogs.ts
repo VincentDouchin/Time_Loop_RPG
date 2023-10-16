@@ -1,5 +1,5 @@
 import { chopLog, despwawnCutscene, lockPlayer, unlockPlayer } from '../utils/dialogHelpers'
-import { updateSteps } from '@/overworld/overworldUi'
+import { updateSteps } from '@/states/overworld/overworldUi'
 import { save, saveToLocalStorage } from '@/save/saveData'
 import { overworldState } from '@/globals/init'
 

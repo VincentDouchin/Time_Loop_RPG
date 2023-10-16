@@ -17,7 +17,7 @@ import { Sprite } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { save, saveToLocalStorage } from '@/save/saveData'
 import { ColorShader } from '@/shaders/ColorShader'
-import { NPCBundle } from '@/stateDungeon/NPC'
+import { NPCBundle } from '@/states/dungeon/NPC'
 import { getOffscreenBuffer } from '@/utils/buffer'
 
 export type direction = 'left' | 'right' | 'up' | 'down'

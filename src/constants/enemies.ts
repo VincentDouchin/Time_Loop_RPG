@@ -1,5 +1,5 @@
 import { type BattleAction, singleEnemyAttack } from './actions'
-import { BanditLeader } from '@/stateBattle/enemyTags'
+import { BanditLeader } from '@/states/battle/enemyTags'
 import type { Class } from '@/lib/ECS'
 
 export interface Enemy<K extends keyof characterAnimations = keyof characterAnimations > {

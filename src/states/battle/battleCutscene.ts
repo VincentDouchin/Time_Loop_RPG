@@ -1,6 +1,6 @@
 import { ecs } from '@/globals/init'
 import { menuInputQuery } from '@/menus/menuInputs'
-import { Dialog, dialogContainerQuery, stepDialog } from '@/stateDungeon/dialog'
+import { Dialog, dialogContainerQuery, stepDialog } from '@/states/dungeon/dialog'
 import { Menu } from '@/ui/menu'
 
 const battlerDialogQuery = ecs.query.pick(Dialog, Menu)

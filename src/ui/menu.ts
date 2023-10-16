@@ -1,6 +1,6 @@
 import { UIElement } from './UiElement'
 import { NineSlice } from './nineSliceUi'
-import type { direction } from '@/stateDungeon/spawnDungeon'
+import type { direction } from '@/states/dungeon/spawnDungeon'
 import { ecs } from '@/globals/init'
 import { Component, Entity, SystemSet } from '@/lib/ECS'
 

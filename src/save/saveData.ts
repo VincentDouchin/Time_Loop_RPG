@@ -3,7 +3,7 @@ import { type keys, removeKeys } from '@/constants/dialogs'
 import type LDTKEnums from '@/constants/exports/LDTKEnums'
 import type { PlayerData } from '@/constants/players'
 import { overworldState } from '@/globals/init'
-import type { direction } from '@/stateDungeon/spawnDungeon'
+import type { direction } from '@/states/dungeon/spawnDungeon'
 
 type states = 'dungeon' | 'overworld' | 'battle'
 interface saveData {
