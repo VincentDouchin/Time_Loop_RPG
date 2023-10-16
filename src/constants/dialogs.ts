@@ -1,6 +1,6 @@
-import { chopLog, lockPlayer, unlockPlayer } from '../utils/dialogHelpers'
-import { despwawnCutscene } from '@/battle/cutscenes'
+import { chopLog, despwawnCutscene, lockPlayer, unlockPlayer } from '../utils/dialogHelpers'
 import { overworldState } from '@/main'
+import { updateSteps } from '@/stateOverworld/overworldUi'
 import { save, saveToLocalStorage } from '@/save/saveData'
 
 export const keys = ['oldManBandit', 'lumberjack', 'splitLog'] as const
@@ -38,10 +38,8 @@ export const dialog: Partial<Record<characters | `sign${string}`, () => Generato
 				yield 'Have you seen Tyler?'
 			} else {
 				yield 'Have you seem my son Tyler on the way here?'
-				yield 'He hangs out in the woods near by'
-				yield 'and tries to scare the travellers'
-				yield 'Can you tell him to come home'
-				yield 'if you see him?'
+				yield 'He hangs out in the woods near by and tries to scare the travellers'
+				yield 'Can you tell him to come home if you see him?'
 				yield 'His mother is worried and her health is getting worse'
 				yield 'I would really appreciate it.'
 				addKey('oldManBandit')
@@ -57,6 +55,7 @@ export const dialog: Partial<Record<characters | `sign${string}`, () => Generato
 			yield 'Mom is not doing well?'
 			yield '...'
 			yield 'Just go'
+			updateSteps(1)
 			overworldState.enable()
 		} else {
 			yield 'Give us all your stuff!'

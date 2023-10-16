@@ -1,6 +1,6 @@
 import { Battler, BattlerMenu, selectAction, selectNextBattler, selectTargets, takeAction } from './battleActions'
 import { battleUi } from './battleUi'
-import { Cutscene } from './cutscenes'
+import { Cutscene } from './cutscene'
 import { Health } from './health'
 import { ActionSelector, BattlerType, PlayerActions, TargetSelector } from '@/constants/actions'
 import type { Enemy } from '@/constants/enemies'
@@ -40,8 +40,7 @@ export const spawnBattlers = (battle: Entity, background: number, enemies: reado
 	for (const playerData of save.players) {
 		const bundle = battlerSpriteBundle('right', assets.characters[playerData.name], background)
 		const player = battle.spawn(...bundle, Health.fromPlayerData(playerData), new Player())
-		new Tween(2000)
-			.onComplete(() => player.addComponent(new Battler(BattlerType.Player, PlayerActions[playerData.name], ActionSelector.PlayerMenu, TargetSelector.PlayerTargetMenu)))
+		sleep(2000).then(() => player.addComponent(new Battler(BattlerType.Player, PlayerActions[playerData.name], ActionSelector.PlayerMenu, TargetSelector.PlayerTargetMenu)))
 	}
 
 	// !ENEMIES
@@ -49,10 +48,10 @@ export const spawnBattlers = (battle: Entity, background: number, enemies: reado
 		const enemyData = enemies[i]
 		const bundle = battlerSpriteBundle('left', assets.characters[enemyData.atlas], background, i, enemies.length)
 		const enemy = battle.spawn(...bundle, new Health(2), new Interactable(8))
-		if (enemyData.additionalComponents) {
-			enemy.addComponent(...enemyData.additionalComponents?.map(getComponent => getComponent()))
+		if (enemyData.bundle) {
+			enemy.addComponent(...enemyData.bundle())
 		}
-		new Tween(2000).onComplete(() => {
+		sleep(2000).then(() => {
 			enemy.addComponent(new Battler(BattlerType.Enemy, enemyData.actions, ActionSelector.EnemyAuto, TargetSelector.EnemyAuto))
 		})
 	}

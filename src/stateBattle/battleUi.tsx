@@ -1,5 +1,5 @@
 import type { StandardProperties } from 'csstype'
-import { BattlerMenu, PlayerActionItem } from '@/battle/battleActions'
+import { BattlerMenu, PlayerActionItem } from '@/stateBattle/battleActions'
 import type { BattleAction } from '@/constants/actions'
 import { assets, ecs } from '@/globals/init'
 import { Interactable } from '@/lib/interactions'

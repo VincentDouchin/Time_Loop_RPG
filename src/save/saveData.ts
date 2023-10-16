@@ -1,8 +1,8 @@
 import type { battles } from '@/constants/battles'
-import { type keys, removeKeys } from '@/constants/dialog'
+import { type keys, removeKeys } from '@/constants/dialogs'
 import type LDTKEnums from '@/constants/exports/LDTKEnums'
 import type { PlayerData } from '@/constants/players'
-import type { direction } from '@/dungeon/spawnDungeon'
+import type { direction } from '@/stateDungeon/spawnDungeon'
 import { overworldState } from '@/main'
 
 type states = 'dungeon' | 'overworld' | 'battle'

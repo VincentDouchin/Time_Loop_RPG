@@ -1,16 +1,16 @@
 import { OrthographicCamera } from 'three'
 import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer'
-import { banditCutscene, battleDialog } from './battle/battleCutscene'
-import { displayHealth, savePlayerHealth, updateHealthDisplay } from './battle/health'
-import { despawnBattle, spawnBattle } from './battle/spawnBattleBackground'
-import { battleTurn, outlineSelectedEnemy, removeDeadBattlers, winOrLose } from './battle/spawnBattlers'
+import { battleDialog } from './stateBattle/battleCutscene'
+import { displayHealth, savePlayerHealth, updateHealthDisplay } from './stateBattle/health'
+import { despawnBattle, spawnBattle } from './stateBattle/spawnBattleBackground'
+import { battleTurn, outlineSelectedEnemy, removeDeadBattlers, winOrLose } from './stateBattle/spawnBattlers'
 import type { BattleData } from './constants/battles'
-import { addTalkingIcon, startDialogDungeon } from './dungeon/NPC'
-import { hideThanks, showEndOfDemo } from './dungeon/endOfDemo'
-import { PlayerInputMap } from './dungeon/playerInputs'
-import { movePlayer } from './dungeon/playerMovement'
-import type { direction } from './dungeon/spawnDungeon'
-import { Dungeon, allowPlayerToExit, exitDungeon, isPlayerInside, setDungeonState, spawnDungeon } from './dungeon/spawnDungeon'
+import { addTalkingIcon, startDialogDungeon } from './stateDungeon/NPC'
+import { hideThanks, showEndOfDemo } from './stateDungeon/endOfDemo'
+import { PlayerInputMap } from './stateDungeon/playerInputs'
+import { movePlayer } from './stateDungeon/playerMovement'
+import type { direction } from './stateDungeon/spawnDungeon'
+import { Dungeon, allowPlayerToExit, exitDungeon, isPlayerInside, setDungeonState, spawnDungeon } from './stateDungeon/spawnDungeon'
 import { despawnEntities, ecs } from './globals/init'
 import { State, SystemSet } from './lib/ECS'
 import { animateSprites } from './lib/animation'
@@ -23,12 +23,12 @@ import { time } from './lib/time'
 import { stepWorld, updatePosition, updateSpritePosition } from './lib/transforms'
 import { Tween } from './lib/tween'
 import { MenuInputMap, clickOnMenuInput, spawnMenuInputs } from './menus/menuInputs'
-import { Inventory, openInventory, spawnInventoryToggle } from './overworld/InventoryUi'
-import { triggerApocalypse } from './overworld/apocalypse'
-import { addNavigationArrows, moveOverworldCharacter, pickupOverworldTreasure, removeNavigationMenu } from './overworld/navigation'
-import { spawnStepsUi } from './overworld/overworldUi'
-import { setInitialState } from './overworld/setInitialState'
-import { despawnOverworld, setOverwolrdState, spawnOverworld } from './overworld/spawnOverworld'
+import { Inventory, openInventory, spawnInventoryToggle } from './stateOverworld/InventoryUi'
+import { triggerApocalypse } from './stateOverworld/apocalypse'
+import { addNavigationArrows, moveOverworldCharacter, pickupOverworldTreasure, removeNavigationMenu } from './stateOverworld/navigation'
+import { spawnStepsUi } from './stateOverworld/overworldUi'
+import { setInitialState } from './stateOverworld/setInitialState'
+import { despawnOverworld, setOverwolrdState, spawnOverworld } from './stateOverworld/spawnOverworld'
 import { save, saveToLocalStorage } from './save/saveData'
 import { ApocalypseShader, updateApocalypseShader } from './shaders/ApocalypseShader'
 import { ColorShader } from './shaders/ColorShader'
@@ -39,6 +39,7 @@ import { addUIElementsToDOM, spawnUIRoot } from './ui/UI'
 import { BattleUI, OverWorldUI, setDefaultFontSize } from './ui/UiElement'
 import { selectEntities, unSelectDespawnMenus, updateMenus } from './ui/menu'
 import { addToScene, addToWorld, registerFullScreenShader, registerShader } from './utils/registerComponents'
+import { banditCutscene } from './stateBattle/cutscene'
 
 // !Lib
 
@@ -52,6 +53,12 @@ ecs
 // !Plugins
 ecs.addPlugin(addToScene(OrthographicCamera, Sprite, CSS2DObject))
 	.addPlugin(registerInput(MenuInputMap, PlayerInputMap))
+
+// ! Start Game
+ecs.state()
+	.onEnter()
+	.onExit(setInitialState)
+	.enable()
 
 // ! States
 export const overworldState = ecs.state()
@@ -72,8 +79,6 @@ export const dungeonState = ecs.state<dungeonRessources>()
 	.onExit(disableTouchJoystick, despawnEntities(Dungeon))
 
 State.exclusive(overworldState, battleState, dungeonState)
-
-setInitialState()
 
 // ! Game loop
 const animate = async (delta: number) => {

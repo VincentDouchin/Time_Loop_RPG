@@ -2,7 +2,7 @@ import { actionMenu } from './battleUi'
 import { Health } from './health'
 import type { BattleAction, BattlerType } from '@/constants/actions'
 import { ActionSelector, TargetSelector, TargetType } from '@/constants/actions'
-import { DialogOption } from '@/dungeon/NPC'
+import { DialogOption } from '@/stateDungeon/dialog'
 import { assets, ecs } from '@/globals/init'
 import { Component, Entity } from '@/lib/ECS'
 import { Interactable } from '@/lib/interactions'
@@ -165,7 +165,9 @@ export const takeAction = (battlerTakingAction: Battler) => {
 							if (battler.currentAction?.targetEffects) {
 								await playEffect(enemyEntity, enemyAtlas, battler.currentAction.targetEffects)
 							}
-							await enemyAtlas.playAnimation('dmg')
+							await enemyAtlas.playAnimation('dmg').then(() => {
+								enemyAtlas.state = 'idle'
+							})
 						})().then(() => {
 							enemyHealth.currentHealth--
 							battler.currentTurn = false

@@ -1,15 +1,12 @@
 import { type BattleAction, singleEnemyAttack } from './actions'
-import { ecs } from '@/globals/init'
+import { BanditLeader } from '@/stateBattle/enemyTags'
 import type { Class } from '@/lib/ECS'
-import { Component } from '@/lib/ECS'
 
 export interface Enemy<K extends keyof characterAnimations = keyof characterAnimations > {
 	atlas: K
 	actions: readonly BattleAction<K>[]
-	additionalComponents?: readonly (() => InstanceType<Class>)[]
+	bundle?: () => Array<InstanceType<Class>>
 }
-@Component(ecs)
-export class BanditLeader {}
 
 export const enemies = {
 	bandit: {
@@ -19,7 +16,7 @@ export const enemies = {
 	banditLeader: {
 		atlas: 'banditLeader',
 		actions: [singleEnemyAttack('dagger')],
-		additionalComponents: [() => new BanditLeader()],
+		bundle: () => [new BanditLeader()],
 	},
 	angelOfDeath: {
 		atlas: 'angelOfDeath',

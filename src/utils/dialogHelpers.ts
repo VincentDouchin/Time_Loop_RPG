@@ -1,16 +1,18 @@
 import { RigidBody } from '@dimforge/rapier2d-compat'
-import { addKey } from '../constants/dialog'
-import { Dialog, NPC } from '@/dungeon/NPC'
-import { LockedMovement } from '@/dungeon/playerMovement'
-import { Dungeon, logBundle } from '@/dungeon/spawnDungeon'
+import { addKey } from '../constants/dialogs'
+import { NPC } from '@/stateDungeon/NPC'
+import { LockedMovement } from '@/stateDungeon/playerMovement'
+import { Dungeon, logBundle } from '@/stateDungeon/spawnDungeon'
 import { Player } from '@/generic/components'
-import { ecs } from '@/globals/init'
+import { despawnEntities, ecs } from '@/globals/init'
 import { LDTKEntityInstance } from '@/level/LDTKEntity'
 import { Component, Entity } from '@/lib/ECS'
 import { TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
 import { Tween } from '@/lib/tween'
 import { sleep } from '@/utils/timing'
+import { Dialog } from '@/stateDungeon/dialog'
+import { Cutscene } from '@/stateBattle/cutscene'
 
 @Component(ecs)
 export class Log { }
@@ -67,3 +69,5 @@ export const chopLog = async () => {
 		}
 	}
 }
+
+export const despwawnCutscene = despawnEntities(Cutscene)

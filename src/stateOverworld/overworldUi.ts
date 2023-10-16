@@ -37,8 +37,8 @@ export const spawnStepsUi = () => {
 export const stepsQuery = ecs.query.pick(StepsUi)
 export const updateSteps = (stepsNb: number) => {
 	if (!save.finishedDemo) {
+		save.steps += stepsNb
 		for (const [steps] of stepsQuery.getAll()) {
-			save.steps += stepsNb
 			steps.update()
 		}
 	}
