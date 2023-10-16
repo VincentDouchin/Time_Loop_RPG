@@ -1,5 +1,4 @@
 import { type Enemy, enemies } from './enemies'
-import { banditCutscene } from '@/stateBattle/battleCutscene'
 
 export interface BattleData {
 	enemies: readonly Enemy[]

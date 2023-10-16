@@ -1,94 +1,30 @@
 import { Collider, ColliderDesc, RigidBodyDesc } from '@dimforge/rapier2d-compat'
-import { Group } from 'three'
-import { getPlayerInputMap } from './playerInputs'
-import { Dialog } from './dialog'
-import { dialog, hasKey } from '@/constants/dialogs'
-import { Log } from '@/utils/dialogHelpers'
-import { NPCBundle } from '@/stateDungeon/NPC'
+import { DarkenWhenInside, Dungeon, Entrance, Inside, InsideTrigger, JustEntered, Outside, Wall } from './dungeonComponents'
+import { logBundle } from './log'
+import { SignBundle } from './sign'
+import { PlayerBundle } from './player'
+import { hasKey } from '@/constants/dialogs'
 import { Player } from '@/generic/components'
-import { assets, ecs, world } from '@/globals/init'
-import type { EntityInstance, LayerInstance } from '@/level/LDTK'
+import type { dungeonRessources } from '@/globals/init'
+import { assets, ecs, overworldState, world } from '@/globals/init'
+import type { LayerInstance } from '@/level/LDTK'
 import { LDTKEntityInstance } from '@/level/LDTKEntity'
 import { drawLayer, spawnIntGridEntities } from '@/level/spawnLevel'
-import type { Class, System } from '@/lib/ECS'
-import { Component, Entity } from '@/lib/ECS'
-import { CameraBounds, CameraTarget } from '@/lib/camera'
-import { PixelTexture } from '@/lib/pixelTexture'
-import { Sprite, TextureAtlas } from '@/lib/sprite'
+import type { System } from '@/lib/ECS'
+import { Entity } from '@/lib/ECS'
+import { CameraBounds } from '@/lib/camera'
+import { Sprite } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
-import type { dungeonRessources } from '@/main'
-import { overworldState } from '@/main'
 import { save, saveToLocalStorage } from '@/save/saveData'
 import { ColorShader } from '@/shaders/ColorShader'
+import { NPCBundle } from '@/stateDungeon/NPC'
 import { getOffscreenBuffer } from '@/utils/buffer'
 
 export type direction = 'left' | 'right' | 'up' | 'down'
-@Component(ecs)
-export class Dungeon { }
-@Component(ecs)
-export class Inside { }
-@Component(ecs)
-export class InsideTrigger { }
-@Component(ecs)
-export class Wall { }
-@Component(ecs)
-export class Outside { }
-@Component(ecs)
-export class DarkenWhenInside { }
-@Component(ecs)
-export class JustEntered { }
-@Component(ecs)
-export class Entrance extends LDTKEntityInstance<{ direction: direction }> { }
-
 const spawnLayer = (layer: LayerInstance) => {
 	const buffer = getOffscreenBuffer(layer.__cWid * layer.__gridSize, layer.__cHei * layer.__gridSize)
 	drawLayer(layer, buffer)
 	return Sprite.fromBuffer(buffer).setRenderOrder(layer.__identifier.includes('top') ? 100 : -1)
-}
-
-@Component(ecs)
-export class SignPost extends LDTKEntityInstance<{ dialog: string }> { }
-
-export const SignBundle = (sign: EntityInstance, layerInstance: LayerInstance) => {
-	const signPost = new SignPost(sign)
-	const components: InstanceType<Class>[] = [
-		signPost,
-		signPost.position(layerInstance),
-		RigidBodyDesc.fixed(),
-		ColliderDesc.cuboid(4, 4),
-		new Group(),
-	]
-	const signDialog = dialog[`sign${signPost.data.dialog}`]
-	if (signDialog) {
-		components.push(...new Dialog(signDialog).withMenu())
-	}
-	return components
-}
-
-export const PlayerBundle = (pos: Position) => {
-	const bundle = TextureAtlas.bundle(assets.characters.paladin, 'idle', 'left', 'down')
-	bundle[0].setRenderOrder(10)
-	return [
-		...bundle,
-		new Position(pos.x, pos.y),
-		getPlayerInputMap(),
-		new CameraTarget(),
-		new Player(),
-		new JustEntered(),
-		RigidBodyDesc.dynamic(),
-		ColliderDesc.cuboid(3, 3),
-	]
-}
-export const logBundle = (split: boolean, entityInstance: LDTKEntityInstance, pos: Position) => (parent: Entity) => {
-	if (split) {
-		return parent.spawn(new Sprite(new PixelTexture(assets.staticItems.logSplit)), pos, new Log(), entityInstance)
-			.withChildren((log) => {
-				log.spawn(RigidBodyDesc.fixed(), ColliderDesc.cuboid(entityInstance.w / 2, entityInstance.h / 2), new Position(entityInstance.w / 2 + 8))
-				log.spawn(RigidBodyDesc.fixed(), ColliderDesc.cuboid(entityInstance.w / 2, entityInstance.h / 2), new Position(-entityInstance.w / 2 - 8))
-			})
-	} else {
-		return parent.spawn(new Sprite(new PixelTexture(assets.staticItems.log)), pos, ...entityInstance.body(), entityInstance, new Log())
-	}
 }
 
 export const spawnDungeon: System<dungeonRessources> = (mapName, levelIndex, direction) => {
@@ -109,13 +45,13 @@ export const spawnDungeon: System<dungeonRessources> = (mapName, levelIndex, dir
 				map.spawn(spawnLayer(layerInstance), new Position(), new DarkenWhenInside())
 			}
 			if (layerInstance.__identifier === 'Collisions') {
-				spawnIntGridEntities(map, mapFile, layerInstance, t => t?.identifier === 'Wall',					(wall, w, h) => {
+				spawnIntGridEntities(map, mapFile, layerInstance, t => t?.identifier === 'Wall', (wall, w, h) => {
 					wall.addComponent(RigidBodyDesc.fixed(), ColliderDesc.cuboid(w / 2, h / 2), new Wall())
 				})
-				spawnIntGridEntities(map, mapFile, layerInstance, t => t?.identifier === 'Inside',					(wall, w, h) => {
+				spawnIntGridEntities(map, mapFile, layerInstance, t => t?.identifier === 'Inside', (wall, w, h) => {
 					wall.addComponent(new InsideTrigger(), RigidBodyDesc.fixed(), ColliderDesc.cuboid(w / 2, h / 2).setSensor(true))
 				})
-				spawnIntGridEntities(map, mapFile, layerInstance, t => t?.identifier === 'Shadow',					(wall, w, h) => {
+				spawnIntGridEntities(map, mapFile, layerInstance, t => t?.identifier === 'Shadow', (wall, w, h) => {
 					const buffer = getOffscreenBuffer(w + 16, h + 8)
 					buffer.fillStyle = 'black'
 					buffer.fillRect(0, 0, w + 16, h + 8)

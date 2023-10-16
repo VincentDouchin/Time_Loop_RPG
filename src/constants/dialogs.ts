@@ -1,7 +1,7 @@
 import { chopLog, despwawnCutscene, lockPlayer, unlockPlayer } from '../utils/dialogHelpers'
-import { overworldState } from '@/main'
-import { updateSteps } from '@/stateOverworld/overworldUi'
+import { updateSteps } from '@/overworld/overworldUi'
 import { save, saveToLocalStorage } from '@/save/saveData'
+import { overworldState } from '@/globals/init'
 
 export const keys = ['oldManBandit', 'lumberjack', 'splitLog'] as const
 export const addKey = (key: typeof keys[number]) => {

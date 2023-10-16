@@ -4,7 +4,7 @@ import { assets } from '@/globals/init'
 import { CameraTarget } from '@/lib/camera'
 import { TextureAtlas } from '@/lib/sprite'
 import { Position } from '@/lib/transforms'
-import { DecidingDirection, Navigator } from '@/stateOverworld/navigation'
+import { DecidingDirection, Navigator } from '@/overworld/navigation'
 import { context } from '@/save/context'
 import { save } from '@/save/saveData'
 

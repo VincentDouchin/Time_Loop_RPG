@@ -2,7 +2,7 @@ import { RigidBody } from '@dimforge/rapier2d-compat'
 import { addKey } from '../constants/dialogs'
 import { NPC } from '@/stateDungeon/NPC'
 import { LockedMovement } from '@/stateDungeon/playerMovement'
-import { Dungeon, logBundle } from '@/stateDungeon/spawnDungeon'
+import { Dungeon } from '@/stateDungeon/dungeonComponents'
 import { Player } from '@/generic/components'
 import { despawnEntities, ecs } from '@/globals/init'
 import { LDTKEntityInstance } from '@/level/LDTKEntity'
@@ -13,6 +13,7 @@ import { Tween } from '@/lib/tween'
 import { sleep } from '@/utils/timing'
 import { Dialog } from '@/stateDungeon/dialog'
 import { Cutscene } from '@/stateBattle/cutscene'
+import { logBundle } from '@/stateDungeon/log'
 
 @Component(ecs)
 export class Log { }

@@ -1,5 +1,5 @@
 import { players } from '@/constants/players'
-import { dungeonState, overworldState } from '@/main'
+import { dungeonState, overworldState } from '@/globals/init'
 import { save } from '@/save/saveData'
 
 export const setInitialState = () => {

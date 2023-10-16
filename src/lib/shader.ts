@@ -1,9 +1,9 @@
 import type { Texture, WebGLRenderer } from 'three'
-import { ClampToEdgeWrapping, NearestFilter, RepeatWrapping, WebGLRenderTarget } from 'three'
+import { ClampToEdgeWrapping, NearestFilter, WebGLRenderTarget } from 'three'
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
 import { CopyShader } from 'three/examples/jsm/shaders/CopyShader'
-import type { PixelTexture } from './pixelTexture'
 import type { Constructor } from './ECS'
+import type { PixelTexture } from './pixelTexture'
 
 export class ShaderComposer {
 	static copyPass = new ShaderPass(CopyShader)
