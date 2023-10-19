@@ -31,7 +31,7 @@ import { allowPlayerToExit, exitDungeon, isPlayerInside, setDungeonState, spawnD
 import { Inventory, openInventory, spawnInventoryToggle } from './states/overworld/InventoryUi'
 import { triggerApocalypse } from './states/overworld/apocalypse'
 import { addNavigationArrows, moveOverworldCharacter, pickupOverworldTreasure, removeNavigationMenu } from './states/overworld/navigation'
-import { spawnStepsUi } from './states/overworld/overworldUi'
+import { spawnStepsUi } from './states/overworld/overworldUi.tsx'
 import { setInitialState } from './states/overworld/setInitialState'
 import { despawnOverworld, setOverwolrdState, spawnOverworld } from './states/overworld/spawnOverworld'
 import { StartGameUI, spawnStartUi } from './states/startGame/startui'

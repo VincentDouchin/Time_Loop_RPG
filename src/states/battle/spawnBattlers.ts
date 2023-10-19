@@ -45,7 +45,7 @@ export const spawnBattlers = (battle: Entity, background: number, enemies: reado
 	for (let i = 0; i < enemies.length; i++) {
 		const enemyData = enemies[i]
 		const bundle = battlerSpriteBundle('left', assets.characters[enemyData.atlas], background, i, enemies.length)
-		const enemy = battle.spawn(...bundle, new Health(2), new Interactable(8))
+		const enemy = battle.spawn(...bundle, new Health(enemyData.hp), new Interactable(8))
 		if (enemyData.bundle) {
 			enemy.addComponent(...enemyData.bundle())
 		}

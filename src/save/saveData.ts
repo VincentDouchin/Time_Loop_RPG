@@ -9,6 +9,7 @@ type states = 'dungeon' | 'overworld' | 'battle'
 interface saveData {
 	finishedDemo: boolean
 	players: PlayerData[]
+	money: number
 	lastDungeon: levels | null
 	lastBattle: keyof typeof battles | null
 	lastState: states
@@ -23,6 +24,7 @@ interface saveData {
 export const save: saveData = {
 	finishedDemo: false,
 	lastBattle: null,
+	money: 0,
 	players: [],
 	keys: [],
 	lastNodeUUID: null,

@@ -16,23 +16,20 @@ export class Inventory { }
 export class InventoryIcon { }
 
 export const spawnInventoryToggle = () => {
-	const bag = ecs
-		.spawn(
-			UIElement.fromImage(assets.uiAtlas.inventory[0], 10).setStyles({ width: '5vw', height: '5vw', position: 'fixed', top: '10vh', left: '10vh', display: 'grid', placeItems: 'center' }),
-			new ChangeBackgroundOnSelected(assets.uiAtlas.inventory[1]),
-			new Interactable(),
-			new MenuInputInteractable('Inventory'),
-			new OverWorldUI(),
-			new InventoryIcon(),
-		)
-	ecs.onNextTick(() => {
-		const menuInputMap = menuInputQuery.extract()
-		if (menuInputMap) {
-			const bundle = UIElement.inputIcon(menuInputMap.get('Inventory'))
-			bundle[0].setStyles({ position: 'absolute', right: '5%', bottom: '5%', width: '5vh', height: '5vh' })
-			bag.spawn(...bundle)
-		}
-	})
+	ecs.spawn((
+		<ui-element
+			style={{ width: '5vw', gap: '3vw', position: 'fixed', top: '10vh', left: '10vh', display: 'grid', placeItems: 'center' }}
+			components={[new OverWorldUI()]}
+		>
+			<image
+				image={assets.uiAtlas.inventory[0]}
+				style={{ width: '5vw', height: '5vw' }}
+				components={[new ChangeBackgroundOnSelected(assets.uiAtlas.inventory[1]), new Interactable(), new MenuInputInteractable('Inventory'), new InventoryIcon()]}
+			>
+			</image>
+			<image image={assets.ui.coin} style={{ width: '5vw', height: '5vw' }}></image>
+		</ui-element>
+	))
 }
 const inventory = () => {
 	const slots = range(0, 24, (i) => {

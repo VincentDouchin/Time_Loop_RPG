@@ -55,7 +55,7 @@ export const PlayerActions: { [k in playerNames]: BattleAction<k>[] } = {
 			label: 'Blades',
 			icon: assets.heroIcons.paladinAttack2,
 			target: TargetType.Others,
-			power: 1,
+			power: 2,
 			targetAmount: 2,
 			type: ActionType.Damage,
 			animation: ['dictum'],

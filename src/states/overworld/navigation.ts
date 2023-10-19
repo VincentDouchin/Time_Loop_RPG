@@ -1,6 +1,6 @@
 import { Group } from 'three'
 import { easing } from 'ts-easing'
-import { updateSteps } from './overworldUi'
+import { updateSteps } from './overworldUi.tsx'
 import { InventoryIcon, inventoryQuery } from './InventoryUi'
 import { battles } from '@/constants/battles'
 import { items } from '@/constants/items'
@@ -124,10 +124,10 @@ export const removeNavigationMenu = () => {
 	}
 }
 
-const needToAddArrowQuery = ecs.query.pick(Entity).added(DecidingDirection)
+const needToAddArrowQuery = ecs.query.pick(Entity, Navigator).added(DecidingDirection)
 export const addNavigationArrows = () => {
-	for (const [entity] of needToAddArrowQuery.getAll()) {
-		ecs.onNextTick(() => {
+	for (const [entity, navigator] of needToAddArrowQuery.getAll()) {
+		if (!navigator.direction) {
 			const navigationMenu = entity.spawn(new NavigationMenu(), new Position(), new Group())
 			const currentNode = currentNodeQuery.getSingle()
 			if (currentNode) {
@@ -154,7 +154,7 @@ export const addNavigationArrows = () => {
 					}
 				}
 			}
-		})
+		}
 	}
 }
 const inventoryIcon = ecs.query.pick(UIElement).with(InventoryIcon)
