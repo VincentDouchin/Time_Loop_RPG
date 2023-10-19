@@ -99,3 +99,5 @@ customElements.define('ui-element', UIElement, { extends: 'div' })
 export const setDefaultFontSize = () => {
 	document.body.style.fontSize = '30px'
 }
+
+

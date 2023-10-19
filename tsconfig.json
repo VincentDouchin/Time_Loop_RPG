@@ -11,7 +11,8 @@
 		/* Bundler mode */
 		"moduleResolution": "Node",
 		"paths": {
-			"@/*": ["./src/*"]
+			"@/*": ["./src/*"],
+			"@assets/*": ["./assets/*"]
 		},
 		"resolveJsonModule": true,
 		"types": ["vite/client"],

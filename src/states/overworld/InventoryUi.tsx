@@ -18,7 +18,8 @@ export class InventoryIcon { }
 export const spawnInventoryToggle = () => {
 	const bag = ecs
 		.spawn(
-			UIElement.fromImage(assets.ui.inventory, 10).setStyles({ width: '10vh', height: '10vh', position: 'fixed', top: '10vh', left: '10vh', display: 'grid', placeItems: 'center' }),
+			UIElement.fromImage(assets.uiAtlas.inventory[0], 10).setStyles({ width: '5vw', height: '5vw', position: 'fixed', top: '10vh', left: '10vh', display: 'grid', placeItems: 'center' }),
+			new ChangeBackgroundOnSelected(assets.uiAtlas.inventory[1]),
 			new Interactable(),
 			new MenuInputInteractable('Inventory'),
 			new OverWorldUI(),

@@ -24,6 +24,7 @@ export type dungeonRessources = [levels, number, direction]
 export const dungeonState = ecs.state<dungeonRessources>()
 State.exclusive(overworldState, battleState, dungeonState)
 
+export const startGame = ecs.state()
 // ! THREE
 ecs.registerComponent(WebGLRenderer)
 ecs.registerComponent(CSS2DRenderer)

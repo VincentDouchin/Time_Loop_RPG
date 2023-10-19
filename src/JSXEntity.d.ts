@@ -20,7 +20,7 @@ declare namespace JSX {
 	interface IntrinsicElementsMap {
 		'nineslice': { image: HTMLCanvasElement;margin: number;scale?: number }
 		'image': { image: HTMLCanvasElement | OffscreenCanvas;scale?: number | string }
-		'ui-element': Record<string, never>
+		'ui-element': NonNullable<unknown>
 		'text': { size?: number }
 	}
 }

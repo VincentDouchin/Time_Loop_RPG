@@ -15,7 +15,7 @@ import { getOffscreenBuffer } from '@/utils/buffer'
 @Component(ecs)
 export class Map {}
 
-export const spawnOverworld = () => {
+export const spawnOverworld = (withCharacter = true) => () => {
 	const level = assets.levels.overworld.levels[1]
 	const buffer = getOffscreenBuffer(level.pxWid, level.pxHei)
 	const map = ecs.spawn(CameraBounds.fromLevel(level), new Map())
@@ -32,7 +32,7 @@ export const spawnOverworld = () => {
 							const nodePosition = navNode.position(layerInstance)
 							const entity = map.spawn(navNode, nodePosition)
 							LDTKEntityInstance.register(entity, entityInstance)
-							if (save.lastNodeUUID === navNode.id || (!save.lastNodeUUID && navNode.data.Start)) {
+							if (withCharacter && (save.lastNodeUUID === navNode.id || (!save.lastNodeUUID && navNode.data.Start))) {
 								map.spawn(...spawnOverworldCharacter(nodePosition))
 								entity.addComponent(new CurrentNode())
 							}

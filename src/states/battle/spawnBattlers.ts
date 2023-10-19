@@ -36,11 +36,10 @@ const battlerSpriteBundle = (side: 'left' | 'right', textureAtlas: TextureAltasS
 
 export const spawnBattlers = (battle: Entity, background: number, enemies: readonly Enemy[]) => {
 	// ! PLAYER
-	for (const playerData of save.players) {
-		const bundle = battlerSpriteBundle('right', assets.characters[playerData.name], background)
-		const player = battle.spawn(...bundle, Health.fromPlayerData(playerData), new Player())
-		sleep(2000).then(() => player.addComponent(new Battler(BattlerType.Player, PlayerActions[playerData.name], ActionSelector.PlayerMenu, TargetSelector.PlayerTargetMenu)))
-	}
+	const playerData = save.players[0]
+	const bundle = battlerSpriteBundle('right', assets.characters[playerData.name], background)
+	const player = battle.spawn(...bundle, Health.fromPlayerData(playerData), new Player())
+	sleep(2000).then(() => player.addComponent(new Battler(BattlerType.Player, PlayerActions[playerData.name], ActionSelector.PlayerMenu, TargetSelector.PlayerTargetMenu)))
 
 	// !ENEMIES
 	for (let i = 0; i < enemies.length; i++) {
@@ -54,7 +53,7 @@ export const spawnBattlers = (battle: Entity, background: number, enemies: reado
 			enemy.addComponent(new Battler(BattlerType.Enemy, enemyData.actions, ActionSelector.EnemyAuto, TargetSelector.EnemyAuto))
 		})
 	}
-	battleUi()
+	battleUi(player)
 }
 const battlersQuery = ecs.query.pick(Battler)
 const cutsceneQuery = ecs.query.with(Cutscene)
@@ -123,8 +122,9 @@ const notPlayerQuery = ecs.query.with(Battler).without(Player)
 const winOrLoseBundle = () => [new UIElement({ position: 'absolute', placeSelf: 'center', width: 'fit-content', padding: '5%', color: 'black', placeContent: 'center', display: 'grid', fontSize: '3em' }), new NineSlice(assets.ui.frameornate, 8, 4), new WinOrLose()]
 export const despawnBattleMenu = despawnEntities(BattlerMenu)
 
+const healthRemovedComponent = ecs.query.removed(Health)
 export const winOrLose = () => {
-	if (winOrLoseUiQuery.size === 0) {
+	if (healthRemovedComponent.size) {
 		if (playerQuery.size === 0 && notPlayerQuery.size > 0) {
 			ecs.spawn(...winOrLoseBundle()).spawn(UIElement.text('Game Over'))
 			despawnBattleMenu()

@@ -35,11 +35,11 @@ export const save: saveData = {
 
 }
 export const saveToLocalStorage = () => {
-	localStorage.setItem('saveData', JSON.stringify(save))
+	localStorage.setItem(`saveData0`, JSON.stringify(save))
 }
 
 export const getSave = () => {
-	const saveDataString = localStorage.getItem('saveData')
+	const saveDataString = localStorage.getItem('saveData0')
 	if (saveDataString) {
 		const saveData = JSON.parse(saveDataString) as saveData
 		Object.assign(save, saveData)
@@ -58,4 +58,3 @@ export const gameOver = () => {
 	overworldState.disable()
 	overworldState.enable()
 }
-getSave()

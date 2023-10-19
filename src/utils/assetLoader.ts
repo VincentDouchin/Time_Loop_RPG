@@ -1,4 +1,4 @@
-import { getOffscreenBuffer } from './buffer'
+import { getOffscreenBuffer, getScreenBuffer } from './buffer'
 
 import { animations } from '@/constants/animations'
 import { PixelTexture } from '@/lib/pixelTexture'
@@ -52,6 +52,16 @@ export const splitTexture = (tiles: number) => (img: HTMLImageElement) => {
 		result.push(buffer.canvas)
 	}
 	return result
+}
+
+export const splitAtlas = (img: HTMLImageElement) => {
+	const res: HTMLCanvasElement[] = []
+	for (let x = 0; x < img.width; x += img.height) {
+		const buffer = getScreenBuffer(img.height, img.height)
+		buffer.drawImage(img, x, 0, img.height, img.height, 0, 0, img.height, img.height)
+		res.push(buffer.canvas)
+	}
+	return res
 }
 
 export const createAtlas = (img: HTMLImageElement | HTMLCanvasElement | OffscreenCanvas, dim?: number) => {

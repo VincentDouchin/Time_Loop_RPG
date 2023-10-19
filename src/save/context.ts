@@ -6,5 +6,4 @@ interface contextData {
 export const context: contextData = {
 	startup: true,
 	controls: 'keyboard',
-
 }

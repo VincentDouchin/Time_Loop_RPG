@@ -85,13 +85,13 @@ export const moveOverworldCharacter = () => {
 							if (target && targetNode && selectedDirection) {
 								atlas.state = 'idle'
 
+								save.lastDirection = selectedDirection
+								saveToLocalStorage()
+								updateSteps(-1)
 								if (save.steps > 0) {
 									target.addComponent(new CurrentNode())
 									ecs.onNextTick(() => entity.addComponent(new DecidingDirection()))
 								}
-								save.lastDirection = selectedDirection
-								saveToLocalStorage()
-								updateSteps(-1)
 								save.lastNodeUUID = targetNode.id
 								if (targetNode.data.Battle) {
 									save.lastBattle = targetNode.data.Battle
@@ -127,32 +127,34 @@ export const removeNavigationMenu = () => {
 const needToAddArrowQuery = ecs.query.pick(Entity).added(DecidingDirection)
 export const addNavigationArrows = () => {
 	for (const [entity] of needToAddArrowQuery.getAll()) {
-		const navigationMenu = entity.spawn(new NavigationMenu(), new Position(), new Group())
-		const currentNode = currentNodeQuery.getSingle()
-		if (currentNode) {
-			const [_entity, pos, navNode] = currentNode
-			const directions = navNode.data.directions
-			if (directions && pos) {
-				for (const direction of directions) {
-					const nodeDirection = direction()
-					const directionPos = nodeDirection.getComponent(Position)
-					if (directionPos) {
-						const arrowX = Math.sign(directionPos.x - pos.x)
-						const arrowY = Math.sign(directionPos.y - pos.y)
-						let arrow: Capitalize<direction> = 'Down'
-						if (arrowX > 0) arrow = 'Right'
-						if (arrowX < 0) arrow = 'Left'
-						if (arrowY > 0) arrow = 'Up'
-						const [sprite, _animator, atlas] = TextureAtlas.single([
-							new PixelTexture(assets.ui[`arrow${arrow}`]),
-							new PixelTexture(assets.ui[`arrow${arrow}Selected`]),
-						])
-						sprite.setRenderOrder(2)
-						navigationMenu.spawn(new Position(arrowX * 16, arrowY * 16), sprite, atlas, new IncrementOnSelected(), new MenuInputInteractable(arrow), new Interactable())
+		ecs.onNextTick(() => {
+			const navigationMenu = entity.spawn(new NavigationMenu(), new Position(), new Group())
+			const currentNode = currentNodeQuery.getSingle()
+			if (currentNode) {
+				const [_entity, pos, navNode] = currentNode
+				const directions = navNode.data.directions
+				if (directions && pos) {
+					for (const direction of directions) {
+						const nodeDirection = direction()
+						const directionPos = nodeDirection.getComponent(Position)
+						if (directionPos) {
+							const arrowX = Math.sign(directionPos.x - pos.x)
+							const arrowY = Math.sign(directionPos.y - pos.y)
+							let arrow: Capitalize<direction> = 'Down'
+							if (arrowX > 0) arrow = 'Right'
+							if (arrowX < 0) arrow = 'Left'
+							if (arrowY > 0) arrow = 'Up'
+							const [sprite, _animator, atlas] = TextureAtlas.single([
+								new PixelTexture(assets.ui[`arrow${arrow}`]),
+								new PixelTexture(assets.ui[`arrow${arrow}Selected`]),
+							])
+							sprite.setRenderOrder(2)
+							navigationMenu.spawn(new Position(arrowX * 16, arrowY * 16), sprite, atlas, new IncrementOnSelected(), new MenuInputInteractable(arrow), new Interactable())
+						}
 					}
 				}
 			}
-		}
+		})
 	}
 }
 const inventoryIcon = ecs.query.pick(UIElement).with(InventoryIcon)

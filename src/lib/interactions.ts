@@ -13,7 +13,18 @@ export class Interactable {
 	#wasPressed = false
 	position = new Vector2()
 	dimensions = new Vector2()
+	#onClick: (() => unknown) | null = null
 	constructor(public x?: number, public y?: number) {	}
+	onClick(fn: () => unknown) {
+		this.#onClick = fn
+		return this
+	}
+
+	triggerClick() {
+		if (this.#onClick) {
+			this.#onClick()
+		}
+	}
 
 	get pressed() {
 		return this.#pressed
@@ -146,5 +157,13 @@ export const detectInteractions = () => {
 		}
 		interactable.hover = hovered.includes(interactable)
 		interactable.pressed = pressed.includes(interactable)
+	}
+}
+
+export const triggerOnClick = () => {
+	for (const [interactable] of interactableQuery.getAll()) {
+		if (interactable.justPressed) {
+			interactable.triggerClick()
+		}
 	}
 }

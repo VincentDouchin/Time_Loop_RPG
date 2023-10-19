@@ -1,7 +1,7 @@
 import { exec } from 'node:child_process'
 import { readdir, writeFile } from 'node:fs/promises'
 
-import path from 'node:path'
+import path, { dirname } from 'node:path'
 import process from 'node:process'
 import type { PluginOption } from 'vite'
 
@@ -21,13 +21,14 @@ export const getAnimationName = (path: string) => {
 	return parts.join('-')
 }
 export default function watchAssets(): PluginOption {
-	const launchScript = async (filePath: string) => {
-		if (filePath.includes('assets\\') && filePath.split('.').at(-1) === 'png') {
+	const launchScript = async (filePath?: string) => {
+		if (!filePath || (filePath.includes('assets\\') && filePath.split('.').at(-1) === 'png')) {
 			const folders: Record<string, string[]> = {}
 			const animations: Record<string, string[]> = {}
-			const assetsDir = await readdir('./assets', { recursive: true, withFileTypes: true })
+			const assetsDir = await readdir('./assets', { withFileTypes: true })
 			for (const dir of assetsDir) {
 				if (dir.isDirectory() && dir.name[0] !== '_') {
+					console.log(assetsDir)
 					const files = (await readdir(`./assets/${dir.name}`))
 					if (dir.name === 'characters') {
 						for (const characterFolder of files) {
@@ -59,6 +60,7 @@ export default function watchAssets(): PluginOption {
 			console.log('regenerated asset names')
 		}
 	}
+	launchScript()
 	return {
 		name: 'watch-assets',
 		apply: 'serve',

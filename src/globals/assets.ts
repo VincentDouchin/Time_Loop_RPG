@@ -1,4 +1,4 @@
-import { AssetLoader, addAnimationsData, createAtlas, getCharacterName, getFileName, getFolderName, joinAtlas, loadImage } from '../utils/assetLoader'
+import { AssetLoader, addAnimationsData, createAtlas, getCharacterName, getFileName, getFolderName, joinAtlas, loadImage, splitAtlas } from '../utils/assetLoader'
 import { inputs } from './inputsIcons'
 import type { LDTKMap } from '@/level/LDTK'
 import { PixelTexture } from '@/lib/pixelTexture'
@@ -29,6 +29,12 @@ const uiLoader = new AssetLoader()
 			return buffer.canvas
 		})
 		return mapKeys(ui, getFileName)
+	})
+const uiAtlasLoader = new AssetLoader()
+	.pipe(async (glob) => {
+		const images = await asyncMapValues(glob, m => loadImage(m.default))
+		const atlases = mapValues(images, splitAtlas)
+		return mapKeys(atlases, getFileName)
 	})
 type chestColor = 'wood' | 'red' | 'azure' | 'green' | 'purple' | 'white' | 'grey' | 'cyan'
 type chestsStates = 'ChestClosed' | 'ChestOpen' | 'Key'
@@ -144,17 +150,19 @@ const heroIconsLoader = new AssetLoader()
 	})
 
 export const loadAssets = async () => {
-	const levels = await levelLoader.loadRecord<levels>(import.meta.glob('./../../assets/levels/*.json', { eager: true }))
-	const tilesets = await imagesLoader.loadRecord<tilesets>(import.meta.glob('./../../assets/tilesets/*.png', { eager: true }))
-	const characters = await characterLoader.loadRecord<characters>(import.meta.glob('./../../assets/characters/**/*.png', { eager: true }))
-	const ui = await uiLoader.loadRecord<ui>(import.meta.glob('./../../assets/ui/*.png', { eager: true }))
-	const fonts = await fontLoader.loadRecord<fonts>(import.meta.glob('./../../assets/fonts/*.*', { eager: true }))
-	const animatedTextures = await animateSpritesLoader.loadRecord<items>(import.meta.glob('./../../assets/items/**/*.png', { eager: true }))
-	const animations = await animationsLoader.loadRecord<animations>(import.meta.glob('./../../assets/animations/*.png', { eager: true }))
-	const staticItems = await imagesLoader.loadRecord<staticItems>(import.meta.glob('./../../assets/staticItems/*.png', { eager: true }))
-	const chests = await chestLoader.loadRecord<chests>(import.meta.glob('./../../assets/_singles/Chests.png', { eager: true }))
-	const weapons = await weaponsLoader.loadRecord<weapons>(import.meta.glob('./../../assets/_singles/Minifantasy_CraftingAndProfessionsWeaponIcons.png', { eager: true }))
-	const heroIcons = await heroIconsLoader.loadRecord<typeof heroIconsNames[number][number]>(import.meta.glob('./../../assets/_singles/TrueHeroes2Icons.png', { eager: true }))
-	const inputs = await inputsLoader(import.meta.glob('./../../assets/_singles/tilemap_packed.png', { eager: true }))
-	return { levels, tilesets, characters, ui, fonts, animatedTextures, animations, staticItems, chests, weapons, inputs, heroIcons } as const
+	return {
+		 levels: await levelLoader.loadRecord<levels>(import.meta.glob('./../../assets/levels/*.json', { eager: true })),
+		tilesets: await imagesLoader.loadRecord<tilesets>(import.meta.glob('./../../assets/tilesets/*.png', { eager: true })),
+		characters: await characterLoader.loadRecord<characters>(import.meta.glob('./../../assets/characters/**/*.png', { eager: true })),
+		ui: await uiLoader.loadRecord<ui>(import.meta.glob('./../../assets/ui/*.png', { eager: true })),
+		uiAtlas: await uiAtlasLoader.loadRecord<uiAtlas>(import.meta.glob('./../../assets/uiAtlas/*.png', { eager: true })),
+		fonts: await fontLoader.loadRecord<fonts>(import.meta.glob('./../../assets/fonts/*.*', { eager: true })),
+		animatedTextures: await animateSpritesLoader.loadRecord<items>(import.meta.glob('./../../assets/items/**/*.png', { eager: true })),
+		animations: await animationsLoader.loadRecord<animations>(import.meta.glob('./../../assets/animations/*.png', { eager: true })),
+		staticItems: await imagesLoader.loadRecord<staticItems>(import.meta.glob('./../../assets/staticItems/*.png', { eager: true })),
+		chests: await chestLoader.loadRecord<chests>(import.meta.glob('./../../assets/_singles/Chests.png', { eager: true })),
+		weapons: await weaponsLoader.loadRecord<weapons>(import.meta.glob('./../../assets/_singles/Minifantasy_CraftingAndProfessionsWeaponIcons.png', { eager: true })),
+		inputs: await inputsLoader(import.meta.glob('./../../assets/_singles/tilemap_packed.png', { eager: true })),
+		heroIcons: await heroIconsLoader.loadRecord<typeof heroIconsNames[number][number]>(import.meta.glob('./../../assets/_singles/TrueHeroes2Icons.png', { eager: true })),
+	} as const
 }
