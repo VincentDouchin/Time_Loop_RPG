@@ -1,5 +1,5 @@
 import type { Texture, WebGLRenderer } from 'three'
-import { ClampToEdgeWrapping, NearestFilter, RGBAFormat, WebGLRenderTarget } from 'three'
+import { NearestFilter, WebGLRenderTarget } from 'three'
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
 import { CopyShader } from 'three/examples/jsm/shaders/CopyShader'
 import type { Constructor } from './ECS'
