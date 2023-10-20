@@ -98,7 +98,7 @@ const deadBattlersQuery = ecs.query.pick(Entity, Health, TextureAtlas<'die'>).wi
 
 export const removeDeadBattlers = () => {
 	for (const [entity, health, atlas] of deadBattlersQuery.getAll()) {
-		if (health.currentHealth === 0) {
+		if (health.currentHealth <= 0) {
 			entity.removeComponent(Battler)
 			atlas.playAnimation('die').then(() => {
 				entity.despawn()
