@@ -18,7 +18,7 @@ import { ColorShader } from './shaders/ColorShader'
 import { ItemPickupShader } from './shaders/ItemPickupShader'
 import { OutlineShader, addOutlineShader } from './shaders/OutlineShader'
 import { battleDialog } from './states/battle/battleCutscene'
-import { updatePlayerUi } from './states/battle/battleUi'
+import { PlayerHealthImage, updatePlayerUi } from './states/battle/battleUi'
 import { banditCutscene } from './states/battle/cutscene'
 import { savePlayerHealth } from './states/battle/health'
 import { despawnBattle, spawnBattle } from './states/battle/spawnBattleBackground'
@@ -71,7 +71,7 @@ overworldState
 battleState
 	.onEnter(spawnBattle)
 	.onUpdate(battleTurn, outlineSelectedEnemy, removeDeadBattlers, winOrLose, savePlayerHealth, battleDialog, banditCutscene, updatePlayerUi)
-	.onExit(despawnBattle, saveToLocalStorage, despawnEntities(BattleUI))
+	.onExit(despawnBattle, saveToLocalStorage, despawnEntities(BattleUI, PlayerHealthImage))
 
 dungeonState
 	.onEnter(spawnDungeon, setDungeonState, spawnInventoryToggle)
