@@ -27,7 +27,7 @@ export class Interactable {
 	}
 
 	get pressed() {
-		return Boolean(this.#pressed)
+		return this.#pressed === true
 	}
 
 	set pressed(state: boolean) {
