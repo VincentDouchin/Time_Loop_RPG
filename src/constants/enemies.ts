@@ -36,4 +36,9 @@ export const enemies = {
 		actions: [singleEnemyAttack('attack')],
 		hp: 3,
 	},
+	bear: {
+		atlas: 'bear',
+		actions: [singleEnemyAttack('attack')],
+		hp: 5,
+	},
 } as const satisfies { [k in keyof characterAnimations]?: Enemy<k> }

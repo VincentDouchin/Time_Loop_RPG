@@ -4,6 +4,7 @@ import { ecs } from '@/globals/init'
 import { Component } from '@/lib/ECS'
 import { getFileName } from '@/utils/assetLoader'
 import type LDTKEnums from '@/constants/exports/LDTKEnums'
+import type { key } from '@/constants/dialogs'
 
 export type levelPath = string & { __type: 'levelPath' }
 
@@ -16,6 +17,7 @@ interface NavNodeLDTK {
 	Dungeon: levelPath | null
 	Level: number
 	Treasure: typeof LDTKEnums['treasure'][number] | null
+	lock: key | null
 }
 
 @Component(ecs)

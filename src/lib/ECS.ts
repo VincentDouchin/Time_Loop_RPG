@@ -12,37 +12,30 @@ type QueryPicked<T extends Class[]> = {
 	[K in keyof T]: T[K] extends infer R extends Class ? InstanceType<R> : never;
 }
 
-export type System<R extends any[] = []> = (...ressources: R) => void
+export type System<R extends any[] = []> = ((...ressources: R) => void) | (() => void)
 
-interface systemSet extends System {
-	conditions: (() => boolean)[]
-	timeout: number
-	runIf: (condition: () => boolean) => systemSet
-	throttle: (timeout: number) => systemSet
+export const systemSet = (systems: System[]) => () => {
+	for (const system of systems) {
+		system()
+	}
 }
-
-export function SystemSet(...systems: System[]): systemSet {
-	let time = Date.now()
-	const set: systemSet = function () {
-		if ((set.timeout > 0 && (time + set.timeout - Date.now()) < 0) || set.timeout === 0) {
-			if (set.conditions.every(condition => condition())) {
-				systems.forEach(system => system())
-				time = Date.now()
-			}
+export const runif = (condition: () => boolean, ...systems: Array<() => unknown>) => () => {
+	if (condition()) {
+		for (const system of systems) {
+			system()
 		}
 	}
-	set.timeout = 0
-	set.conditions = []
-	set.runIf = (condition: () => boolean) => {
-		set.conditions.push(condition)
-		return set
+}
+export const throttle = (delay: number, ...systems: Array<() => unknown>) => {
+	let time = Date.now()
+	return () => {
+		if (Date.now() - time >= delay) {
+			for (const system of systems) {
+				system()
+			}
+			time = Date.now()
+		}
 	}
-	set.throttle = (timeout: number) => {
-		set.timeout = timeout
-		return set
-	}
-
-	return set
 }
 
 class Query<T extends InstanceType<Class>[] = []> extends Map<Entity, T> {
@@ -249,11 +242,12 @@ export class Entity {
 }
 
 export class State<R extends any[] = []> {
-	#update: System[] = []
-	#preUpdate: System[] = []
-	#postUpdate: System[] = []
+	#update: System<R>[] = []
+	#preUpdate: System<R>[] = []
+	#postUpdate: System<R>[] = []
 	#enter: System<R>[] = []
-	#exit: System[] = []
+	#exit: System<R>[] = []
+	ressources?: R
 	constructor(private ecs: ECS) { }
 	static exclusive(...states: State<any>[]) {
 		for (const state of states) {
@@ -265,17 +259,17 @@ export class State<R extends any[] = []> {
 		return this.ecs.states.has(this)
 	}
 
-	onPreUpdate(...systems: System[]) {
+	onPreUpdate(...systems: System<R>[]) {
 		this.#preUpdate.push(...systems)
 		return this
 	}
 
-	onUpdate(...systems: System[]) {
+	onUpdate(...systems: System<R>[]) {
 		this.#update.push(...systems)
 		return this
 	}
 
-	onPostUpdate(...systems: System[]) {
+	onPostUpdate(...systems: System<R>[]) {
 		this.#postUpdate.push(...systems)
 		return this
 	}
@@ -285,29 +279,34 @@ export class State<R extends any[] = []> {
 		return this
 	}
 
-	onExit(...systems: System[]) {
+	onExit(...systems: System<R>[]) {
 		this.#exit.push(...systems)
 		return this
 	}
 
 	update() {
-		this.#update.forEach(update => update())
+		const r = (this.ressources ?? []) as R
+		this.#update.forEach(update => update(...r))
 	}
 
 	preUpdate() {
-		this.#preUpdate.forEach(update => update())
+		const r = (this.ressources ?? []) as R
+		this.#preUpdate.forEach(update => update(...r))
 	}
 
 	postUpdate() {
-		this.#postUpdate.forEach(update => update())
+		const r = (this.ressources ?? []) as R
+		this.#postUpdate.forEach(update => update(...r))
 	}
 
 	enter(...ressources: R) {
+		this.ressources = ressources
 		this.#enter.forEach(enter => enter(...ressources))
 	}
 
-	exit() {
-		this.#exit.forEach(exit => exit())
+	exit(ressources: R) {
+		this.#exit.forEach(exit => exit(...ressources))
+		this.ressources = undefined
 	}
 
 	enable(...ressources: R) {
@@ -319,7 +318,8 @@ export class State<R extends any[] = []> {
 	}
 
 	disable() {
-		this.exit()
+		const r = (this.ressources ?? []) as R
+		this.exit(r)
 		this.ecs.states.delete(this)
 		return this
 	}
@@ -331,7 +331,7 @@ export class State<R extends any[] = []> {
 }
 
 export class ECS {
-	states = new Set<State>()
+	states = new Set<State<any>>()
 	entities = new Set<Entity>()
 	#callBacks = new Set<() => void>()
 	#callBacks2 = new Set<() => void>()

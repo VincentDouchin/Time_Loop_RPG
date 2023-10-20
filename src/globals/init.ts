@@ -5,7 +5,7 @@ import { CSS2DObject, CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRe
 import { loadAssets } from './assets'
 import type { BattleData } from '@/constants/battles'
 import type { Class } from '@/lib/ECS'
-import { ECS, Entity, State, SystemSet } from '@/lib/ECS'
+import { ECS, Entity, State, systemSet } from '@/lib/ECS'
 import { createWorld } from '@/lib/world'
 import { ColorShader } from '@/shaders/ColorShader'
 import type { direction } from '@/states/dungeon/spawnDungeon'
@@ -48,7 +48,7 @@ export const renderer = new WebGLRenderer({ antialias: true, alpha: true })
 export const cssRenderer = new CSS2DRenderer()
 
 export const despawnEntities = (...components: Class[]) => {
-	return SystemSet(...components.map((component) => {
+	return systemSet(components.map((component) => {
 		const query = ecs.query.pick(Entity).with(component)
 		return () => {
 			for (const [entity] of query.getAll()) {

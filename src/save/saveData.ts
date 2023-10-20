@@ -6,6 +6,7 @@ import { overworldState } from '@/globals/init'
 import type { direction } from '@/states/dungeon/spawnDungeon'
 
 type states = 'dungeon' | 'overworld' | 'battle'
+type Treasure = (typeof LDTKEnums['treasure'][number])
 interface saveData {
 	finishedDemo: boolean
 	players: PlayerData[]
@@ -18,7 +19,7 @@ interface saveData {
 	keys: Array<typeof keys[number]>
 	lastDirection: direction | null
 	steps: number
-	treasureFound: (typeof LDTKEnums['treasure'][number])[]
+	treasureFound: Treasure[]
 }
 
 export const save: saveData = {
@@ -59,4 +60,17 @@ export const gameOver = () => {
 	saveToLocalStorage()
 	overworldState.disable()
 	overworldState.enable()
+}
+export const addTreasure = (treasure: Treasure) => {
+	if (!save.treasureFound.includes(treasure)) {
+		save.treasureFound.push(treasure)
+	}
+}
+export const removeTreasure = (treasure: Treasure) => {
+	if (save.treasureFound.includes(treasure)) {
+		save.treasureFound = save.treasureFound.filter(t => t !== treasure)
+		return true
+	} else {
+		return false
+	}
 }

@@ -2,7 +2,7 @@ import { UIElement } from './UiElement'
 import { NineSlice } from './nineSliceUi'
 import type { direction } from '@/states/dungeon/spawnDungeon'
 import { ecs } from '@/globals/init'
-import { Component, Entity, SystemSet } from '@/lib/ECS'
+import { Component, Entity, systemSet } from '@/lib/ECS'
 
 import { Interactable } from '@/lib/interactions'
 import { Sprite, TextureAtlas } from '@/lib/sprite'
@@ -219,4 +219,4 @@ const changeBorderOnSelected = () => {
 		}
 	}
 }
-export const selectEntities = SystemSet(changeBackgroundOnSelected, changeBorderOnSelected, changeTextureOnSelected, selectUiElement)
+export const selectEntities = systemSet([changeBackgroundOnSelected, changeBorderOnSelected, changeTextureOnSelected, selectUiElement])

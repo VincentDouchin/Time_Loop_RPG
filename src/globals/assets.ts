@@ -3,7 +3,7 @@ import { inputs } from './inputsIcons'
 import type { LDTKMap } from '@/level/LDTK'
 import { PixelTexture } from '@/lib/pixelTexture'
 import { getOffscreenBuffer, getScreenBuffer } from '@/utils/buffer'
-import { asyncMapValues, entries, groupByObject, mapKeys, mapValues, reduce } from '@/utils/mapFunctions'
+import { addKeys, asyncMapValues, entries, groupByObject, mapKeys, mapValues, range, reduce } from '@/utils/mapFunctions'
 
 const imagesLoader = new AssetLoader()
 	.pipe(async (glob) => {
@@ -148,21 +148,67 @@ const heroIconsLoader = new AssetLoader()
 		}
 		return res
 	})
+const portalSize = ['big2', 'big1', 'medium', 'small', 'tiny'] as const
+const portalLoader = async (glob: Record<string, { default: string }>) => {
+	const images = await asyncMapValues(glob, m => loadImage(m.default))
+	const split = groupByObject(images, getFolderName)
 
+	const portalImages = range(0, portalSize.length, (i) => {
+		const buffer = getOffscreenBuffer(48, 48)
+		for (const img of Object.values(split.portal)) {
+			buffer.drawImage(img, 0, i * 48, 48, 48, 0, 0, 48, 48)
+		}
+		return buffer.canvas
+	})
+	const sizes = addKeys(portalSize, portalImages)
+	const animationsWithoutNames = mapValues(split.animations, (img) => {
+		const atlases = range(0, 3, (i) => {
+			const buffer = getOffscreenBuffer(img.width, 48)
+			buffer.drawImage(img, 0, i * 48, img.width, 48, 0, 0, img.width, 48)
+			return splitAtlas(buffer.canvas).map(x => new PixelTexture(x))
+		})
+		return addKeys(['start', 'middle', 'end'] as const, atlases)
+	})
+	const animations = mapKeys(animationsWithoutNames, (key) => {
+		const size = portalSize.find(s => key.includes(s))
+		if (size) {
+			return size
+		} else {
+			return 'globe' as const
+		}
+	})
+
+	return { sizes, animations }
+}
 export const loadAssets = async () => {
+	const levels = await levelLoader.loadRecord<levels>(import.meta.glob('./../../assets/levels/*.json', { eager: true }))
+	const tilesets = await imagesLoader.loadRecord<tilesets>(import.meta.glob('./../../assets/tilesets/*.png', { eager: true }))
+	const characters = await characterLoader.loadRecord<characters>(import.meta.glob('./../../assets/characters/**/*.png', { eager: true }))
+	const ui = await uiLoader.loadRecord<ui>(import.meta.glob('./../../assets/ui/*.png', { eager: true }))
+	const uiAtlas = await uiAtlasLoader.loadRecord<uiAtlas>(import.meta.glob('./../../assets/uiAtlas/*.png', { eager: true }))
+	const fonts = await fontLoader.loadRecord<fonts>(import.meta.glob('./../../assets/fonts/*.*', { eager: true }))
+	const animatedTextures = await animateSpritesLoader.loadRecord<items>(import.meta.glob('./../../assets/items/**/*.png', { eager: true }))
+	const animations = await animationsLoader.loadRecord<animations>(import.meta.glob('./../../assets/animations/*.png', { eager: true }))
+	const staticItems = await imagesLoader.loadRecord<staticItems>(import.meta.glob('./../../assets/staticItems/*.png', { eager: true }))
+	const chests = await chestLoader.loadRecord<chests>(import.meta.glob('./../../assets/_singles/Chests.png', { eager: true }))
+	const weapons = await weaponsLoader.loadRecord<weapons>(import.meta.glob('./../../assets/_singles/Minifantasy_CraftingAndProfessionsWeaponIcons.png', { eager: true }))
+	const inputs = await inputsLoader(import.meta.glob('./../../assets/_singles/tilemap_packed.png', { eager: true }))
+	const heroIcons = await heroIconsLoader.loadRecord<typeof heroIconsNames[number][number]>(import.meta.glob('./../../assets/_singles/TrueHeroes2Icons.png', { eager: true }))
+	const portals = await portalLoader(import.meta.glob('./../../assets/_singles/portal/**', { eager: true }))
 	return {
-		 levels: await levelLoader.loadRecord<levels>(import.meta.glob('./../../assets/levels/*.json', { eager: true })),
-		tilesets: await imagesLoader.loadRecord<tilesets>(import.meta.glob('./../../assets/tilesets/*.png', { eager: true })),
-		characters: await characterLoader.loadRecord<characters>(import.meta.glob('./../../assets/characters/**/*.png', { eager: true })),
-		ui: await uiLoader.loadRecord<ui>(import.meta.glob('./../../assets/ui/*.png', { eager: true })),
-		uiAtlas: await uiAtlasLoader.loadRecord<uiAtlas>(import.meta.glob('./../../assets/uiAtlas/*.png', { eager: true })),
-		fonts: await fontLoader.loadRecord<fonts>(import.meta.glob('./../../assets/fonts/*.*', { eager: true })),
-		animatedTextures: await animateSpritesLoader.loadRecord<items>(import.meta.glob('./../../assets/items/**/*.png', { eager: true })),
-		animations: await animationsLoader.loadRecord<animations>(import.meta.glob('./../../assets/animations/*.png', { eager: true })),
-		staticItems: await imagesLoader.loadRecord<staticItems>(import.meta.glob('./../../assets/staticItems/*.png', { eager: true })),
-		chests: await chestLoader.loadRecord<chests>(import.meta.glob('./../../assets/_singles/Chests.png', { eager: true })),
-		weapons: await weaponsLoader.loadRecord<weapons>(import.meta.glob('./../../assets/_singles/Minifantasy_CraftingAndProfessionsWeaponIcons.png', { eager: true })),
-		inputs: await inputsLoader(import.meta.glob('./../../assets/_singles/tilemap_packed.png', { eager: true })),
-		heroIcons: await heroIconsLoader.loadRecord<typeof heroIconsNames[number][number]>(import.meta.glob('./../../assets/_singles/TrueHeroes2Icons.png', { eager: true })),
-	} as const
+		levels,
+		tilesets,
+		characters,
+		ui,
+		uiAtlas,
+		fonts,
+		animatedTextures,
+		animations,
+		staticItems,
+		chests,
+		weapons,
+		inputs,
+		heroIcons,
+		portals,
+	}
 }

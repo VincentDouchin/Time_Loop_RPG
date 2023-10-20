@@ -14,6 +14,7 @@ import { sleep } from '@/utils/timing'
 import { Dialog } from '@/states/dungeon/dialog'
 import { Cutscene } from '@/states/battle/cutscene'
 import { logBundle } from '@/states/dungeon/log'
+import { save, saveToLocalStorage } from '@/save/saveData'
 
 @Component(ecs)
 export class Log { }
@@ -68,6 +69,16 @@ export const chopLog = async () => {
 			atlas.state = 'idle'
 			entity.addComponent(dialog)
 		}
+	}
+}
+
+export const pay = (amount: number) => {
+	if (save.money >= amount) {
+		save.money -= amount
+		saveToLocalStorage()
+		return true
+	} else {
+		return false
 	}
 }
 

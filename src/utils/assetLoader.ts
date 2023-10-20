@@ -5,7 +5,8 @@ import { PixelTexture } from '@/lib/pixelTexture'
 import type { TextureAltasStates } from '@/lib/sprite'
 
 type pipeFn<T> = (glob: Record<string, T>) => Promise<Record<string, any>> | Record<string, any>
-
+interface Module { default: string }
+export type pipeGlob = pipeFn<Module>
 export class AssetLoader< T = { default: string } > {
 	#fn: pipeFn<T> = x => x
 	constructor() {}
@@ -54,7 +55,7 @@ export const splitTexture = (tiles: number) => (img: HTMLImageElement) => {
 	return result
 }
 
-export const splitAtlas = (img: HTMLImageElement) => {
+export const splitAtlas = (img: HTMLImageElement | OffscreenCanvas | HTMLCanvasElement) => {
 	const res: HTMLCanvasElement[] = []
 	for (let x = 0; x < img.width; x += img.height) {
 		const buffer = getScreenBuffer(img.height, img.height)

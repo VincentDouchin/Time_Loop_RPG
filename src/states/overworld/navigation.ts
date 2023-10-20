@@ -46,7 +46,7 @@ export const moveOverworldCharacter = () => {
 					if (currentNode) {
 						const [_entity, initialNodePos, currentNavNode] = currentNode
 						const node = currentNavNode.data.directions.find((ref) => {
-							const pos = ref().getComponent(Position)
+							const pos = ref()?.getComponent(Position)
 							if (pos && initialNodePos) {
 								switch (direction) {
 									case 'up' : return pos.x === initialNodePos.x && pos.y > initialNodePos.y
@@ -136,20 +136,22 @@ export const addNavigationArrows = () => {
 				if (directions && pos) {
 					for (const direction of directions) {
 						const nodeDirection = direction()
-						const directionPos = nodeDirection.getComponent(Position)
-						if (directionPos) {
-							const arrowX = Math.sign(directionPos.x - pos.x)
-							const arrowY = Math.sign(directionPos.y - pos.y)
-							let arrow: Capitalize<direction> = 'Down'
-							if (arrowX > 0) arrow = 'Right'
-							if (arrowX < 0) arrow = 'Left'
-							if (arrowY > 0) arrow = 'Up'
-							const [sprite, _animator, atlas] = TextureAtlas.single([
-								new PixelTexture(assets.ui[`arrow${arrow}`]),
-								new PixelTexture(assets.ui[`arrow${arrow}Selected`]),
-							])
-							sprite.setRenderOrder(2)
-							navigationMenu.spawn(new Position(arrowX * 16, arrowY * 16), sprite, atlas, new IncrementOnSelected(), new MenuInputInteractable(arrow), new Interactable())
+						if (nodeDirection) {
+							const directionPos = nodeDirection.getComponent(Position)
+							if (directionPos) {
+								const arrowX = Math.sign(directionPos.x - pos.x)
+								const arrowY = Math.sign(directionPos.y - pos.y)
+								let arrow: Capitalize<direction> = 'Down'
+								if (arrowX > 0) arrow = 'Right'
+								if (arrowX < 0) arrow = 'Left'
+								if (arrowY > 0) arrow = 'Up'
+								const [sprite, _animator, atlas] = TextureAtlas.single([
+									new PixelTexture(assets.ui[`arrow${arrow}`]),
+									new PixelTexture(assets.ui[`arrow${arrow}Selected`]),
+								])
+								sprite.setRenderOrder(2)
+								navigationMenu.spawn(new Position(arrowX * 16, arrowY * 16), sprite, atlas, new IncrementOnSelected(), new MenuInputInteractable(arrow), new Interactable())
+							}
 						}
 					}
 				}

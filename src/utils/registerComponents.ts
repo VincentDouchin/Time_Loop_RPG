@@ -4,7 +4,7 @@ import type { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
 import { ecs, world } from '@/globals/init'
 import type { Class, Constructor, ECS, System } from '@/lib/ECS'
-import { Entity, SystemSet } from '@/lib/ECS'
+import { Entity, systemSet } from '@/lib/ECS'
 
 import { sceneQuery } from '@/lib/camera'
 import { Position } from '@/lib/transforms'
@@ -63,7 +63,7 @@ export const registerShader = (...shaderPasses: Constructor<ShaderPass>[]) => {
 			}
 		})
 	}
-	return SystemSet(...systems)
+	return systemSet(systems)
 }
 
 export const registerFullScreenShader = (...shaderPasses: Constructor<ShaderPass>[]) => {
@@ -84,7 +84,7 @@ export const registerFullScreenShader = (...shaderPasses: Constructor<ShaderPass
 			}
 		})
 	}
-	return SystemSet(...systems)
+	return systemSet(systems)
 }
 const bodyQuery = ecs.query.pick(RigidBodyDesc, Entity).without(RigidBody)
 const colliderQuery = ecs.query.pick(ColliderDesc, RigidBody, Entity).without(Collider)

@@ -1,9 +1,10 @@
-import { chopLog, despwawnCutscene, lockPlayer, unlockPlayer } from '../utils/dialogHelpers'
+import { chopLog, despwawnCutscene, lockPlayer, pay, unlockPlayer } from '../utils/dialogHelpers'
 import { updateSteps } from '@/states/overworld/overworldUi'
-import { save, saveToLocalStorage } from '@/save/saveData'
+import { removeTreasure, save, saveToLocalStorage } from '@/save/saveData'
 import { overworldState } from '@/globals/init'
 
-export const keys = ['oldManBandit', 'lumberjack', 'splitLog'] as const
+export const keys = ['oldManBandit', 'oldManBanditdrink', 'lumberjack', 'splitLog', 'gnomeForest'] as const
+export type key = typeof keys[number]
 export const addKey = (key: typeof keys[number]) => {
 	save.keys = [...save.keys, key]
 	saveToLocalStorage()
@@ -22,28 +23,49 @@ export const dialog: Partial<Record<characters | `sign${string}`, () => Generato
 		yield 'I am the innkeeper'
 		yield 'Do you want a drink?'
 		const answer = yield ['yes', 'no']
-		switch (answer) {
-			case 0:yield 'Here you go'
-				break
-			case 1:yield 'Alright!'
-				break
+		if (answer === 0) {
+			yield 'It will be 10 gils please'
+			const answer = yield ['Pay', 'Leave']
+			if (answer === 0) {
+				if (pay(10)) {
+					save.treasureFound.push('Beer')
+					yield 'Here you go!'
+					yield '...'
+					yield 'Did you just put a full pint of beer in your backpack?'
+				} else {
+					yield 'It seems like you don\'t have enough money, sorry!'
+				}
+			} else {
+				yield 'Goodbye!'
+			}
 		}
 		yield unlockPlayer()
 	},
 	*banditOldMan() {
 		while (true) {
 			lockPlayer()
-			yield 'Hello adventurer'
-			if (hasKey('oldManBandit')) {
-				yield 'Have you seen Tyler?'
+			if (!hasKey('oldManBanditdrink')) {
+				yield 'Hello adventurer'
+				yield 'Won\'t you buy an old man a drink?'
+				if (save.treasureFound.includes('Beer')) {
+					removeTreasure('Beer')
+					saveToLocalStorage()
+					addKey('oldManBanditdrink')
+				}
 			} else {
-				yield 'Have you seem my son Tyler on the way here?'
-				yield 'He hangs out in the woods near by and tries to scare the travellers'
-				yield 'Can you tell him to come home if you see him?'
-				yield 'His mother is worried and her health is getting worse'
-				yield 'I would really appreciate it.'
-				addKey('oldManBandit')
+				if (hasKey('oldManBandit')) {
+					yield 'Have you seen Tyler?'
+				} else {
+					yield 'Thanks a lot stranger'
+					yield 'Have you seem my son Tyler on the way here?'
+					yield 'He hangs out in the woods near by and tries to scare the travellers'
+					yield 'Can you tell him to come home if you see him?'
+					yield 'His mother is worried and her health is getting worse'
+					yield 'I would really appreciate it.'
+					addKey('oldManBandit')
+				}
 			}
+
 			unlockPlayer()
 			yield
 		}
@@ -54,7 +76,7 @@ export const dialog: Partial<Record<characters | `sign${string}`, () => Generato
 			yield '...'
 			yield 'Mom is not doing well?'
 			yield '...'
-			yield 'Just go'
+			yield 'I need to go'
 			updateSteps(1)
 			overworldState.enable()
 		} else {
@@ -99,5 +121,6 @@ export const dialog: Partial<Record<characters | `sign${string}`, () => Generato
 		yield 'You\'ll find it there, mate.'
 		yield 'It won\'t be much use to ya unless ya find some other portals, though.'
 		yield 'And I\'m afraid with the end of the world scheduled for tonight, you won\'t \'ave much time.'
+		addKey('gnomeForest')
 	},
 } as const

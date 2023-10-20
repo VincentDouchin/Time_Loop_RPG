@@ -3,6 +3,7 @@ import { DarkenWhenInside, Dungeon, Entrance, Inside, InsideTrigger, JustEntered
 import { logBundle } from './log'
 import { SignBundle } from './sign'
 import { PlayerBundle } from './player'
+import { Portal, portalBundle } from './portal'
 import { hasKey } from '@/constants/dialogs'
 import { Player } from '@/generic/components'
 import type { dungeonRessources } from '@/globals/init'
@@ -24,7 +25,7 @@ export type direction = 'left' | 'right' | 'up' | 'down'
 const spawnLayer = (layer: LayerInstance) => {
 	const buffer = getOffscreenBuffer(layer.__cWid * layer.__gridSize, layer.__cHei * layer.__gridSize)
 	drawLayer(layer, buffer)
-	return Sprite.fromBuffer(buffer).setRenderOrder(layer.__identifier.includes('top') ? 100 : -1)
+	return [Sprite.fromBuffer(buffer), new Position(0, 0, layer.__identifier.includes('top') ? 9 : -1)]
 }
 
 export const spawnDungeon: System<dungeonRessources> = (mapName, levelIndex, direction) => {
@@ -38,11 +39,11 @@ export const spawnDungeon: System<dungeonRessources> = (mapName, levelIndex, dir
 	if (level.layerInstances) {
 		for (const layerInstance of [...level.layerInstances].reverse()) {
 			if (layerInstance.__identifier.toLowerCase().includes('outside')) {
-				map.spawn(spawnLayer(layerInstance), new Position(), new Outside(), new DarkenWhenInside())
+				map.spawn(...spawnLayer(layerInstance), new Outside(), new DarkenWhenInside())
 			} else if (layerInstance.__identifier.toLowerCase().includes('inside')) {
-				map.spawn(spawnLayer(layerInstance), new Position(), new Inside())
+				map.spawn(...spawnLayer(layerInstance), new Inside())
 			} else {
-				map.spawn(spawnLayer(layerInstance), new Position(), new DarkenWhenInside())
+				map.spawn(...spawnLayer(layerInstance), new DarkenWhenInside())
 			}
 			if (layerInstance.__identifier === 'Collisions') {
 				spawnIntGridEntities(map, mapFile, layerInstance, t => t?.identifier === 'Wall', (wall, w, h) => {
@@ -76,6 +77,10 @@ export const spawnDungeon: System<dungeonRessources> = (mapName, levelIndex, dir
 						case 'Log': {
 							const log = new LDTKEntityInstance(entityInstance)
 							map.spawn(logBundle(hasKey('splitLog'), log, log.position(layerInstance)))
+						};break
+						case 'Portal':{
+							const portal = new Portal(entityInstance)
+							map.spawn(portalBundle(portal, portal.position(layerInstance)))
 						}
 					}
 				}

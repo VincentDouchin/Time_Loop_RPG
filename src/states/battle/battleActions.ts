@@ -169,7 +169,7 @@ export const takeAction = (battlerTakingAction: Battler) => {
 								enemyAtlas.state = 'idle'
 							})
 						})().then(() => {
-							enemyHealth.currentHealth--
+							enemyHealth.currentHealth -= battler.currentAction?.power ?? 0
 							battler.currentTurn = false
 							battler.finishedTurn = true
 							enemyEntity.removeComponent(ColorShader)

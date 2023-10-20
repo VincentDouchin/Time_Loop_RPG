@@ -1,7 +1,6 @@
 import { OrthographicCamera } from 'three'
 import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer'
 import { battleState, despawnEntities, dungeonState, ecs, overworldState, startGame } from './globals/init'
-import { SystemSet } from './lib/ECS'
 import { animateSprites } from './lib/animation'
 import { adjustScreenSize, cameraFollow, initializeCameraBounds, render, spawnCamera, updateCameraZoom } from './lib/camera'
 import { changeControls, disableTouchJoystick, enableTouchJoystick, registerInput } from './lib/inputs'
@@ -9,7 +8,7 @@ import { detectInteractions, triggerOnClick, updateMousePosition } from './lib/i
 import { initThree } from './lib/rendering'
 import { Sprite } from './lib/sprite'
 import { time } from './lib/time'
-import { stepWorld, updatePosition, updateSpritePosition } from './lib/transforms'
+import { sortSprites, stepWorld, updatePosition, updateSpritePosition } from './lib/transforms'
 import { Tween } from './lib/tween'
 import { MenuInputMap, clickOnMenuInput, spawnMenuInputs } from './menus/menuInputs'
 import { save, saveToLocalStorage } from './save/saveData'
@@ -28,7 +27,7 @@ import { hideThanks, showEndOfDemo } from './states/dungeon/endOfDemo'
 import { PlayerInputMap } from './states/dungeon/playerInputs'
 import { movePlayer } from './states/dungeon/playerMovement'
 import { allowPlayerToExit, exitDungeon, isPlayerInside, setDungeonState, spawnDungeon } from './states/dungeon/spawnDungeon'
-import { Inventory, openInventory, spawnInventoryToggle } from './states/overworld/InventoryUi'
+import { Inventory, openInventory, spawnInventoryToggle, updateCoinUi } from './states/overworld/InventoryUi'
 import { triggerApocalypse } from './states/overworld/apocalypse'
 import { addNavigationArrows, moveOverworldCharacter, pickupOverworldTreasure, removeNavigationMenu } from './states/overworld/navigation'
 import { spawnStepsUi } from './states/overworld/overworldUi.tsx'
@@ -41,13 +40,14 @@ import { selectEntities, unSelectDespawnMenus, updateMenus } from './ui/menu'
 import { addNineSlicetoUI } from './ui/nineSliceUi'
 import { addToScene, addToWorld, registerFullScreenShader, registerShader } from './utils/registerComponents'
 import { updatePlayerUi } from './states/battle/battleUi'
+import { runif } from './lib/ECS.ts'
 
 // !Lib
 
 ecs
 	.core.onEnter(initThree, updateMousePosition, spawnCamera, spawnMenuInputs, spawnUIRoot, setDefaultFontSize, changeControls)
 	.onPreUpdate(detectInteractions, updatePosition, clickOnMenuInput)
-	.onUpdate(updateMenus, addOutlineShader, animateSprites, addNineSlicetoUI, addUIElementsToDOM, selectEntities, unSelectDespawnMenus, () => Tween.update(time.delta), adjustScreenSize(), initializeCameraBounds, registerShader(ColorShader, OutlineShader, ItemPickupShader), registerFullScreenShader(ApocalypseShader), addToWorld, updateApocalypseShader, triggerOnClick)
+	.onUpdate(updateMenus, addOutlineShader, animateSprites, addNineSlicetoUI, addUIElementsToDOM, selectEntities, unSelectDespawnMenus, () => Tween.update(time.delta), adjustScreenSize(), initializeCameraBounds, registerShader(ColorShader, OutlineShader, ItemPickupShader), registerFullScreenShader(ApocalypseShader), addToWorld, updateApocalypseShader, triggerOnClick, sortSprites)
 	.onPostUpdate(updateSpritePosition, cameraFollow, render, stepWorld)
 	.enable()
 
@@ -64,8 +64,8 @@ startGame
 
 // ! States
 overworldState
-	.onEnter(showEndOfDemo, spawnOverworld(), SystemSet(spawnStepsUi).runIf(() => !save.finishedDemo), setOverwolrdState, spawnInventoryToggle)
-	.onUpdate(moveOverworldCharacter, SystemSet(triggerApocalypse).runIf(() => !save.finishedDemo), addNavigationArrows, removeNavigationMenu, pickupOverworldTreasure, openInventory, hideThanks)
+	.onEnter(showEndOfDemo, spawnOverworld(), runif(() => !save.finishedDemo, spawnStepsUi), setOverwolrdState, spawnInventoryToggle)
+	.onUpdate(moveOverworldCharacter, runif(() => !save.finishedDemo, triggerApocalypse), addNavigationArrows, removeNavigationMenu, pickupOverworldTreasure, openInventory, hideThanks, updateCoinUi)
 	.onExit(despawnOverworld, despawnEntities(OverWorldUI, Inventory))
 
 battleState
@@ -74,8 +74,8 @@ battleState
 	.onExit(despawnBattle, saveToLocalStorage, despawnEntities(BattleUI))
 
 dungeonState
-	.onEnter(spawnDungeon, setDungeonState)
-	.onUpdate(movePlayer, isPlayerInside, updateCameraZoom(7), startDialogDungeon, exitDungeon, allowPlayerToExit, addTalkingIcon, enableTouchJoystick)
+	.onEnter(spawnDungeon, setDungeonState, spawnInventoryToggle)
+	.onUpdate(movePlayer, isPlayerInside, updateCameraZoom(5), startDialogDungeon, exitDungeon, allowPlayerToExit, addTalkingIcon, enableTouchJoystick, openInventory, updateCoinUi)
 	.onExit(disableTouchJoystick, despawnEntities(Dungeon))
 
 // ! Game loop

@@ -5,12 +5,13 @@ import { Player } from '@/generic/components'
 import { assets } from '@/globals/init'
 import { CameraTarget } from '@/lib/camera'
 import { TextureAtlas } from '@/lib/sprite'
-import { Position } from '@/lib/transforms'
+import { Position, YSorted } from '@/lib/transforms'
 
 export const PlayerBundle = (pos: Position) => {
 	const bundle = TextureAtlas.bundle(assets.characters.paladin, 'idle', 'left', 'down')
-	bundle[0].setRenderOrder(10)
+
 	return [
+		new YSorted(),
 		...bundle,
 		new Position(pos.x, pos.y),
 		getPlayerInputMap(),

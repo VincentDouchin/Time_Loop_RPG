@@ -49,3 +49,12 @@ export const stepWorld = () => {
 	world.timestep = time.delta / 1000
 	world.step()
 }
+
+@Component(ecs)
+export class YSorted {}
+const YSortedSpritesQuery = ecs.query.pick(Position).with(YSorted)
+export const sortSprites = () => {
+	for (const [position] of YSortedSpritesQuery.getAll()) {
+		position.z = (position.y * -0.01) + 4
+	}
+}

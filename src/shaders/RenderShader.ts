@@ -9,5 +9,6 @@ export class RenderShader extends ShaderPass {
 	constructor(texture: Texture) {
 		super(renderShader)
 		this.uniforms.uTexture = new Uniform(texture)
+		this.material.transparent = true
 	}
 }

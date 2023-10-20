@@ -29,7 +29,6 @@ export class CanTalk {
 export const NPCBundle = (entityInstance: EntityInstance, layerInstance: LayerInstance) => {
 	const npc = new NPC(entityInstance)
 	const bundle = TextureAtlas.bundle(assets.characters[npc.data.name], 'idle', 'left', 'down')
-	bundle[0].setRenderOrder(9)
 	const components: InstanceType<Class>[] = [
 		...bundle,
 		npc,
@@ -52,7 +51,7 @@ export const startDialogDungeon = () => {
 	for (const [playerInputs, playerPosition] of playerQuery.getAll()) {
 		for (const [entity, position, dialog, menu] of dialogQuery.getAll()) {
 			if (playerPosition.distanceTo(position) < 16) {
-				if (!entity.getComponent(CanTalk) && !dialog.finished && !dialog.current) {
+				if (!entity.getComponent(CanTalk) && !dialog.current) {
 					entity.addComponent(new CanTalk())
 				}
 				const menuInputs = menuInputQuery.extract()

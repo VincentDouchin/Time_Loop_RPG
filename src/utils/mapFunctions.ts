@@ -28,9 +28,9 @@ export const groupByObject = <T extends Record<string, any>, F extends (key: key
 }
 
 export const mapKeys = <K extends string, T extends Record<string, any>, F extends (key: keyof T) => K>(obj: T, fn: F) => {
-	const res = {} as { [k in K]: T[keyof T] }
+	const res = {} as { [k in ReturnType<F>]: T[keyof T] }
 	for (const [key, val] of entries(obj)) {
-		const newKey = fn(key)
+		const newKey = fn(key) as ReturnType<F>
 		res[newKey] = val
 	}
 	return res
@@ -45,6 +45,14 @@ export const range = <R >(start: number, end: number, fn: (i: number) => R) => {
 	const res: R[] = []
 	for (let i = start; i < end; i++) {
 		res.push(fn(i))
+	}
+	return res
+}
+export const addKeys = <K extends readonly string[], V>(keys: K, values: V[]) => {
+	const res = {} as Record<K[number], V>
+	for (let i = 0; i < keys.length; i++) {
+		const key = keys[i] as K[number]
+		res[key] = values[i]
 	}
 	return res
 }

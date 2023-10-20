@@ -1,11 +1,13 @@
 import { Battler, BattlerMenu, selectAction, selectNextBattler, selectTargets, takeAction } from './battleActions'
-import { battleUi } from './battleUi'
+import { battleUi, displayHealth } from './battleUi'
 import { Cutscene } from './cutscene'
 import { Health } from './health'
 import { ActionSelector, BattlerType, PlayerActions, TargetSelector } from '@/constants/actions'
 import type { Enemy } from '@/constants/enemies'
 import { Player } from '@/generic/components'
+import type { battleRessources } from '@/globals/init'
 import { assets, despawnEntities, ecs, overworldState } from '@/globals/init'
+import type { System } from '@/lib/ECS'
 import { Component, Entity } from '@/lib/ECS'
 import { Interactable } from '@/lib/interactions'
 import { type TextureAltasStates, TextureAtlas } from '@/lib/sprite'
@@ -13,9 +15,9 @@ import { Position } from '@/lib/transforms'
 import { Tween } from '@/lib/tween'
 import { gameOver, save, saveToLocalStorage } from '@/save/saveData'
 import { OutlineShader } from '@/shaders/OutlineShader'
-import { NineSlice } from '@/ui/nineSliceUi'
 import { UIElement } from '@/ui/UiElement'
 import { Selected } from '@/ui/menu'
+import { NineSlice } from '@/ui/nineSliceUi'
 import { sleep } from '@/utils/timing'
 
 const battlerSpriteBundle = (side: 'left' | 'right', textureAtlas: TextureAltasStates<'walk' | 'idle'>, background: number, index: number = 0, length: number = 1) => {
@@ -49,7 +51,9 @@ export const spawnBattlers = (battle: Entity, background: number, enemies: reado
 		if (enemyData.bundle) {
 			enemy.addComponent(...enemyData.bundle())
 		}
+
 		sleep(2000).then(() => {
+			enemy.addChildren(displayHealth(enemy, { x: 0, y: -8 }))
 			enemy.addComponent(new Battler(BattlerType.Enemy, enemyData.actions, ActionSelector.EnemyAuto, TargetSelector.EnemyAuto))
 		})
 	}
@@ -123,7 +127,7 @@ const winOrLoseBundle = () => [new UIElement({ position: 'absolute', placeSelf: 
 export const despawnBattleMenu = despawnEntities(BattlerMenu)
 
 const healthRemovedComponent = ecs.query.removed(Health)
-export const winOrLose = () => {
+export const winOrLose: System<battleRessources> = (battle) => {
 	if (healthRemovedComponent.size) {
 		if (playerQuery.size === 0 && notPlayerQuery.size > 0) {
 			ecs.spawn(...winOrLoseBundle()).spawn(UIElement.text('Game Over'))
@@ -136,6 +140,9 @@ export const winOrLose = () => {
 		if (notPlayerQuery.size === 0 && playerQuery.size > 0) {
 			ecs.spawn(...winOrLoseBundle()).spawn(UIElement.text('You won!'))
 			despawnBattleMenu()
+			if (battle.onExit) {
+				battle.onExit()
+			}
 			sleep(3000).then(() => {
 				overworldState.enable()
 				saveToLocalStorage()

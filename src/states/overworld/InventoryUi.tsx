@@ -14,7 +14,8 @@ import { range } from '@/utils/mapFunctions'
 export class Inventory { }
 @Component(ecs)
 export class InventoryIcon { }
-
+@Component(ecs)
+export class UiCoin {}
 export const spawnInventoryToggle = () => {
 	ecs.spawn((
 		<ui-element
@@ -27,7 +28,9 @@ export const spawnInventoryToggle = () => {
 				components={[new ChangeBackgroundOnSelected(assets.uiAtlas.inventory[1]), new Interactable(), new MenuInputInteractable('Inventory'), new InventoryIcon()]}
 			>
 			</image>
-			<image image={assets.ui.coin} style={{ width: '5vw', height: '5vw' }}></image>
+			<image image={assets.ui.coin} style={{ width: '5vw', height: '5vw', display: 'grid', placeItems: 'center' }}>
+				<text size={3} components={[new UiCoin()]}>{save.money}</text>
+			</image>
 		</ui-element>
 	))
 }
@@ -67,6 +70,12 @@ const inventory = () => {
 	)
 
 	return inventory
+}
+const coinUiQuery = ecs.query.pick(UIElement).with(UiCoin)
+export const updateCoinUi = () => {
+	for (const [element] of coinUiQuery.getAll()) {
+		element.text(String(save.money))
+	}
 }
 export const inventoryQuery = ecs.query.pick(Entity, UIElement).with(Inventory)
 export const openInventory = () => {

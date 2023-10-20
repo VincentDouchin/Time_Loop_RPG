@@ -5,7 +5,7 @@ import { composer, scene } from './rendering'
 import { Sprite } from './sprite'
 import { cssRenderer, ecs, renderer } from '@/globals/init'
 import type { Level } from '@/level/LDTK'
-import { Component, SystemSet } from '@/lib/ECS'
+import { Component, throttle } from '@/lib/ECS'
 import { Position } from '@/lib/transforms'
 
 @Component(ecs)
@@ -42,6 +42,7 @@ export const mainCameraQuery = ecs.query.pick(OrthographicCamera).with(MainCamer
 export const render = () => {
 	const camera = mainCameraQuery.extract()
 	composer.render()
+	
 	if (camera) {
 		cssRenderer.render(scene, camera)
 	}
@@ -128,7 +129,7 @@ export const adjustScreenSize = () => {
 		screenSize.changed = true
 	})
 	const cameraBoundsQuery = ecs.query.pick(Sprite, Position).with(CameraBounds)
-	return SystemSet(() => {
+	return throttle(100, () => {
 		if (screenSize.changed) {
 			for (const anyRenderer of [renderer, cssRenderer]) {
 				anyRenderer.setSize(window.innerWidth, window.innerHeight)
@@ -151,5 +152,5 @@ export const adjustScreenSize = () => {
 				camera.updateProjectionMatrix()
 			}
 		}
-	}).throttle(100)
+	})
 }
