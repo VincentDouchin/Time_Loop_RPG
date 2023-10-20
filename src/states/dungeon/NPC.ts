@@ -9,7 +9,7 @@ import type { Class } from '@/lib/ECS'
 import { Component, Entity } from '@/lib/ECS'
 import { Interactable } from '@/lib/interactions'
 import { TextureAtlas } from '@/lib/sprite'
-import { Position } from '@/lib/transforms'
+import { Position, YSorted } from '@/lib/transforms'
 import { MenuInputInteractable, getMenuInputMap, menuInputQuery } from '@/menus/menuInputs'
 import { UIElement } from '@/ui/UiElement'
 import { dialogContainer } from '@/ui/dialogUi'
@@ -36,6 +36,7 @@ export const NPCBundle = (entityInstance: EntityInstance, layerInstance: LayerIn
 		RigidBodyDesc.fixed(),
 		ColliderDesc.cuboid(4, 4),
 		getMenuInputMap(),
+		new YSorted(),
 	]
 	const npcDialog = dialog[npc.data.name]
 	if (npcDialog) {

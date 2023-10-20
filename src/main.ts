@@ -1,6 +1,7 @@
 import { OrthographicCamera } from 'three'
 import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer'
 import { battleState, despawnEntities, dungeonState, ecs, overworldState, startGame } from './globals/init'
+import { runif } from './lib/ECS.ts'
 import { animateSprites } from './lib/animation'
 import { adjustScreenSize, cameraFollow, initializeCameraBounds, render, spawnCamera, updateCameraZoom } from './lib/camera'
 import { changeControls, disableTouchJoystick, enableTouchJoystick, registerInput } from './lib/inputs'
@@ -17,13 +18,14 @@ import { ColorShader } from './shaders/ColorShader'
 import { ItemPickupShader } from './shaders/ItemPickupShader'
 import { OutlineShader, addOutlineShader } from './shaders/OutlineShader'
 import { battleDialog } from './states/battle/battleCutscene'
+import { updatePlayerUi } from './states/battle/battleUi'
 import { banditCutscene } from './states/battle/cutscene'
 import { savePlayerHealth } from './states/battle/health'
 import { despawnBattle, spawnBattle } from './states/battle/spawnBattleBackground'
 import { battleTurn, outlineSelectedEnemy, removeDeadBattlers, winOrLose } from './states/battle/spawnBattlers'
 import { addTalkingIcon, startDialogDungeon } from './states/dungeon/NPC'
 import { Dungeon } from './states/dungeon/dungeonComponents'
-import { hideThanks, showEndOfDemo } from './states/dungeon/endOfDemo'
+import { hideThanks } from './states/dungeon/endOfDemo'
 import { PlayerInputMap } from './states/dungeon/playerInputs'
 import { movePlayer } from './states/dungeon/playerMovement'
 import { allowPlayerToExit, exitDungeon, isPlayerInside, setDungeonState, spawnDungeon } from './states/dungeon/spawnDungeon'
@@ -39,8 +41,6 @@ import { BattleUI, OverWorldUI, setDefaultFontSize } from './ui/UiElement'
 import { selectEntities, unSelectDespawnMenus, updateMenus } from './ui/menu'
 import { addNineSlicetoUI } from './ui/nineSliceUi'
 import { addToScene, addToWorld, registerFullScreenShader, registerShader } from './utils/registerComponents'
-import { updatePlayerUi } from './states/battle/battleUi'
-import { runif } from './lib/ECS.ts'
 
 // !Lib
 
@@ -64,7 +64,7 @@ startGame
 
 // ! States
 overworldState
-	.onEnter(showEndOfDemo, spawnOverworld(), runif(() => !save.finishedDemo, spawnStepsUi), setOverwolrdState, spawnInventoryToggle)
+	.onEnter(spawnOverworld(), runif(() => !save.finishedDemo, spawnStepsUi), setOverwolrdState, spawnInventoryToggle)
 	.onUpdate(moveOverworldCharacter, runif(() => !save.finishedDemo, triggerApocalypse), addNavigationArrows, removeNavigationMenu, pickupOverworldTreasure, openInventory, hideThanks, updateCoinUi)
 	.onExit(despawnOverworld, despawnEntities(OverWorldUI, Inventory))
 
@@ -75,7 +75,7 @@ battleState
 
 dungeonState
 	.onEnter(spawnDungeon, setDungeonState, spawnInventoryToggle)
-	.onUpdate(movePlayer, isPlayerInside, updateCameraZoom(5), startDialogDungeon, exitDungeon, allowPlayerToExit, addTalkingIcon, enableTouchJoystick, openInventory, updateCoinUi)
+	.onUpdate(movePlayer, isPlayerInside, updateCameraZoom(6), startDialogDungeon, exitDungeon, allowPlayerToExit, addTalkingIcon, enableTouchJoystick, openInventory, updateCoinUi)
 	.onExit(disableTouchJoystick, despawnEntities(Dungeon))
 
 // ! Game loop

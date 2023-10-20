@@ -1,4 +1,5 @@
 import { type Enemy, enemies } from './enemies'
+import { showEndOfDemo } from '@/states/dungeon/endOfDemo'
 import { giveMoney } from '@/utils/battleHelpers'
 
 export interface BattleData {
@@ -17,6 +18,7 @@ export const battles = {
 	BossBattleIntro: {
 		enemies: [enemies.angelOfDeath],
 		background: 2,
+		onExit: showEndOfDemo,
 	},
 	ForestAnimals: {
 		enemies: [enemies.bat, enemies.wolf, enemies.bat],
