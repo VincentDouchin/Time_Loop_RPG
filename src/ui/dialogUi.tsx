@@ -2,6 +2,7 @@ import { type Dialog, DialogContainer } from '@/states/dungeon/dialog'
 import { assets } from '@/globals/init'
 import { Interactable } from '@/lib/interactions'
 import { Tween } from '@/lib/tween'
+import { MenuInputInteractable } from '@/menus/menuInputs'
 
 export const dialogContainer = (dialog: Dialog) => {
 	const move = (element: UIElement) => new Tween(100)
@@ -14,7 +15,7 @@ export const dialogContainer = (dialog: Dialog) => {
 			margin={4}
 			scale={3}
 			style={{ display: 'grid', gap: '0.2rem', padding: '0.2rem', maxWidth: '200px', translate: '0% -50%' }}
-			components={[new DialogContainer(dialog), new Interactable()]}
+			components={[new DialogContainer(dialog), new Interactable(), new MenuInputInteractable('Enter')]}
 			bind={move}
 			worldPosition={{ x: 0, y: 8 }}
 		>

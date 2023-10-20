@@ -1,7 +1,5 @@
 import { ecs } from '@/globals/init'
 import { Component, Entity } from '@/lib/ECS'
-import { Interactable } from '@/lib/interactions'
-import { MenuInputInteractable } from '@/menus/menuInputs'
 import { UIElement } from '@/ui/UiElement'
 import { Menu, UnderlineOnSelected } from '@/ui/menu'
 
@@ -46,7 +44,7 @@ export const stepDialog = (dialog: Dialog, menu: Menu) => {
 		if (line) {
 			const lines = typeof line === 'string' ? [line] : line
 			const boxes = lines.map((line, index) => {
-				const box = bubble.spawn(new UIElement(), new MenuInputInteractable('Enter'), new Interactable(), new DialogOption(index))
+				const box = bubble.spawn(new UIElement(), new DialogOption(index))
 				box.spawn(UIElement.text(line))
 				return box
 			}).filter(Boolean)
