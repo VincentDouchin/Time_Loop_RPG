@@ -8,9 +8,9 @@ import { ecs, renderer } from '@/globals/init'
 
 @Component(ecs)
 export class Interactable {
-	hover = false
-	#pressed = false
-	#wasPressed = false
+	hover: null | boolean = null
+	#pressed: null | boolean = null
+	#wasPressed: null | boolean = null
 	position = new Vector2()
 	dimensions = new Vector2()
 	#onClick: (() => unknown) | null = null
@@ -27,7 +27,7 @@ export class Interactable {
 	}
 
 	get pressed() {
-		return this.#pressed
+		return Boolean(this.#pressed)
 	}
 
 	set pressed(state: boolean) {
