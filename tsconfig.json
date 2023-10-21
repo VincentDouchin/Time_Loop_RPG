@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"target": "ES2020",
+		"target": "ES5",
 		"jsx": "preserve",
 		"jsxFactory": "createUiEntity",
 		"jsxFragmentFactory": "createUiFragment",
