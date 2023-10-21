@@ -9,11 +9,12 @@ import { ecs, renderer } from '@/globals/init'
 @Component(ecs)
 export class Interactable {
 	hover: null | boolean = null
-	#pressed: null | boolean = null
-	#wasPressed: null | boolean = null
+	pressed: null | boolean = null
+	wasPressed: null | boolean = null
 	position = new Vector2()
 	dimensions = new Vector2()
 	#onClick: (() => unknown) | null = null
+	lastTouchedBy: PointerInput | null = null
 	constructor(public x?: number, public y?: number) {	}
 	onClick(fn: () => unknown) {
 		this.#onClick = fn
@@ -26,21 +27,12 @@ export class Interactable {
 		}
 	}
 
-	get pressed() {
-		return this.#pressed === true
-	}
-
-	set pressed(state: boolean) {
-		this.#wasPressed = this.pressed
-		this.#pressed = state
-	}
-
 	get justPressed() {
-		return this.#wasPressed === false && this.#pressed === true
+		return this.wasPressed === false && this.pressed === true
 	}
 
 	get justReleased() {
-		return this.#wasPressed === true && this.#pressed === false
+		return this.wasPressed === true && this.pressed === false
 	}
 }
 
@@ -52,7 +44,16 @@ class PointerInput {
 
 	position = new Vector2()
 	screenPosition = new Vector2()
+	wasPressed = false
 	pressed = false
+	get justPressed() {
+		return this.wasPressed === false && this.pressed === true
+	}
+
+	get justReleased() {
+		return this.wasPressed === true && this.pressed === false
+	}
+
 	constructor(private down: string, private up: string) {
 	}
 
@@ -111,6 +112,12 @@ export const updateMousePosition = () => {
 	}
 }
 
+export const updatePointerInputs = () => {
+	for (const pointer of PointerInput.all) {
+		pointer.wasPressed = pointer.pressed
+	}
+}
+
 const worldInteractablesQuery = ecs.query.pick(Interactable, Sprite)
 const uiInteractablesQuery = ecs.query.pick(Interactable, UIElement)
 const interactableQuery = ecs.query.pick(Interactable)
@@ -142,6 +149,7 @@ export const detectInteractions = () => {
 	}
 	const hovered: Interactable[] = []
 	const pressed: Interactable[] = []
+	const wasPressed: Interactable[] = []
 	for (const [interactable] of interactableQuery.getAll()) {
 		for (const pointer of PointerInput.all) {
 			const left = interactable.position.x - interactable.dimensions.x / 2
@@ -153,10 +161,14 @@ export const detectInteractions = () => {
 				if (pointer.pressed) {
 					pressed.push(interactable)
 				}
+				if (pointer.wasPressed) {
+					wasPressed.push(interactable)
+				}
 			}
 		}
 		interactable.hover = hovered.includes(interactable)
 		interactable.pressed = pressed.includes(interactable)
+		interactable.wasPressed = wasPressed.includes(interactable)
 	}
 }
 

@@ -5,7 +5,7 @@ import { runif } from './lib/ECS.ts'
 import { animateSprites } from './lib/animation'
 import { adjustScreenSize, cameraFollow, initializeCameraBounds, render, spawnCamera, updateCameraZoom } from './lib/camera'
 import { changeControls, disableTouchJoystick, enableTouchJoystick, registerInput } from './lib/inputs'
-import { detectInteractions, triggerOnClick, updateMousePosition } from './lib/interactions'
+import { detectInteractions, triggerOnClick, updateMousePosition, updatePointerInputs } from './lib/interactions'
 import { initThree } from './lib/rendering'
 import { Sprite } from './lib/sprite'
 import { time } from './lib/time'
@@ -46,7 +46,7 @@ import { addToScene, addToWorld, registerFullScreenShader, registerShader } from
 
 ecs
 	.core.onEnter(initThree, updateMousePosition, spawnCamera, spawnMenuInputs, spawnUIRoot, setDefaultFontSize, changeControls)
-	.onPreUpdate(detectInteractions, updatePosition, clickOnMenuInput)
+	.onPreUpdate(detectInteractions, updatePosition, clickOnMenuInput, updatePointerInputs)
 	.onUpdate(updateMenus, addOutlineShader, animateSprites, addNineSlicetoUI, addUIElementsToDOM, selectEntities, unSelectDespawnMenus, () => Tween.update(time.delta), adjustScreenSize(), initializeCameraBounds, registerShader(ColorShader, OutlineShader, ItemPickupShader), registerFullScreenShader(ApocalypseShader), addToWorld, updateApocalypseShader, triggerOnClick, sortSprites)
 	.onPostUpdate(updateSpritePosition, cameraFollow, render, stepWorld)
 	.enable()
