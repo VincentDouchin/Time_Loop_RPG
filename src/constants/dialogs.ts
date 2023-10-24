@@ -17,29 +17,31 @@ export const removeKeys = (...keysToRemove: Array<typeof keys[number]>) => {
 export const hasKey = (key: typeof keys[number]) => save.keys.includes(key)
 export const dialog: Partial<Record<characters | `sign${string}`, () => Generator>> = {
 	*howard() {
-		lockPlayer()
-		yield 'Hello adventurer!'
-		yield 'My name is Howard'
-		yield 'I am the innkeeper'
-		yield 'Do you want a drink?'
-		const answer = yield ['yes', 'no']
-		if (answer === 0) {
-			yield 'It will be 10 gils please'
-			const answer = yield ['Pay', 'Leave']
+		while (true) {
+			lockPlayer()
+			yield 'Hello adventurer!'
+			yield 'My name is Howard'
+			yield 'I am the innkeeper'
+			yield 'Do you want a drink?'
+			const answer = yield ['yes', 'no']
 			if (answer === 0) {
-				if (pay(10)) {
-					save.treasureFound.push('Beer')
-					yield 'Here you go!'
-					yield '...'
-					yield 'Did you just put a full pint of beer in your backpack?'
+				yield 'It will be 10 gils please'
+				const answer = yield ['Pay', 'Leave']
+				if (answer === 0) {
+					if (pay(10)) {
+						save.treasureFound.push('Beer')
+						yield 'Here you go!'
+						yield '...'
+						yield 'Did you just put a full pint of beer in your backpack?'
+					} else {
+						yield 'It seems like you don\'t have enough money, sorry!'
+					}
 				} else {
-					yield 'It seems like you don\'t have enough money, sorry!'
+					yield 'Goodbye!'
 				}
-			} else {
-				yield 'Goodbye!'
 			}
+			yield unlockPlayer()
 		}
-		yield unlockPlayer()
 	},
 	*banditOldMan() {
 		while (true) {
