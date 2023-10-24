@@ -17,11 +17,11 @@ export const removeKeys = (...keysToRemove: Array<typeof keys[number]>) => {
 export const hasKey = (key: typeof keys[number]) => save.keys.includes(key)
 export const dialog: Partial<Record<characters | `sign${string}`, () => Generator>> = {
 	*howard() {
+		yield 'Hello adventurer!'
+		yield 'My name is Howard'
+		yield 'I am the innkeeper'
 		while (true) {
 			lockPlayer()
-			yield 'Hello adventurer!'
-			yield 'My name is Howard'
-			yield 'I am the innkeeper'
 			yield 'Do you want a drink?'
 			const answer = yield ['yes', 'no']
 			if (answer === 0) {
