@@ -82,7 +82,7 @@ export const dialog: Partial<Record<characters | `sign${string}`, () => Generato
 			updateSteps(1)
 			overworldState.enable()
 		} else {
-			yield 'Give us all your stuff!'
+			yield 'You made a mistake coming here!'
 		}
 		yield despwawnCutscene()
 	},
