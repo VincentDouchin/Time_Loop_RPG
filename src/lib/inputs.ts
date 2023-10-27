@@ -83,7 +83,7 @@ export const disableTouchJoystick = () => {
 
 export const enableTouchJoystick = () => {
 	if (context.controls === 'touch' && !touchJoystick) {
-		touchJoystick = nipplejs.create({ zone: document.body })
+		touchJoystick = nipplejs.create({ zone: document.body, size: 200 })
 		touchJoystick.on('move', (_, data) => {
 			const force = data.distance / 50
 			if (Math.abs(data.vector.x) > 0.1) {
