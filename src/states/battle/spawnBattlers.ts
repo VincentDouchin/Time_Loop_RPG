@@ -53,7 +53,7 @@ export const spawnBattlers = (battle: Entity, background: number, enemies: reado
 		}
 
 		sleep(2000).then(() => {
-			enemy.addChildren(displayHealth(enemy, { x: 0, y: 8 }))
+			enemy.addChildren(displayHealth(enemy, { x: 0, y: -4 }))
 			enemy.addComponent(new Battler(BattlerType.Enemy, enemyData.actions, ActionSelector.EnemyAuto, TargetSelector.EnemyAuto))
 		})
 	}
