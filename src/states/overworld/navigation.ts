@@ -164,7 +164,7 @@ const playerQuery = ecs.query.pick(Entity)
 export const pickupOverworldTreasure = () => {
 	const playerEntity = playerQuery.extract()
 	if (playerEntity) {
-		playerEntity.removeComponent(DecidingDirection)
+		removeNavigationMenu()
 		for (const [_entity, _pos, navNode] of currentNodeQuery.getAll()) {
 			const treasure = navNode.data.Treasure
 			if (treasure && !save.treasureFound.includes(treasure)) {
@@ -186,7 +186,7 @@ export const pickupOverworldTreasure = () => {
 									.onUpdate(r => treasureUiElement.setStyle('scale', 1.5 * (1 - r) + 0.5))
 									.onComplete(() => {
 										treasureEntity.despawn()
-										playerEntity.addComponent(new DecidingDirection())
+										addNavigationArrows()
 									})
 							}
 						})
